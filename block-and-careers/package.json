@@ -1,0 +1,30 @@
+{
+  "name": "block-and-careers",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@next/eslint-plugin-next": "^12.1.5",
+    "next": "12.1.5",
+    "prettier": "^2.6.2",
+    "react": "18.0.0",
+    "react-dom": "18.0.0",
+    "recoil": "^0.7.2",
+    "styled-components": "^5.3.5"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.24",
+    "@types/react": "18.0.5",
+    "@types/react-dom": "18.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.19.0",
+    "eslint": "8.13.0",
+    "eslint-config-next": "^12.1.5",
+    "eslint-config-prettier": "^8.5.0",
+    "typescript": "4.6.3"
+  }
+}
