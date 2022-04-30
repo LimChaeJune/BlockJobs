@@ -3,8 +3,7 @@ import Document, {
   Html,
   Head,
   Main,
-  NextScript,
-  DocumentInitialProps,
+  NextScript,  
   DocumentContext,
 } from "next/document";
 import { ServerStyleSheet } from "styled-components";
@@ -13,12 +12,9 @@ import { ServerStyleSheet } from "styled-components";
 // https://nextjs.org/docs/advanced-features/custom-document
 
 export default class MyDocument extends Document {
-  static async getInitialProps(
-    ctx: DocumentContext
-  ): Promise<DocumentInitialProps> {
+  static async getInitialProps(ctx: DocumentContext) {
     const sheet = new ServerStyleSheet();
     const originalRenderPage = ctx.renderPage;
-
     try {
       ctx.renderPage = () =>
         originalRenderPage({
@@ -27,6 +23,7 @@ export default class MyDocument extends Document {
         });
 
       const initialProps = await Document.getInitialProps(ctx);
+      return initialProps;
       return {
         ...initialProps,
         styles: (

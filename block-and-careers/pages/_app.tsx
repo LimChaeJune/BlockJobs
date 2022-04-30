@@ -1,4 +1,4 @@
-import "@styles/globals.scss";
+import "@style/globals.css";
 import "@style/variables.css";
 import type { AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
