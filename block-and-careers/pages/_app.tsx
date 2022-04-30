@@ -1,12 +1,21 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
-import { RecoilRoot } from 'recoil'
+import "@style/globals.css";
+import "@style/variables.css";
+import type { AppProps } from "next/app";
+import { RecoilRoot } from "recoil";
+import Head from "next/head";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return 
-  <RecoilRoot>
-    <Component {...pageProps} />
-  </RecoilRoot>
+  return (
+    <>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>BlockJobs!</title>
+      </Head>
+      <RecoilRoot>
+        <Component {...pageProps} />
+      </RecoilRoot>
+    </>
+  );
 }
 
-export default MyApp
+export default MyApp;
