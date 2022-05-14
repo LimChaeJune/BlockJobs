@@ -1,5 +1,4 @@
 import NavBar from "./navbar";
-import Footer from "./footer";
 import styled from "styled-components";
 
 interface Props {
@@ -12,9 +11,6 @@ const BlockJobLayout = ({ children }: Props): JSX.Element => {
       <Container>
         <NavBar />
         <Content>{children}</Content>
-        <footer>
-          <Footer />
-        </footer>
       </Container>
     </>
   );
