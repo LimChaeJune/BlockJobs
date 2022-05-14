@@ -3,20 +3,23 @@ import { BiBell } from "react-icons/bi";
 import Link from "next/link";
 import styled from "styled-components";
 import { useWeb3 } from "@hooks/Web3Client";
-import { useRecoilState } from "recoil";
 import { Web3_Model, initialWeb3 } from "states/web3/account";
 import { useCallback } from "react";
+import { useRecoilState } from "recoil";
 
 const NavBar = (): JSX.Element => {
-  const { web3State, connect, disconnect } = useWeb3();
+  const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
+  const { connect, disconnect } = useWeb3();
 
-  const WalletConn = useCallback(() => {
-    connect();
+  const WalletConn = useCallback(async () => {
+    await connect();
   }, []);
 
-  const WalletDisConn = useCallback(() => {
-    disconnect();
+  const WalletDisConn = useCallback(async () => {
+    await disconnect();
   }, []);
+
+  // 쿠키에 로그인 정보가 있으면 바로 지갑 연결
 
   return (
     <>
@@ -33,14 +36,16 @@ const NavBar = (): JSX.Element => {
             })}
           </NavBar_Items>
           <NavBar_UserContainer>
-            {web3State?.web3Provider ? (
+            {web3State?.address ? (
               <NavBar_Item
                 onClick={WalletDisConn}
               >{`${web3State?.address}`}</NavBar_Item>
             ) : (
-              <NavBar_Item onClick={WalletConn}>지갑 연결</NavBar_Item>
+              <>
+                <NavBar_Item onClick={WalletConn}>지갑 연결</NavBar_Item>
+                <BiBell className="Item" />
+              </>
             )}
-            <BiBell className="Item" />
           </NavBar_UserContainer>
         </NavBar_Content>
       </NavBar_Back>
