@@ -5,7 +5,7 @@ import { ethers } from "ethers";
 import { useRecoilState } from "recoil";
 import { initialWeb3 } from "@state/web3/account";
 import { Web3_Model } from "@state/web3/account";
-import { toast } from "react-toastify";
+import { useToast } from "@chakra-ui/react";
 
 const providerOptions = {
   walletconnect: {
@@ -26,6 +26,7 @@ if (typeof window !== "undefined") {
 }
 
 export const useWeb3 = () => {
+  const toast = useToast();
   const [web3State, SetWeb3] = useRecoilState<Web3_Model>(initialWeb3);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [modalProvider, SetModalProvider] = useState<any>(null);
@@ -41,7 +42,13 @@ export const useWeb3 = () => {
         const address = await signer.getAddress();
         const network = await web3Provider.getNetwork();
 
-        toast.success("지갑연결에 성공했습니다.");
+        toast({
+          title: "지갑연결에 성공했습니다.",
+          status: "success",
+          position: "bottom-right",
+          isClosable: true,
+        });
+
         const ConnWeb3: Web3_Model = {
           provider: null,
           web3Provider: null,
@@ -66,7 +73,12 @@ export const useWeb3 = () => {
         await modalProvider.disconnect();
       }
 
-      toast.success("지갑 연결을 해지했습니다.");
+      toast({
+        title: "지갑연결을 해지하였습니다..",
+        status: "success",
+        position: "bottom-right",
+        isClosable: true,
+      });
 
       const DisConn: Web3_Model = {
         provider: null,
@@ -83,7 +95,12 @@ export const useWeb3 = () => {
   useEffect(() => {
     if (modalProvider?.on) {
       const handleAccountsChanged = (accounts: string[]) => {
-        toast.info("지갑이 변경되었습니다.");
+        toast({
+          title: "지갑이 변경되었습니다.",
+          status: "info",
+          position: "bottom-right",
+          isClosable: true,
+        });
 
         SetWeb3({ ...web3State, address: accounts[0] });
       };
@@ -92,7 +109,12 @@ export const useWeb3 = () => {
       const handleChainChanged = (_hexChainId: string) => {
         if (typeof window !== "undefined") {
           console.log("switched to chain...", _hexChainId);
-          toast.info("Web3 네트워크가 변경되었습니다.");
+          toast({
+            title: "Web3 네트워크가 변경되었습니다.",
+            status: "info",
+            position: "bottom-right",
+            isClosable: true,
+          });
           window.location.reload();
         } else {
           console.log("window is undefined");

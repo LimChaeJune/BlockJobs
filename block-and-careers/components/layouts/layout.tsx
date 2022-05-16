@@ -1,5 +1,5 @@
+import styled from "@emotion/styled";
 import NavBar from "./navbar";
-import styled from "styled-components";
 
 interface Props {
   children: JSX.Element[] | JSX.Element;

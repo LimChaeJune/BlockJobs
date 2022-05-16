@@ -1,45 +1,14 @@
-import React, { ReactElement } from "react";
-import Document, {
-  Html,
-  Head,
-  Main,
-  NextScript,
-  DocumentContext,
-} from "next/document";
-import { ServerStyleSheet } from "styled-components";
+import React from "react";
+import NextDocument, { Html, Head, Main, NextScript } from "next/document";
+import { ColorModeScript } from "@chakra-ui/react";
 
 // NEXT.JS CUSTOM DOCUMENT
 // https://nextjs.org/docs/advanced-features/custom-document
 
-export default class MyDocument extends Document {
-  static async getInitialProps(ctx: DocumentContext) {
-    const sheet = new ServerStyleSheet();
-    const originalRenderPage = ctx.renderPage;
-    try {
-      ctx.renderPage = () =>
-        originalRenderPage({
-          enhanceApp: (App) => (props) =>
-            sheet.collectStyles(<App {...props} />),
-        });
-
-      const initialProps = await Document.getInitialProps(ctx);
-      return {
-        ...initialProps,
-        styles: (
-          <>
-            {initialProps.styles}
-            {sheet.getStyleElement()}
-          </>
-        ),
-      };
-    } finally {
-      sheet.seal();
-    }
-  }
-
-  render(): ReactElement {
+export default class Document extends NextDocument {
+  render() {
     return (
-      <Html lang="en">
+      <Html>
         <Head>
           <meta property="og:type" content="website" />
           <meta property="og:url" content="https://example.com/page.html" />
@@ -63,6 +32,8 @@ export default class MyDocument extends Document {
           />
         </Head>
         <body>
+          {/* Make Color mode to persists when you refresh the page. */}
+          <ColorModeScript />
           <Main />
           <NextScript />
         </body>
