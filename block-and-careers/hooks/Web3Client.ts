@@ -42,12 +42,15 @@ export const useWeb3 = () => {
         const address = await signer.getAddress();
         const network = await web3Provider.getNetwork();
 
-        toast({
-          title: "지갑연결에 성공했습니다.",
-          status: "success",
-          position: "bottom-right",
-          isClosable: true,
-        });
+        // 로컬 스토리지에 지갑 연결된게 없어야지 호출
+        if (!localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER")) {
+          toast({
+            title: "지갑연결에 성공했습니다.",
+            status: "success",
+            position: "bottom-right",
+            isClosable: true,
+          });
+        }
 
         const ConnWeb3: Web3_Model = {
           provider: null,

@@ -33,6 +33,13 @@ const NavBar = (): JSX.Element => {
     await disconnect();
   }, []);
 
+  useEffect(() => {
+    const fetchAccount = async () => {
+      await connect();
+    };
+    fetchAccount();
+  }, []);
+
   // 쿠키에 로그인 정보가 있으면 바로 지갑 연결
 
   return (
@@ -45,7 +52,9 @@ const NavBar = (): JSX.Element => {
         alignItems="center"
       >
         <Box>
-          <Heading fontSize="xl">BlockJobs</Heading>
+          <Link href={"/"}>
+            <Heading fontSize="xl">BlockJobs</Heading>
+          </Link>
         </Box>
         <Spacer />
         <ButtonGroup>
