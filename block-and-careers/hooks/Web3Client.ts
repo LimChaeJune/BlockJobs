@@ -6,6 +6,7 @@ import { useRecoilState } from "recoil";
 import { initialWeb3 } from "@state/web3/account";
 import { Web3_Model } from "@state/web3/account";
 import { useToast } from "@chakra-ui/react";
+import { BlockJobs_ABI, Contract_Address } from "@state/datas/BlockJobs_ABI";
 
 const providerOptions = {
   walletconnect: {
@@ -19,7 +20,7 @@ const providerOptions = {
 let web3Modal: Web3Modal | null;
 if (typeof window !== "undefined") {
   web3Modal = new Web3Modal({
-    network: "rinkeby", // optional
+    network: "Ropsten", // optional
     cacheProvider: true,
     providerOptions, // required
   });
@@ -32,6 +33,8 @@ export const useWeb3 = () => {
   const [modalProvider, SetModalProvider] = useState<any>(null);
   const [web3Provider, SetWeb3Provider] =
     useState<ethers.providers.Web3Provider | null>(null);
+
+  const [ContractState, SetContractState] = useState<ethers.Contract>();
 
   const connect = useCallback(async () => {
     if (web3Modal) {
@@ -54,6 +57,13 @@ export const useWeb3 = () => {
           network: network,
         };
 
+        const Contract = new ethers.Contract(
+          Contract_Address,
+          BlockJobs_ABI,
+          signer
+        );
+
+        SetContractState(Contract);
         SetModalProvider(provider);
         SetWeb3Provider(web3Provider);
         SetWeb3(ConnWeb3);
@@ -143,6 +153,6 @@ export const useWeb3 = () => {
   return {
     connect,
     disconnect,
-    web3Provider,
+    ContractState,
   };
 };

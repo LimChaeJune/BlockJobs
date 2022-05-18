@@ -1,7 +1,7 @@
 import { NavList, InavItem } from "@state/datas/navbar";
 import Link from "next/link";
 import { useWeb3 } from "@hooks/Web3Client";
-import { Web3_Model, initialWeb3 } from "states/web3/account";
+import { Web3_Model, initialWeb3, balance } from "states/web3/account";
 import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import {
@@ -18,8 +18,10 @@ import {
   MenuList,
   MenuItem,
   MenuDivider,
+  LinkBox,
 } from "@chakra-ui/react";
 import colors from "themes/foundations/colors";
+import { BigNumber, ethers, utils } from "ethers";
 
 const NavBar = (): JSX.Element => {
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
@@ -28,6 +30,11 @@ const NavBar = (): JSX.Element => {
 
   const WalletConn = useCallback(async () => {
     await connect();
+
+    // ContractState?.BalanceOf(web3State.address).then((res: BigNumber) => {
+    //   console.log(ethers.utils.formatEther(res.toString()));
+    //   setbalance(res);
+    // });
   }, []);
 
   const WalletDisConn = useCallback(async () => {
@@ -40,6 +47,20 @@ const NavBar = (): JSX.Element => {
     };
     fetchAccount();
   }, []);
+
+  useEffect(() => {
+    const working = async () => {
+      if (web3State?.network?.chainId !== 3) {
+        try {
+          await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: utils.hexValue(3) }],
+          });
+        } catch (e) {}
+      }
+    };
+    working();
+  }, [web3State.network]);
 
   // 쿠키에 로그인 정보가 있으면 바로 지갑 연결
 
@@ -60,7 +81,7 @@ const NavBar = (): JSX.Element => {
           </Link>
         </Box>
         <Spacer />
-        <ButtonGroup>
+        <LinkBox>
           {NavList().map((item: InavItem) => {
             return (
               <Link key={item.id} href={item.href} passHref>
@@ -79,7 +100,7 @@ const NavBar = (): JSX.Element => {
               </Link>
             );
           })}
-        </ButtonGroup>
+        </LinkBox>
         <Spacer />
         <Box>
           {web3State?.address ? (

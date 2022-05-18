@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { atom, selector } from "recoil";
 
 export interface Web3_Model {
@@ -15,5 +15,12 @@ export const initialWeb3 = atom<Web3_Model>({
     address: null,
   },
 
+  // dangerouslyAllowMutability: true,
+});
+
+export const balance = atom<BigNumber | 0>({
+  key: "blockjob_balance",
+
+  default: 0,
   // dangerouslyAllowMutability: true,
 });
