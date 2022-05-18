@@ -38,23 +38,18 @@ export const useWeb3 = () => {
       try {
         const provider = await web3Modal.connect();
         const web3Provider = new ethers.providers.Web3Provider(provider);
-        const signer = web3Provider.getSigner();
+        const signer = web3Provider?.getSigner();
         const address = await signer.getAddress();
-        const network = await web3Provider.getNetwork();
+        const network = await web3Provider?.getNetwork();
 
-        // 로컬 스토리지에 지갑 연결된게 없어야지 호출
-        if (!localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER")) {
-          toast({
-            title: "지갑연결에 성공했습니다.",
-            status: "success",
-            position: "bottom-right",
-            isClosable: true,
-          });
-        }
+        toast({
+          title: "지갑연결에 성공했습니다.",
+          status: "success",
+          position: "bottom-right",
+          isClosable: true,
+        });
 
         const ConnWeb3: Web3_Model = {
-          provider: null,
-          web3Provider: null,
           address: address,
           network: network,
         };
@@ -84,8 +79,6 @@ export const useWeb3 = () => {
       });
 
       const DisConn: Web3_Model = {
-        provider: null,
-        web3Provider: null,
         address: null,
         network: null,
       };
@@ -108,7 +101,6 @@ export const useWeb3 = () => {
         SetWeb3({ ...web3State, address: accounts[0] });
       };
 
-      // https://docs.ethers.io/v5/concepts/best-practices/#best-practices--network-changes
       const handleChainChanged = (_hexChainId: string) => {
         if (typeof window !== "undefined") {
           console.log("switched to chain...", _hexChainId);
@@ -151,5 +143,6 @@ export const useWeb3 = () => {
   return {
     connect,
     disconnect,
+    web3Provider,
   };
 };

@@ -23,6 +23,7 @@ import colors from "themes/foundations/colors";
 
 const NavBar = (): JSX.Element => {
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
+
   const { connect, disconnect } = useWeb3();
 
   const WalletConn = useCallback(async () => {
@@ -35,7 +36,7 @@ const NavBar = (): JSX.Element => {
 
   useEffect(() => {
     const fetchAccount = async () => {
-      await connect();
+      await WalletConn();
     };
     fetchAccount();
   }, []);
@@ -53,7 +54,9 @@ const NavBar = (): JSX.Element => {
       >
         <Box>
           <Link href={"/"}>
-            <Heading fontSize="xl">BlockJobs</Heading>
+            <Heading _hover={{ cursor: "pointer" }} fontSize="xl">
+              BlockJobs
+            </Heading>
           </Link>
         </Box>
         <Spacer />
