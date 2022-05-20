@@ -24,6 +24,7 @@ interface IFormInput {
   employees: string;
   industryId: string;
   email: string;
+  thumbnail: string;
 }
 
 interface modalInput {

@@ -1,3 +1,4 @@
+import axios from "axios";
 import { BigNumber, ethers } from "ethers";
 import { atom, selector } from "recoil";
 
@@ -23,4 +24,18 @@ export const balance = atom<BigNumber | 0>({
 
   default: 0,
   // dangerouslyAllowMutability: true,
+});
+
+export const getAccountExist = selector<boolean>({
+  key: "getAccountExist",
+  get: async ({ get }) => {
+    const address = get(initialWeb3)?.address;
+    if (address) {
+      const res = await axios.get(
+        `http://localhost:5001/account/CheckAccount/${address}`
+      );
+      return res.data;
+    }
+    return false;
+  },
 });

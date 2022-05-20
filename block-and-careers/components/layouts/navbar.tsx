@@ -1,13 +1,13 @@
 import { NavList, InavItem } from "@state/datas/navbar";
 import Link from "next/link";
 import { useWeb3 } from "@hooks/Web3Client";
-import { Web3_Model, initialWeb3, balance } from "states/web3/account";
-import { useCallback, useEffect } from "react";
+import { link_selectpage } from "@components/utils/routing";
+import { Web3_Model, initialWeb3 } from "states/web3/account";
+import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import {
   Box,
   Button,
-  ButtonGroup,
   Flex,
   Heading,
   Text,
@@ -21,10 +21,12 @@ import {
   LinkBox,
 } from "@chakra-ui/react";
 import colors from "themes/foundations/colors";
-import { BigNumber, ethers, utils } from "ethers";
+import { utils } from "ethers";
+import { accountCheck } from "restapi/account/accounCheck";
 
 const NavBar = (): JSX.Element => {
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
+  const [existAccountState, setExistAccount] = useState<boolean>(false);
 
   const { connect, disconnect } = useWeb3();
 
@@ -61,6 +63,22 @@ const NavBar = (): JSX.Element => {
     };
     working();
   }, [web3State.network]);
+
+  useEffect(() => {
+    const effectWorking = async () => {
+      if (web3State?.address) {
+        await accountCheck(web3State.address)
+          .then((res) => {
+            console.log(res.data);
+            setExistAccount(res.data);
+          })
+          .catch((e) => {
+            console.log(e.message);
+          });
+      }
+    };
+    effectWorking();
+  }, [web3State.address]);
 
   // 쿠키에 로그인 정보가 있으면 바로 지갑 연결
 
@@ -126,22 +144,31 @@ const NavBar = (): JSX.Element => {
                   </Text>
                 </Flex>
               </MenuButton>
-              <MenuList padding={"0px"}>
-                <MenuItem>My Page</MenuItem>
-                <MenuItem>프로필 정보</MenuItem>
-                <MenuDivider />
-                <MenuItem>경력 신청 현황</MenuItem>
-                <MenuItem>지원 현황</MenuItem>
-                <MenuItem>받은 제안</MenuItem>
-                <MenuDivider></MenuDivider>
-                <MenuItem
-                  onClick={WalletDisConn}
-                  _hover={{ background: colors.secondery[400] }}
-                  background={colors.secondery[400]}
-                >
-                  로그아웃
-                </MenuItem>
-              </MenuList>
+              {existAccountState ? (
+                <MenuList padding={"0px"}>
+                  <MenuItem>My Page</MenuItem>
+                  <MenuItem>프로필 정보</MenuItem>
+                  <MenuDivider />
+                  <MenuItem>경력 신청 현황</MenuItem>
+                  <MenuItem>지원 현황</MenuItem>
+                  <MenuItem>받은 제안</MenuItem>
+                  <MenuDivider></MenuDivider>
+                  <MenuItem
+                    onClick={WalletDisConn}
+                    _hover={{ background: colors.secondery[400] }}
+                    background={colors.secondery[400]}
+                  >
+                    로그아웃
+                  </MenuItem>
+                </MenuList>
+              ) : (
+                <MenuList>
+                  <MenuItem>
+                    <Link href={link_selectpage}>회원 등록</Link>
+                  </MenuItem>
+                  <MenuItem onClick={WalletDisConn}>로그아웃</MenuItem>
+                </MenuList>
+              )}
             </Menu>
           ) : (
             <>
