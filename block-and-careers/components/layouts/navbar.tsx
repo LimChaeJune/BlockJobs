@@ -2,8 +2,13 @@ import { NavList, InavItem } from "@state/datas/navbar";
 import Link from "next/link";
 import { useWeb3 } from "@hooks/Web3Client";
 import { link_selectpage } from "@components/utils/routing";
-import { Web3_Model, initialWeb3 } from "states/web3/account";
-import { useCallback, useEffect, useState } from "react";
+import {
+  Web3_Model,
+  initialWeb3,
+  Account_Model,
+  account_state,
+} from "states/web3/account";
+import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import {
   Box,
@@ -23,10 +28,13 @@ import {
 import colors from "themes/foundations/colors";
 import { utils } from "ethers";
 import { accountCheck } from "restapi/account/accounCheck";
+import styled from "@emotion/styled";
+import { AccountUserType } from "restapi/users/registerUser";
 
 const NavBar = (): JSX.Element => {
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
-  const [existAccountState, setExistAccount] = useState<boolean>(false);
+  const [existAccountState, setExistAccount] =
+    useRecoilState<Account_Model | null>(account_state);
 
   const { connect, disconnect } = useWeb3();
 
@@ -103,18 +111,7 @@ const NavBar = (): JSX.Element => {
           {NavList().map((item: InavItem) => {
             return (
               <Link key={item.id} href={item.href} passHref>
-                <Button
-                  _focus={{
-                    border: "0px",
-                  }}
-                  _hover={{
-                    color: `${colors.primary[400]}`,
-                    border: "0px",
-                  }}
-                  background={"transparent"}
-                >
-                  {item.title}
-                </Button>
+                <Link_Btn>{item.title}</Link_Btn>
               </Link>
             );
           })}
@@ -145,22 +142,42 @@ const NavBar = (): JSX.Element => {
                 </Flex>
               </MenuButton>
               {existAccountState ? (
-                <MenuList padding={"0px"}>
-                  <MenuItem>My Page</MenuItem>
-                  <MenuItem>프로필 정보</MenuItem>
-                  <MenuDivider />
-                  <MenuItem>경력 신청 현황</MenuItem>
-                  <MenuItem>지원 현황</MenuItem>
-                  <MenuItem>받은 제안</MenuItem>
-                  <MenuDivider></MenuDivider>
-                  <MenuItem
-                    onClick={WalletDisConn}
-                    _hover={{ background: colors.secondery[400] }}
-                    background={colors.secondery[400]}
-                  >
-                    로그아웃
-                  </MenuItem>
-                </MenuList>
+                existAccountState.accountProvider ===
+                AccountUserType.Customer ? (
+                  <MenuList padding={"0px"}>
+                    <MenuItem>My Page</MenuItem>
+                    <MenuItem>프로필 정보</MenuItem>
+                    <MenuDivider />
+                    <MenuItem>경력 신청 현황</MenuItem>
+                    <MenuItem>지원 현황</MenuItem>
+                    <MenuItem>받은 제안</MenuItem>
+                    <MenuDivider></MenuDivider>
+                    <MenuItem
+                      onClick={WalletDisConn}
+                      _hover={{ background: colors.secondery[400] }}
+                      background={colors.secondery[400]}
+                    >
+                      로그아웃
+                    </MenuItem>
+                  </MenuList>
+                ) : (
+                  <MenuList padding={"0px"}>
+                    {" "}
+                    <MenuItem>기업 정보 관리</MenuItem>
+                    <MenuDivider />
+                    <MenuItem>공고 등록</MenuItem>
+                    <MenuItem>공고 관리</MenuItem>
+                    <MenuItem>신청 받은 경력</MenuItem>
+                    <MenuDivider />
+                    <MenuItem
+                      onClick={WalletDisConn}
+                      _hover={{ background: colors.secondery[400] }}
+                      background={colors.secondery[400]}
+                    >
+                      로그아웃
+                    </MenuItem>
+                  </MenuList>
+                )
               ) : (
                 <MenuList>
                   <MenuItem>
@@ -188,5 +205,16 @@ const NavBar = (): JSX.Element => {
     </Box>
   );
 };
+
+const Link_Btn = styled.span`
+  font-weight: Bold;
+  margin-left:
+  font-size: 16px;
+  margin-left:12px;
+  cursor:pointer;
+  &:hover {
+    color: ${colors.primary[400]};
+  }
+`;
 
 export default NavBar;

@@ -1,30 +1,23 @@
 import { AxiosResponse } from "axios";
+import { RegisterAccount_Body } from "restapi/users/registerUser";
 import client from "../apiClient";
 
-enum AccountUserType {
-  Customer = "Customer",
-  Enterprise = "Enterprise",
-}
-
-interface RegisterAccount_Body {
-  accountAddress: string;
-  accountProvider: string;
-  accountUserType: AccountUserType;
-}
-
-interface RegisterUser_Body {
+export interface RegisterEnterprise_Body {
   account: RegisterAccount_Body;
+  description: string;
   industryId: string;
   email: string;
-  name: string;
-  phone: string;
+  address: string;
+  title: string;
+  employees: string;
+  businessNumber: string;
 }
 
-export const RegisterUser = async (
-  body: RegisterUser_Body
+export const RegisterEnterprise = async (
+  body: RegisterEnterprise_Body
 ): Promise<AxiosResponse> => {
   try {
-    const res = await client.post("/register", body);
+    const res = await client.post("enterprise/register", body);
     return res;
   } catch (err) {
     throw err;

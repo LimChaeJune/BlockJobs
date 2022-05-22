@@ -1,20 +1,35 @@
 import {
   Button,
+  CloseButton,
+  Divider,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   Input,
   Modal,
   ModalBody,
-  ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
   Select,
+  Spacer,
+  Textarea,
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { EnterpriseEmployees, GetEmployees } from "@state/datas/enterprisetype";
+import { IndustryEntity } from "restapi/industry/get";
+import {
+  RegisterEnterprise_Body,
+  RegisterEnterprise,
+} from "restapi/enterprise/registerEnterprise";
+import { useRouter } from "next/router";
+import { AccountUserType } from "restapi/users/registerUser";
+import { useRecoilState } from "recoil";
+import { initialWeb3, Web3_Model } from "@state/web3/account";
+import { useCallback } from "react";
 
 interface IFormInput {
   title: string;
@@ -30,17 +45,51 @@ interface IFormInput {
 interface modalInput {
   isOpen: boolean;
   onClose: () => void;
+  rootIndustry: IndustryEntity[];
 }
 
-function Register_Enterprise({ isOpen, onClose }: modalInput) {
+function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
+  const router = useRouter();
+  const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<IFormInput>();
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log(data);
+  const closeClick = useCallback(() => {
+    if (confirm("회원등록을 취소하시겠습니까?")) {
+      reset();
+      onClose();
+    }
+  }, []);
+
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    const RegisterEnter_Body: RegisterEnterprise_Body = {
+      email: data.email,
+      industryId: data.industryId,
+      title: data.title,
+      description: data.description,
+      address: data.address,
+      employees: data.employees,
+      businessNumber: data.businessNumber,
+      account: {
+        accountAddress: web3State?.address,
+        accountUserType: AccountUserType.Enterprise,
+      },
+    };
+    console.log(RegisterEnter_Body);
+    const res = await RegisterEnterprise(RegisterEnter_Body);
+    console.log(res);
+    if (res.status == 200) {
+      alert(
+        "사용자 생성을 완료했습니다.\r BlockJobs 서비스를 이용하실 수 있습니다."
+      );
+      router.push("/");
+    } else {
+      alert(res.data);
+    }
   };
 
   const enterSizes: EnterpriseEmployees[] = GetEmployees();
@@ -49,8 +98,13 @@ function Register_Enterprise({ isOpen, onClose }: modalInput) {
     <Modal closeOnOverlayClick isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
+        <Flex alignItems={"center"} ml={5} pt={2} pb={1}>
+          <Heading fontSize={"xl"}>BlockJobs</Heading>
+          <Spacer />
+          <CloseButton mr={5} onClick={closeClick} />
+        </Flex>
+        <Divider />
         <ModalHeader>기업 등록</ModalHeader>
-        <ModalCloseButton />
         <ModalBody>
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl isRequired isInvalid={errors.title !== undefined}>
@@ -66,6 +120,22 @@ function Register_Enterprise({ isOpen, onClose }: modalInput) {
                 })}
               />
               <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
+            </FormControl>
+
+            <FormControl
+              isRequired
+              isInvalid={errors.description !== undefined}
+              mt={3}
+            >
+              <FormLabel htmlFor="description">회사 정보</FormLabel>
+              <Textarea
+                id="description"
+                placeholder="회사 정보를 입력해주세요"
+                {...register("description", {
+                  required: "회사 정보는 필수 입력 항목입니다.",
+                })}
+              />
+              <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
             </FormControl>
 
             <FormControl isRequired mt={3}>
@@ -88,7 +158,7 @@ function Register_Enterprise({ isOpen, onClose }: modalInput) {
                 placeholder="주소를 입력해주세요"
                 type={"address"}
                 {...register("address", {
-                  required: "address 필수 입력 항목입니다.",
+                  required: "주소는 필수 입력 항목입니다.",
                 })}
               />
               <FormErrorMessage>{errors.address?.message}</FormErrorMessage>
@@ -110,6 +180,24 @@ function Register_Enterprise({ isOpen, onClose }: modalInput) {
                 })}
               </Select>
               <FormErrorMessage>{errors.employees?.message}</FormErrorMessage>
+            </FormControl>
+
+            <FormControl isRequired mt={3}>
+              <FormLabel htmlFor="industryId">산업군</FormLabel>
+              <Select
+                {...register("industryId", {
+                  required: "산업군은 필수 입력 항목입니다.",
+                })}
+              >
+                {rootIndustry?.map((value: IndustryEntity, idx) => {
+                  return (
+                    <option key={idx} value={value.id}>
+                      {value.title}
+                    </option>
+                  );
+                })}
+              </Select>
+              <FormErrorMessage>{errors.industryId?.message}</FormErrorMessage>
             </FormControl>
 
             <FormControl isRequired mt={3}>

@@ -12,13 +12,29 @@ import { selectList, SelectTypes } from "@state/datas/usertype";
 import { useCallback } from "react";
 import { FaRegBuilding, FaRegUser } from "react-icons/fa";
 import colors from "themes/foundations/colors";
+import { GetRootJobs } from "restapi/jobs/get";
+import { InferGetStaticPropsType } from "next";
+import { GetIndustry } from "restapi/industry/get";
 
-function SelectPage() {
+function SelectPage({
+  rootJobs,
+  industry,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
+  // useEffect(() => {
+  //   const item = async () => {
+  //     const res = await GetRootJobs();
+  //     const rootJobs = res.data;
+  //     console.log(rootJobs)
+  //   };
+  //   item();
+  // },[]);
+
   const {
     isOpen: isOpenEnterprise,
     onOpen: opOpenEnterprise,
     onClose: onCloseEnterprise,
   } = useDisclosure();
+
   const {
     isOpen: isOpenUser,
     onOpen: onOpenUser,
@@ -74,10 +90,29 @@ function SelectPage() {
       <Register_Enterprise
         isOpen={isOpenEnterprise}
         onClose={onCloseEnterprise}
+        rootIndustry={industry}
       />
-      <Register_User isOpen={isOpenUser} onClose={onCloseUser} />
+      <Register_User
+        isOpen={isOpenUser}
+        onClose={onCloseUser}
+        rootJobs={rootJobs}
+      />
     </Flex>
   );
+}
+
+export async function getStaticProps() {
+  const res_industry = await GetIndustry();
+  const res_rootjob = await GetRootJobs();
+  const rootJobs = res_rootjob.data;
+  const industry = res_industry.data;
+
+  return {
+    props: {
+      rootJobs,
+      industry,
+    },
+  };
 }
 
 export default SelectPage;

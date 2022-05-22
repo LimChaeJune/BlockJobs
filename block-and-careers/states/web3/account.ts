@@ -1,10 +1,18 @@
 import axios from "axios";
 import { BigNumber, ethers } from "ethers";
 import { atom, selector } from "recoil";
+import { AccountUserType } from "restapi/users/registerUser";
 
 export interface Web3_Model {
   address: string | null | undefined;
   network: ethers.providers.Network | null | undefined;
+}
+export interface Account_Model {
+  accountAddress: string;
+  accountProvider: string;
+  userType: AccountUserType;
+  createAt: Date;
+  updateAt: Date;
 }
 
 // 처음 Web3 연결 전 초기화
@@ -16,6 +24,14 @@ export const initialWeb3 = atom<Web3_Model>({
     address: null,
   },
 
+  // dangerouslyAllowMutability: true,
+});
+
+// 처음 Web3 연결 전 초기화
+export const account_state = atom<Account_Model | null>({
+  key: "curr_account",
+
+  default: null,
   // dangerouslyAllowMutability: true,
 });
 
@@ -31,9 +47,7 @@ export const getAccountExist = selector<boolean>({
   get: async ({ get }) => {
     const address = get(initialWeb3)?.address;
     if (address) {
-      const res = await axios.get(
-        `http://localhost:5001/account/CheckAccount/${address}`
-      );
+      const res = await axios.get(`account/CheckAccount/${address}`);
       return res.data;
     }
     return false;

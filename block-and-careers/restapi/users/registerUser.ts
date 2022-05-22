@@ -1,20 +1,20 @@
 import { AxiosResponse } from "axios";
 import client from "../apiClient";
 
-enum AccountUserType {
+export enum AccountUserType {
   Customer = "Customer",
   Enterprise = "Enterprise",
 }
 
-interface RegisterAccount_Body {
-  accountAddress: string;
-  accountProvider: string;
+export interface RegisterAccount_Body {
+  accountAddress: string | null | undefined;
+  // accountProvider: string | null | undefined;
   accountUserType: AccountUserType;
 }
 
-interface RegisterUser_Body {
+export interface RegisterUser_Body {
   account: RegisterAccount_Body;
-  industryId: string;
+  jobsId: string;
   email: string;
   name: string;
   phone: string;
@@ -24,7 +24,7 @@ export const RegisterUser = async (
   body: RegisterUser_Body
 ): Promise<AxiosResponse> => {
   try {
-    const res = await client.post("/register", body);
+    const res = await client.post("users/register", body);
     return res;
   } catch (err) {
     throw err;
