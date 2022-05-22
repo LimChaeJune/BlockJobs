@@ -5,7 +5,8 @@ import { ethers } from "ethers";
 import { useRecoilState } from "recoil";
 import { initialWeb3 } from "@state/web3/account";
 import { Web3_Model } from "@state/web3/account";
-import { toast } from "react-toastify";
+import { useToast } from "@chakra-ui/react";
+import { BlockJobs_ABI, Contract_Address } from "@state/datas/BlockJobs_ABI";
 
 const providerOptions = {
   walletconnect: {
@@ -19,36 +20,50 @@ const providerOptions = {
 let web3Modal: Web3Modal | null;
 if (typeof window !== "undefined") {
   web3Modal = new Web3Modal({
-    network: "rinkeby", // optional
+    network: "Ropsten", // optional
     cacheProvider: true,
     providerOptions, // required
   });
 }
 
 export const useWeb3 = () => {
+  const toast = useToast();
   const [web3State, SetWeb3] = useRecoilState<Web3_Model>(initialWeb3);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [modalProvider, SetModalProvider] = useState<any>(null);
   const [web3Provider, SetWeb3Provider] =
     useState<ethers.providers.Web3Provider | null>(null);
 
+  const [ContractState, SetContractState] = useState<ethers.Contract>();
+
   const connect = useCallback(async () => {
     if (web3Modal) {
       try {
         const provider = await web3Modal.connect();
         const web3Provider = new ethers.providers.Web3Provider(provider);
-        const signer = web3Provider.getSigner();
+        const signer = web3Provider?.getSigner();
         const address = await signer.getAddress();
-        const network = await web3Provider.getNetwork();
+        const network = await web3Provider?.getNetwork();
 
-        toast.success("지갑연결에 성공했습니다.");
+        toast({
+          title: "지갑연결에 성공했습니다.",
+          status: "success",
+          position: "bottom-right",
+          isClosable: true,
+        });
+
         const ConnWeb3: Web3_Model = {
-          provider: null,
-          web3Provider: null,
           address: address,
           network: network,
         };
 
+        const Contract = new ethers.Contract(
+          Contract_Address,
+          BlockJobs_ABI,
+          signer
+        );
+
+        SetContractState(Contract);
         SetModalProvider(provider);
         SetWeb3Provider(web3Provider);
         SetWeb3(ConnWeb3);
@@ -66,11 +81,14 @@ export const useWeb3 = () => {
         await modalProvider.disconnect();
       }
 
-      toast.success("지갑 연결을 해지했습니다.");
+      toast({
+        title: "지갑연결을 해지하였습니다..",
+        status: "success",
+        position: "bottom-right",
+        isClosable: true,
+      });
 
       const DisConn: Web3_Model = {
-        provider: null,
-        web3Provider: null,
         address: null,
         network: null,
       };
@@ -83,16 +101,25 @@ export const useWeb3 = () => {
   useEffect(() => {
     if (modalProvider?.on) {
       const handleAccountsChanged = (accounts: string[]) => {
-        toast.info("지갑이 변경되었습니다.");
+        toast({
+          title: "지갑이 변경되었습니다.",
+          status: "info",
+          position: "bottom-right",
+          isClosable: true,
+        });
 
         SetWeb3({ ...web3State, address: accounts[0] });
       };
 
-      // https://docs.ethers.io/v5/concepts/best-practices/#best-practices--network-changes
       const handleChainChanged = (_hexChainId: string) => {
         if (typeof window !== "undefined") {
           console.log("switched to chain...", _hexChainId);
-          toast.info("Web3 네트워크가 변경되었습니다.");
+          toast({
+            title: "Web3 네트워크가 변경되었습니다.",
+            status: "info",
+            position: "bottom-right",
+            isClosable: true,
+          });
           window.location.reload();
         } else {
           console.log("window is undefined");
@@ -126,5 +153,6 @@ export const useWeb3 = () => {
   return {
     connect,
     disconnect,
+    ContractState,
   };
 };

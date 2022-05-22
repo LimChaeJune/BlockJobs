@@ -1,112 +1,219 @@
-import { NavList, InavItem } from "@state/layouts/navbar";
-import { BiBell } from "react-icons/bi";
+import { NavList, InavItem } from "@state/datas/navbar";
 import Link from "next/link";
-import styled from "styled-components";
 import { useWeb3 } from "@hooks/Web3Client";
-import { Web3_Model, initialWeb3 } from "states/web3/account";
-import { useCallback } from "react";
+import { link_selectpage } from "@components/utils/routing";
+import {
+  Web3_Model,
+  initialWeb3,
+  Account_Model,
+  account_state,
+} from "states/web3/account";
+import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Text,
+  Spacer,
+  Avatar,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+  LinkBox,
+} from "@chakra-ui/react";
+import colors from "themes/foundations/colors";
+import { utils } from "ethers";
+import { accountCheck } from "restapi/account/accounCheck";
+import styled from "@emotion/styled";
+import { AccountUserType } from "restapi/users/registerUser";
 
 const NavBar = (): JSX.Element => {
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
+  const [existAccountState, setExistAccount] =
+    useRecoilState<Account_Model | null>(account_state);
+
   const { connect, disconnect } = useWeb3();
 
   const WalletConn = useCallback(async () => {
     await connect();
+
+    // ContractState?.BalanceOf(web3State.address).then((res: BigNumber) => {
+    //   console.log(ethers.utils.formatEther(res.toString()));
+    //   setbalance(res);
+    // });
   }, []);
 
   const WalletDisConn = useCallback(async () => {
     await disconnect();
   }, []);
 
+  useEffect(() => {
+    const fetchAccount = async () => {
+      await WalletConn();
+    };
+    fetchAccount();
+  }, []);
+
+  useEffect(() => {
+    const working = async () => {
+      if (web3State?.network?.chainId !== 3) {
+        try {
+          await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: utils.hexValue(3) }],
+          });
+        } catch (e) {}
+      }
+    };
+    working();
+  }, [web3State.network]);
+
+  useEffect(() => {
+    const effectWorking = async () => {
+      if (web3State?.address) {
+        await accountCheck(web3State.address)
+          .then((res) => {
+            console.log(res.data);
+            setExistAccount(res.data);
+          })
+          .catch((e) => {
+            console.log(e.message);
+          });
+      }
+    };
+    effectWorking();
+  }, [web3State.address]);
+
   // 쿠키에 로그인 정보가 있으면 바로 지갑 연결
 
   return (
-    <>
-      <NavBar_Back>
-        <NavBar_Content>
-          <NavBar_Logo>BlockJobs</NavBar_Logo>
-          <NavBar_Items>
-            {NavList().map((item: InavItem) => {
-              return (
-                <Link key={item.id} href={item.href} passHref>
-                  <NavBar_Item>{item.title}</NavBar_Item>
-                </Link>
-              );
-            })}
-          </NavBar_Items>
-          <NavBar_UserContainer>
-            {web3State?.address ? (
-              <NavBar_Item
-                onClick={WalletDisConn}
-              >{`${web3State?.address}`}</NavBar_Item>
-            ) : (
-              <>
-                <NavBar_Item onClick={WalletConn}>지갑 연결</NavBar_Item>
-                <BiBell className="Item" />
-              </>
-            )}
-          </NavBar_UserContainer>
-        </NavBar_Content>
-      </NavBar_Back>
-    </>
+    <Box borderBottom={`1px solid ${colors.secondery[300]}`}>
+      <Flex
+        paddingLeft="10%"
+        paddingRight="10%"
+        height="50px"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Box>
+          <Link href={"/"}>
+            <Heading _hover={{ cursor: "pointer" }} fontSize="xl">
+              BlockJobs
+            </Heading>
+          </Link>
+        </Box>
+        <Spacer />
+        <LinkBox>
+          {NavList().map((item: InavItem) => {
+            return (
+              <Link key={item.id} href={item.href} passHref>
+                <Link_Btn>{item.title}</Link_Btn>
+              </Link>
+            );
+          })}
+        </LinkBox>
+        <Spacer />
+        <Box>
+          {web3State?.address ? (
+            <Menu>
+              <MenuButton>
+                <Flex
+                  justifyContent="center"
+                  alignItems="center"
+                  border={`1px solid ${colors.secondery[400]}`}
+                  borderRadius="5%"
+                  padding="5px"
+                  as={Button}
+                  _hover={{
+                    background: colors.secondery[300],
+                  }}
+                >
+                  <Avatar size={"sm"} marginRight={"10px"}></Avatar>
+                  <Text>
+                    {`${web3State?.address.slice(
+                      0,
+                      4
+                    )}....${web3State?.address.slice(-4)}`}
+                  </Text>
+                </Flex>
+              </MenuButton>
+              {existAccountState ? (
+                existAccountState.accountProvider ===
+                AccountUserType.Customer ? (
+                  <MenuList padding={"0px"}>
+                    <MenuItem>My Page</MenuItem>
+                    <MenuItem>프로필 정보</MenuItem>
+                    <MenuDivider />
+                    <MenuItem>경력 신청 현황</MenuItem>
+                    <MenuItem>지원 현황</MenuItem>
+                    <MenuItem>받은 제안</MenuItem>
+                    <MenuDivider></MenuDivider>
+                    <MenuItem
+                      onClick={WalletDisConn}
+                      _hover={{ background: colors.secondery[400] }}
+                      background={colors.secondery[400]}
+                    >
+                      로그아웃
+                    </MenuItem>
+                  </MenuList>
+                ) : (
+                  <MenuList padding={"0px"}>
+                    {" "}
+                    <MenuItem>기업 정보 관리</MenuItem>
+                    <MenuDivider />
+                    <MenuItem>공고 등록</MenuItem>
+                    <MenuItem>공고 관리</MenuItem>
+                    <MenuItem>신청 받은 경력</MenuItem>
+                    <MenuDivider />
+                    <MenuItem
+                      onClick={WalletDisConn}
+                      _hover={{ background: colors.secondery[400] }}
+                      background={colors.secondery[400]}
+                    >
+                      로그아웃
+                    </MenuItem>
+                  </MenuList>
+                )
+              ) : (
+                <MenuList>
+                  <MenuItem>
+                    <Link href={link_selectpage}>회원 등록</Link>
+                  </MenuItem>
+                  <MenuItem onClick={WalletDisConn}>로그아웃</MenuItem>
+                </MenuList>
+              )}
+            </Menu>
+          ) : (
+            <>
+              <Button
+                _hover={{
+                  color: "teal.500",
+                }}
+                background=""
+                onClick={WalletConn}
+              >
+                지갑 연결
+              </Button>
+            </>
+          )}
+        </Box>
+      </Flex>
+    </Box>
   );
 };
 
-const NavBar_Back = styled.div`
-  position: fixed;
-  z-index: 9999;
-  top: 0px;
-  color: ${(props) => props.theme.colors.black};
-  background: ${(props) => props.theme.colors.white};
-  height: 60px;
-  width: 100%;
-  border: 1px solid ${(props) => props.theme.colors.lighterGray};
-  display: flex;
-  display: -webkt-flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const NavBar_Content = styled.div`
-  width: 1060px;
-  display: flex;
-  display: -webkt-flex;
-  justify-content: space-between;
-`;
-
-const NavBar_Logo = styled.div`
-  font-size: ${(props) => props.theme.fonts.middle_font_size};
-  margin: 5px;
-  font-weight: 800;
-  cursor: pointer;
-`;
-
-const NavBar_Items = styled.div`
-  display: flex;
-  margin-right: 1em;
-  margin-left: 1em;
-`;
-
-const NavBar_Item = styled.div`
-  cursor: pointer;
-  font-size: ${(props) => props.theme.fonts.middle_font_size};
-  margin: 5px;
-  font-weight: 500;
+const Link_Btn = styled.span`
+  font-weight: Bold;
+  margin-left:
+  font-size: 16px;
+  margin-left:12px;
+  cursor:pointer;
   &:hover {
-    color: ${(props) => props.theme.colors.skyBlue};
-  }
-`;
-
-const NavBar_UserContainer = styled.div`
-  display: flex;
-  margin-left: auto;
-
-  .Item {
-    cursor: pointer;
-    font-size: 24px;
-    margin: 5px;
-    font-weight: 700;
+    color: ${colors.primary[400]};
   }
 `;
 

@@ -1,30 +1,36 @@
-import GlobalStyles from "@style/GlobalStyles";
-import theme from "@style/theme";
-import { ThemeProvider } from "styled-components";
 import BlockJobLayout from "@components/layouts/layout";
-import type { AppProps } from "next/app";
+import type { AppContext, AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { ChakraProvider } from "@chakra-ui/react";
+import themes from "themes";
+import App from "next/app";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <RecoilRoot>
-        <GlobalStyles />
-        <ThemeProvider theme={theme}>
+        <ChakraProvider resetCSS theme={themes}>
           <BlockJobLayout>
             <Component {...pageProps} />
-            <ToastContainer
-              hideProgressBar
-              position="bottom-right"
-              autoClose={2000}
-            />
           </BlockJobLayout>
-        </ThemeProvider>
+        </ChakraProvider>
       </RecoilRoot>
     </>
   );
 }
+
+export const getServerSideProps = async (appContext: AppContext) => {
+  const appProps = await App.getInitialProps(appContext);
+
+  // const { ctx } = appContext;
+  // const allCookies = cookies(ctx);
+  // const web3Cookie = allCookies["web3Data"];
+
+  // if (web3Cookie !== undefined) {
+  //   web3SetCookie(web3Cookie);
+  // }
+
+  return { ...appProps };
+};
 
 export default MyApp;
