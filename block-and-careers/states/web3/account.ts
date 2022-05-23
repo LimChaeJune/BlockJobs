@@ -1,11 +1,12 @@
 import axios from "axios";
 import { BigNumber, ethers } from "ethers";
 import { atom, selector } from "recoil";
-import { AccountUserType } from "restapi/users/registerUser";
+import { AccountUserType } from "restapi/users/post";
 
 export interface Web3_Model {
   address: string | null | undefined;
   network: ethers.providers.Network | null | undefined;
+  signer: ethers.providers.Provider | ethers.Signer | undefined;
 }
 export interface Account_Model {
   accountAddress: string;
@@ -22,6 +23,7 @@ export const initialWeb3 = atom<Web3_Model>({
   default: {
     network: null,
     address: null,
+    signer: undefined,
   },
 
   // dangerouslyAllowMutability: true,

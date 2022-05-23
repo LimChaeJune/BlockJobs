@@ -24,9 +24,9 @@ import { IndustryEntity } from "restapi/industry/get";
 import {
   RegisterEnterprise_Body,
   RegisterEnterprise,
-} from "restapi/enterprise/registerEnterprise";
+} from "restapi/enterprise/post";
 import { useRouter } from "next/router";
-import { AccountUserType } from "restapi/users/registerUser";
+import { AccountUserType } from "restapi/users/post";
 import { useRecoilState } from "recoil";
 import { initialWeb3, Web3_Model } from "@state/web3/account";
 import { useCallback } from "react";
@@ -95,7 +95,7 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
   const enterSizes: EnterpriseEmployees[] = GetEmployees();
 
   return (
-    <Modal closeOnOverlayClick isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <Flex alignItems={"center"} ml={5} pt={2} pb={1}>

@@ -1,7 +1,7 @@
 import { NavList, InavItem } from "@state/datas/navbar";
 import Link from "next/link";
 import { useWeb3 } from "@hooks/Web3Client";
-import { link_selectpage } from "@components/utils/routing";
+import { career_post, link_selectpage } from "@components/utils/routing";
 import {
   Web3_Model,
   initialWeb3,
@@ -29,7 +29,7 @@ import colors from "themes/foundations/colors";
 import { utils } from "ethers";
 import { accountCheck } from "restapi/account/accounCheck";
 import styled from "@emotion/styled";
-import { AccountUserType } from "restapi/users/registerUser";
+import { AccountUserType } from "restapi/users/post";
 
 const NavBar = (): JSX.Element => {
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
@@ -77,7 +77,6 @@ const NavBar = (): JSX.Element => {
       if (web3State?.address) {
         await accountCheck(web3State.address)
           .then((res) => {
-            console.log(res.data);
             setExistAccount(res.data);
           })
           .catch((e) => {
@@ -142,12 +141,14 @@ const NavBar = (): JSX.Element => {
                 </Flex>
               </MenuButton>
               {existAccountState ? (
-                existAccountState.accountProvider ===
-                AccountUserType.Customer ? (
+                existAccountState.userType[0] === AccountUserType.Customer ? (
                   <MenuList padding={"0px"}>
                     <MenuItem>My Page</MenuItem>
                     <MenuItem>프로필 정보</MenuItem>
                     <MenuDivider />
+                    <MenuItem>
+                      <Link href={career_post}>경력 신청</Link>
+                    </MenuItem>
                     <MenuItem>경력 신청 현황</MenuItem>
                     <MenuItem>지원 현황</MenuItem>
                     <MenuItem>받은 제안</MenuItem>

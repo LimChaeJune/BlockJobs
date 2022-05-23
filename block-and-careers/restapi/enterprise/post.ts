@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { RegisterAccount_Body } from "restapi/users/registerUser";
+import { RegisterAccount_Body } from "restapi/users/post";
 import client from "../apiClient";
 
 export interface RegisterEnterprise_Body {

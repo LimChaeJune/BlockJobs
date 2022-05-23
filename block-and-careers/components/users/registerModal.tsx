@@ -27,7 +27,7 @@ import {
   AccountUserType,
   RegisterUser,
   RegisterUser_Body,
-} from "restapi/users/registerUser";
+} from "restapi/users/post";
 
 interface IFormInput {
   phone: string;

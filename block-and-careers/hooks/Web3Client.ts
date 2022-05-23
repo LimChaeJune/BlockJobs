@@ -55,6 +55,7 @@ export const useWeb3 = () => {
         const ConnWeb3: Web3_Model = {
           address: address,
           network: network,
+          signer: signer,
         };
 
         const Contract = new ethers.Contract(
@@ -91,12 +92,23 @@ export const useWeb3 = () => {
       const DisConn: Web3_Model = {
         address: null,
         network: null,
+        signer: undefined,
       };
       SetWeb3(DisConn);
     } else {
       console.error("No Web3Modal");
     }
   }, []);
+
+  const getContract = () => {
+    const Contract = new ethers.Contract(
+      Contract_Address,
+      BlockJobs_ABI,
+      web3State.signer
+    );
+
+    return Contract;
+  };
 
   useEffect(() => {
     if (modalProvider?.on) {
@@ -153,6 +165,7 @@ export const useWeb3 = () => {
   return {
     connect,
     disconnect,
+    getContract,
     ContractState,
   };
 };
