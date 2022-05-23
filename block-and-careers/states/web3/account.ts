@@ -6,7 +6,6 @@ import { AccountUserType } from "restapi/users/post";
 export interface Web3_Model {
   address: string | null | undefined;
   network: ethers.providers.Network | null | undefined;
-  signer: ethers.providers.Provider | ethers.Signer | undefined;
 }
 export interface Account_Model {
   accountAddress: string;
@@ -23,10 +22,9 @@ export const initialWeb3 = atom<Web3_Model>({
   default: {
     network: null,
     address: null,
-    signer: undefined,
   },
 
-  // dangerouslyAllowMutability: true,
+  dangerouslyAllowMutability: true,
 });
 
 // 처음 Web3 연결 전 초기화

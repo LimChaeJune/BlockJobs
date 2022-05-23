@@ -23,6 +23,7 @@ import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import { useWeb3 } from "@hooks/Web3Client";
 import { BigNumber, ethers } from "ethers";
 import SearchEnterModal from "@components/enterprise/searchEnterpriseModal";
+import { EnterPrise_Entity } from "restapi/enterprise/get";
 
 interface IFormInput {
   roles: string[];
@@ -33,37 +34,36 @@ interface IFormInput {
   fnsDt: number;
 }
 
-function Post() {
+function Post(enterprise: EnterPrise_Entity[]) {
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
-  const { connect, ContractState, getContract } = useWeb3();
+  const { connect } = useWeb3();
   const [myRoles, setMyRoles] = useState<string[]>([]);
   const [curr_role, setCurrRole] = useState<string>();
+  const [curr_company, setCompany] = useState<EnterPrise_Entity>();
 
   const {
     handleSubmit,
     register,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<IFormInput>();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    await connect();
-    await getContract()
-      ?.BalanceOf(web3State.address)
+    const contract = await connect();
+    await contract
+      ?.createCareer(data.company, curr_company)
       .then((res: BigNumber) => {
         console.log(ethers.utils.formatEther(res.toString()));
       });
+
+    reset();
   };
 
-  useEffect(() => {
-    console.log(ContractState);
-  }, [web3State]);
-
   const TestCOntract = async () => {
-    await connect();
-    await ContractState?.BalanceOf(web3State.address).then((res: BigNumber) => {
+    const contract = await connect();
+    await contract?.BalanceOf(web3State.address).then((res: BigNumber) => {
       console.log(ethers.utils.formatEther(res.toString()));
     });
   };
@@ -156,7 +156,8 @@ function Post() {
       <SearchEnterModal
         isOpen={isOpen}
         onClose={onClose}
-        enterprises={[]}
+        enterprises={enterprise}
+        setCompany={setCompany}
       ></SearchEnterModal>
     </Box>
   );

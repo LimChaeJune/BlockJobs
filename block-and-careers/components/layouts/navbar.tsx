@@ -70,7 +70,7 @@ const NavBar = (): JSX.Element => {
       }
     };
     working();
-  }, [web3State.network]);
+  }, [web3State.network, existAccountState]);
 
   useEffect(() => {
     const effectWorking = async () => {
