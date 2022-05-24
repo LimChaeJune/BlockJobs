@@ -58,6 +58,7 @@ const NavBar = (): JSX.Element => {
     fetchAccount();
   }, []);
 
+  // Web3 현재 네트워크  확인
   useEffect(() => {
     const working = async () => {
       if (web3State?.network?.chainId !== 3) {
@@ -72,6 +73,7 @@ const NavBar = (): JSX.Element => {
     working();
   }, [web3State.network, existAccountState]);
 
+  // Web3 네트워크 확인 후
   useEffect(() => {
     const effectWorking = async () => {
       if (web3State?.address) {
@@ -86,8 +88,6 @@ const NavBar = (): JSX.Element => {
     };
     effectWorking();
   }, [web3State.address]);
-
-  // 쿠키에 로그인 정보가 있으면 바로 지갑 연결
 
   return (
     <Box borderBottom={`1px solid ${colors.secondery[300]}`}>

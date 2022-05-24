@@ -11,7 +11,7 @@ import {
   Td,
   Tr,
 } from "@chakra-ui/react";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { EnterPrise_Entity } from "restapi/enterprise/get";
 import colors from "themes/foundations/colors";
 
@@ -28,9 +28,7 @@ function SearchEnterModal({
   enterprises,
   setCompany,
 }: modalInput) {
-  const [resultEnterprise, setResultEnter] = useState<
-    EnterPrise_Entity[] | undefined
-  >(enterprises);
+  const [resultEnterprise, setResultEnter] = useState<EnterPrise_Entity[]>([]);
   const searchType = ["회사명", "사업자 번호"];
 
   const SearchTextChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +41,13 @@ function SearchEnterModal({
 
   const TrItemClicked = (e: EnterPrise_Entity) => {
     setCompany(e);
+    onClose();
   };
+
+  useEffect(() => {
+    console.log(enterprises);
+    setResultEnter(enterprises);
+  }, [enterprises]);
 
   return (
     <Modal closeOnOverlayClick isOpen={isOpen} onClose={onClose} size={"2xl"}>
@@ -74,6 +78,7 @@ function SearchEnterModal({
               return (
                 <Tr
                   key={idx}
+                  cursor={"pointer"}
                   _hover={{ background: `${colors.blue[100]}` }}
                   onClick={() => TrItemClicked(item)}
                 >
