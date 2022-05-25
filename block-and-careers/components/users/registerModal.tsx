@@ -23,11 +23,10 @@ import { useCallback } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { JobEntity } from "restapi/jobs/get";
-import {
-  AccountUserType,
-  RegisterUser,
-  RegisterUser_Body,
-} from "restapi/users/post";
+import { RegisterUser } from "restapi/users/post";
+
+import { AccountUserType } from "restapi/types/account";
+import { RegisterUser_Body } from "restapi/types/user";
 
 interface IFormInput {
   phone: string;

@@ -1,18 +1,11 @@
 import axios from "axios";
 import { BigNumber, ethers } from "ethers";
 import { atom, selector } from "recoil";
-import { AccountUserType } from "restapi/users/post";
+import { Account_Model } from "restapi/types/account";
 
 export interface Web3_Model {
   address: string | null | undefined;
   network: ethers.providers.Network | null | undefined;
-}
-export interface Account_Model {
-  accountAddress: string;
-  accountProvider: string;
-  userType: AccountUserType;
-  createAt: Date;
-  updateAt: Date;
 }
 
 // 처음 Web3 연결 전 초기화
@@ -24,7 +17,7 @@ export const initialWeb3 = atom<Web3_Model>({
     address: null,
   },
 
-  dangerouslyAllowMutability: true,
+  // dangerouslyAllowMutability: true,
 });
 
 // 처음 Web3 연결 전 초기화

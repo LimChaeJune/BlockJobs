@@ -28,6 +28,7 @@ if (typeof window !== "undefined") {
 
 export const useWeb3 = () => {
   const toast = useToast();
+  const [contractState, SetContract] = useState<ethers.Contract | undefined>();
   const [web3State, SetWeb3] = useRecoilState<Web3_Model>(initialWeb3);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [modalProvider, SetModalProvider] = useState<any>(null);
@@ -98,6 +99,25 @@ export const useWeb3 = () => {
   }, []);
 
   useEffect(() => {
+    const connectContract = async () => {
+      if (web3Modal) {
+        const provider = await web3Modal.connect();
+        const web3Provider = new ethers.providers.Web3Provider(provider);
+        const signer = web3Provider?.getSigner();
+
+        const Contract = new ethers.Contract(
+          Contract_Address,
+          BlockJobs_ABI,
+          signer
+        );
+
+        SetContract(Contract);
+      }
+    };
+    connectContract();
+  }, [web3State]);
+
+  useEffect(() => {
     if (modalProvider?.on) {
       const handleAccountsChanged = (accounts: string[]) => {
         toast({
@@ -152,5 +172,6 @@ export const useWeb3 = () => {
   return {
     connect,
     disconnect,
+    contractState,
   };
 };

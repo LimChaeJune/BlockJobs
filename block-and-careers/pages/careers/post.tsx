@@ -5,7 +5,6 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
-  Container,
   Textarea,
   Tag,
   TagLabel,
@@ -21,25 +20,38 @@ import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import { useWeb3 } from "@hooks/Web3Client";
-import { BigNumber, ethers } from "ethers";
 import SearchEnterModal from "@components/enterprise/searchEnterpriseModal";
 import { EnterPrise_Entity } from "restapi/enterprise/get";
-import { AccountUserType } from "restapi/users/post";
+import { AccountUserType } from "restapi/types/account";
 import { InferGetStaticPropsType } from "next";
-import colors from "themes/foundations/colors";
+import { useBlockJobs } from "@hooks/BlockJobsContract";
+import { BigNumber, ethers } from "ethers";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 interface IFormInput {
   roles: string[];
   description: string;
-  worker: string;
   company: string;
-  stDt: number;
-  fnsDt: number;
+  stDt: Date;
+  fnsDt: Date;
 }
 
+const career_Schema = yup.object().shape({
+  description: yup
+    .string()
+    .required("근무 내용은 필수입력 내용입니다.")
+    .min(10, "최소 10자 이상의 근무내용을 작성해주세요"),
+  stDt: yup.date().required("근무시작 날짜는 필수입력 내용입니다."),
+  fnsDt: yup.date().required("근무종료 날짜는 필수입력 내용입니다."),
+  roles: yup.array().min(1, "한 개 이상의 직무를 등록해야합니다."),
+});
+
 function Post({ enterprise }: InferGetStaticPropsType<typeof getStaticProps>) {
+  const router = useRouter();
+
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
-  const { connect } = useWeb3();
+  const { createCareer } = useBlockJobs();
   const [myRoles, setMyRoles] = useState<string[]>([]);
   const [curr_role, setCurrRole] = useState<string>();
   const [curr_company, setCompany] = useState<EnterPrise_Entity>();
@@ -47,49 +59,39 @@ function Post({ enterprise }: InferGetStaticPropsType<typeof getStaticProps>) {
   const {
     handleSubmit,
     register,
-    reset,
-    formState: { isSubmitting },
-  } = useForm<IFormInput>();
+    setValue,
+    formState: { isSubmitting, errors },
+  } = useForm<IFormInput>({ resolver: yupResolver(career_Schema) });
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    const contract = await connect();
     try {
-      console.log(
-        myRoles,
-        data.description,
-        curr_company?.account.accountAddress
-      );
-      await contract?.createCareer(
-        myRoles,
-        data.description,
-        curr_company?.account.accountAddress,
-        new Date(data.stDt).getTime(),
-        new Date(data.fnsDt).getTime(),
-        1000000
-      );
+      await createCareer({
+        myRoles: myRoles,
+        description: data.description,
+        company_address: curr_company?.account.accountAddress,
+        stDt: data.stDt,
+        fnsDt: data.fnsDt,
+      });
     } catch (e) {
       console.log(e);
       alert("contract SignTX를 실패했습니다. 다시 시도해주세요");
     }
-
-    // reset();
-    // setMyRoles([]);
-    // setCompany(undefined);
   };
 
-  const TestContract = async () => {
-    const contract = await connect();
-    await contract?.BalanceOf(web3State.address).then((res: BigNumber) => {
-      console.log(ethers.utils.formatEther(res.toString()));
-    });
-  };
+  // const TestContract = async () => {
+  //   await BalanceOf(web3State.address).then((res: BigNumber) => {
+  //     console.log(ethers.utils.formatEther(res.toString()));
+  //   });
+  //   console.log(errors.description);
+  // };
 
   const TagEnter = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && curr_role !== undefined) {
       setMyRoles([...myRoles, curr_role]);
       setCurrRole(undefined);
+      setValue("roles", myRoles);
     }
   };
   const TagDelete = (tagItem: string) => {
@@ -114,41 +116,47 @@ function Post({ enterprise }: InferGetStaticPropsType<typeof getStaticProps>) {
         <Divider mt={"20px"} mb={"20px"} />
         <Box>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <FormControl>
+            <FormControl
+              isRequired
+              isReadOnly
+              isInvalid={curr_company === undefined}
+            >
               <FormLabel>근무 회사</FormLabel>
               <Flex alignItems={"center"}>
                 <Input value={curr_company?.title} mr={2} readOnly />
                 <Button onClick={onOpen}>회사 검색</Button>
               </Flex>
+              <FormErrorMessage>{"회사를 선택해주세요"}</FormErrorMessage>
             </FormControl>
 
-            <FormControl mt={"20px"}>
-              <FormLabel>근무 시작일</FormLabel>
-              <Input
-                type={"date"}
-                placeholder="근무 시작일 입력해주세요"
-                {...register("stDt", {
-                  required: "근무 시작일은 필수 입력 항목입니다.",
-                })}
-              />
-            </FormControl>
+            <Flex gap={"10px"}>
+              <FormControl isRequired isInvalid={!!errors.stDt} mt={"20px"}>
+                <FormLabel>근무 시작일</FormLabel>
+                <Input
+                  type={"date"}
+                  placeholder="근무 시작일 입력해주세요"
+                  {...register("stDt")}
+                />
+                <FormErrorMessage>{errors?.stDt?.message}</FormErrorMessage>
+              </FormControl>
 
-            <FormControl mt={"20px"}>
-              <FormLabel>근무 종료일</FormLabel>
-              <Input
-                type={"date"}
-                placeholder="근무 종료일을 입력해주세요"
-                {...register("fnsDt", {
-                  required: "근무 종료일은 필수 입력 항목입니다.",
-                })}
-              />
-            </FormControl>
+              <FormControl isRequired isInvalid={!!errors.fnsDt} mt={"20px"}>
+                <FormLabel>근무 종료일</FormLabel>
+                <Input
+                  type={"date"}
+                  placeholder="근무 종료일을 입력해주세요"
+                  {...register("fnsDt")}
+                />
+                <FormErrorMessage>{errors?.fnsDt?.message}</FormErrorMessage>
+              </FormControl>
+            </Flex>
 
             <FormControl mt={"20px"}>
               <FormLabel>담당 직무/업무</FormLabel>
               <Input
                 type={"text"}
                 value={curr_role}
+                placeholder="담당 직무를 입력해주세요"
                 onKeyDown={TagEnter}
                 onChange={changeTagValue}
               />
@@ -170,14 +178,19 @@ function Post({ enterprise }: InferGetStaticPropsType<typeof getStaticProps>) {
               ) : null}
             </FormControl>
 
-            <FormControl mt={"20px"}>
+            <FormControl
+              isRequired
+              isInvalid={!!errors?.description}
+              mt={"20px"}
+            >
               <FormLabel>근무 내용</FormLabel>
               <Textarea
                 placeholder="근무 내용을 입력해주세요 (예: [삼성전자] 반도체 프로젝트를 진행했습니다...)"
-                {...register("description", {
-                  required: "근무 내용은 필수 입력 항목입니다.",
-                })}
+                {...register("description")}
               />
+              <FormErrorMessage>
+                {errors?.description?.message}
+              </FormErrorMessage>
             </FormControl>
             <Button mt={4} isLoading={isSubmitting} type="submit">
               경력 신청

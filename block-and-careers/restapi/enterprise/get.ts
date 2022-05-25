@@ -1,4 +1,4 @@
-import { Account_Model } from "@state/web3/account";
+import { Account_Model } from "../types/account";
 
 export interface EnterPrise_Entity {
   account: Account_Model;

@@ -2,12 +2,7 @@ import { NavList, InavItem } from "@state/datas/navbar";
 import Link from "next/link";
 import { useWeb3 } from "@hooks/Web3Client";
 import { career_post, link_selectpage } from "@components/utils/routing";
-import {
-  Web3_Model,
-  initialWeb3,
-  Account_Model,
-  account_state,
-} from "states/web3/account";
+import { Web3_Model, initialWeb3, account_state } from "states/web3/account";
 import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import {
@@ -27,9 +22,9 @@ import {
 } from "@chakra-ui/react";
 import colors from "themes/foundations/colors";
 import { utils } from "ethers";
-import { accountCheck } from "restapi/account/accounCheck";
+import { accountCheck } from "restapi/account/get";
 import styled from "@emotion/styled";
-import { AccountUserType } from "restapi/users/post";
+import { AccountUserType, Account_Model } from "restapi/types/account";
 
 const NavBar = (): JSX.Element => {
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
