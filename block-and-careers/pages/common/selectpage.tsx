@@ -61,7 +61,8 @@ function SelectPage({
         p={20}
       >
         <Heading fontSize={"xl"} marginTop={"10px"} marginBottom={"10px"}>
-          BlockJobs의 서비스를 이용하시려면 회원 등록을 먼저 진행해주세요
+          BlockJobs의 서비스를 이용하시려면 회원 등록을 먼저 진행해주세요 (등록
+          시 토큰 사용을 위한 Approve를 승인해야합니다.)
         </Heading>
         <Flex height={"100%"} width={"100%"}>
           {selects.map((item: SelectTypes, idx) => {

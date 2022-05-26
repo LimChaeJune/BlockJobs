@@ -67,6 +67,7 @@ function Post({ enterprise }: InferGetStaticPropsType<typeof getStaticProps>) {
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
+      console.log(data);
       await createCareer({
         myRoles: myRoles,
         description: data.description,

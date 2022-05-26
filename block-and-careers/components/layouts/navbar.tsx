@@ -2,9 +2,14 @@ import { NavList, InavItem } from "@state/datas/navbar";
 import Link from "next/link";
 import { useWeb3 } from "@hooks/Web3Client";
 import { career_post, link_selectpage } from "@components/utils/routing";
-import { Web3_Model, initialWeb3, account_state } from "states/web3/account";
+import {
+  Web3_Model,
+  initialWeb3,
+  account_state,
+  balance,
+} from "states/web3/account";
 import { useCallback, useEffect } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   Box,
   Button,
@@ -21,10 +26,11 @@ import {
   LinkBox,
 } from "@chakra-ui/react";
 import colors from "themes/foundations/colors";
-import { utils } from "ethers";
+import { BigNumber, utils } from "ethers";
 import { accountCheck } from "restapi/account/get";
 import styled from "@emotion/styled";
 import { AccountUserType, Account_Model } from "restapi/types/account";
+import { useBlockJobs } from "@hooks/BlockJobsContract";
 
 const NavBar = (): JSX.Element => {
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
@@ -35,7 +41,6 @@ const NavBar = (): JSX.Element => {
 
   const WalletConn = useCallback(async () => {
     await connect();
-
     // ContractState?.BalanceOf(web3State.address).then((res: BigNumber) => {
     //   console.log(ethers.utils.formatEther(res.toString()));
     //   setbalance(res);
@@ -56,11 +61,11 @@ const NavBar = (): JSX.Element => {
   // Web3 현재 네트워크  확인
   useEffect(() => {
     const working = async () => {
-      if (web3State?.network?.chainId !== 3) {
+      if (web3State?.network?.chainId !== 4) {
         try {
           await window.ethereum.request({
             method: "wallet_switchEthereumChain",
-            params: [{ chainId: utils.hexValue(3) }],
+            params: [{ chainId: utils.hexValue(4) }],
           });
         } catch (e) {}
       }
@@ -75,6 +80,7 @@ const NavBar = (): JSX.Element => {
         await accountCheck(web3State.address)
           .then((res) => {
             setExistAccount(res.data);
+            sessionStorage.setItem("account", JSON.stringify(res.data));
           })
           .catch((e) => {
             console.log(e.message);

@@ -8,7 +8,7 @@ export interface RegisterUser_Body {
   phone: string;
 }
 
-export interface User_Model {
+export interface User_Entity {
   id: string;
   email: string;
   name: string;

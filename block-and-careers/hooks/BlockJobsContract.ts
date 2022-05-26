@@ -1,6 +1,23 @@
-import { BigNumber, ethers } from "ethers";
+import { BigNumber } from "ethers";
 import { useCallback, useEffect } from "react";
 import { useWeb3 } from "./Web3Client";
+
+enum CareerStatus {
+  Wait = 0,
+  approve = 1,
+  reject = 2,
+}
+
+interface Career_Item {
+  id: number;
+  roles: string[];
+  description: string;
+  worker: string;
+  company: string;
+  stDt: number;
+  fnsDt: number;
+  status: CareerStatus;
+}
 
 interface props_createCareer {
   myRoles: string[];
@@ -8,6 +25,12 @@ interface props_createCareer {
   company_address: string | undefined;
   stDt: Date;
   fnsDt: Date;
+}
+
+interface approve_Career {
+  careerId: string;
+  amount: number;
+  status: CareerStatus;
 }
 
 export const useBlockJobs = () => {
@@ -22,13 +45,19 @@ export const useBlockJobs = () => {
 
   // User의 Amount만큼 approve
   const approveUser = useCallback(
-    async (amount: string) => {
-      const tx = await contractState?.approveUser(
-        ethers.utils.parseEther(amount)
-      );
+    async (amount: number) => {
+      const tx = await contractState?.approveUser(amount);
       const receipt = await tx.wait();
       const data = receipt.logs[0].data;
       console.log(data);
+    },
+    [contractState]
+  );
+
+  // to_address에게 amount만큼 송금
+  const transferFrom = useCallback(
+    async (to_address: string, amount: number) => {
+      await contractState?.transferFrom(to_address, amount);
     },
     [contractState]
   );
@@ -44,9 +73,22 @@ export const useBlockJobs = () => {
 
   // Ether로 BJC 구매
   const Buy = useCallback(
-    async (amount: string) => {
+    async (amount: number) => {
       const tx = await contractState?.Buy({
-        value: ethers.utils.parseEther(amount),
+        value: amount,
+      });
+      const receipt = await tx.wait();
+      const data = receipt.logs[0].data;
+      console.log(data);
+    },
+    [contractState]
+  );
+
+  // BJC로 Ether 구매
+  const Sell = useCallback(
+    async (amount: number) => {
+      const tx = await contractState?.sell({
+        value: amount,
       });
       const receipt = await tx.wait();
       const data = receipt.logs[0].data;
@@ -70,7 +112,7 @@ export const useBlockJobs = () => {
           company_address,
           new Date(stDt).getTime(),
           new Date(fnsDt).getTime(),
-          ethers.utils.parseEther("1")
+          10
         );
         const receipt = await tx.wait();
         const data = receipt.logs[0].data;
@@ -82,5 +124,60 @@ export const useBlockJobs = () => {
     [contractState]
   );
 
-  return { approveUser, BalanceOf, Buy, createCareer };
+  const approveCareer = useCallback(
+    async ({ careerId, amount, status }: approve_Career) => {
+      try {
+        const tx = await contractState?.approveCareer(careerId, amount, status);
+        const receipt = await tx.wait();
+        const data = receipt.logs[0].data;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    []
+  );
+
+  // 회사의 지갑주소 기준으로 커리어 조회
+  const getCareerByComany = useCallback(
+    async (enterprise_address: string): Promise<Career_Item[]> => {
+      const careersByCompany = await contractState?.getCareerByComany(
+        enterprise_address
+      );
+      return careersByCompany;
+    },
+    [contractState]
+  );
+
+  // 신청인 지갑주소 기준으로 커리어 조회
+  const getCareerByWorker = useCallback(
+    async (user_address: string): Promise<Career_Item[]> => {
+      const careerByWorker = await contractState?.getCareerByWorker(
+        user_address
+      );
+      return careerByWorker;
+    },
+    [contractState]
+  );
+
+  // 아이디 기준으로 커리어 조회
+  const getCareerDetail = useCallback(
+    async (careerId: number): Promise<Career_Item> => {
+      const careerById = await contractState?.getCareerDetail(careerId);
+      return careerById;
+    },
+    [contractState]
+  );
+
+  return {
+    approveUser,
+    transferFrom,
+    BalanceOf,
+    Buy,
+    Sell,
+    createCareer,
+    approveCareer,
+    getCareerByComany,
+    getCareerByWorker,
+    getCareerDetail,
+  };
 };

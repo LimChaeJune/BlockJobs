@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import { atom, selector } from "recoil";
 import { Account_Model } from "restapi/types/account";
 
@@ -28,10 +28,10 @@ export const account_state = atom<Account_Model | null>({
   // dangerouslyAllowMutability: true,
 });
 
-export const balance = atom<BigNumber | 0>({
+export const balance = atom<string | undefined>({
   key: "blockjob_balance",
 
-  default: 0,
+  default: undefined,
   // dangerouslyAllowMutability: true,
 });
 
