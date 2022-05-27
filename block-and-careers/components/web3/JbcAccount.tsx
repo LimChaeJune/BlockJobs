@@ -5,7 +5,7 @@ import { useBlockJobs } from "@hooks/BlockJobsContract";
 import { useEffect } from "react";
 
 // 생성한 JBC 코인 어카운트 관리
-const JBCAccount = () => {
+const JBCAccount = (): JSX.Element => {
   const [accountWeb3] = useRecoilState(initialWeb3);
   const [balanceState] = useRecoilState(balance);
 
@@ -18,3 +18,5 @@ const JBCAccount = () => {
     </Box>
   );
 };
+
+export default JBCAccount;

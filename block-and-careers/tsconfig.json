@@ -7,7 +7,8 @@
       "@state/*": ["states/*"],
       "@style/*": ["styles/*"],
       "@api/*": ["pages/api/*"],
-      "@hooks/*": ["hooks/*"]
+      "@hooks/*": ["hooks/*"],
+      "@restapi/*": ["restapi/*"]
     },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -24,6 +25,6 @@
     "jsx": "preserve",
     "incremental": true,    
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_document.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_document.tsx", "jest.setup.js"],
   "exclude": ["node_modules"]
 }

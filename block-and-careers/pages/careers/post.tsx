@@ -21,7 +21,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import { useWeb3 } from "@hooks/Web3Client";
 import SearchEnterModal from "@components/enterprise/searchEnterpriseModal";
-import { EnterPrise_Entity } from "restapi/enterprise/get";
+import { EnterPrise_Entity } from "@restapi/types/enterprise";
 import { AccountUserType } from "restapi/types/account";
 import { InferGetStaticPropsType } from "next";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
@@ -105,99 +105,83 @@ function Post({ enterprise }: InferGetStaticPropsType<typeof getStaticProps>) {
 
   return (
     <Box width={"100%"}>
-      {/* <Button onClick={TestContract}>TEXTBUTTON</Button> */}
-      <Box
-        width={"1060px"}
-        position={"relative"}
-        alignItems={"center"}
-        margin={"0 auto"}
-        mt={"30px"}
-      >
-        <Heading size={"lg"}>경력 신청</Heading>
-        <Divider mt={"20px"} mb={"20px"} />
-        <Box>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <FormControl
-              isRequired
-              isReadOnly
-              isInvalid={curr_company === undefined}
-            >
-              <FormLabel>근무 회사</FormLabel>
-              <Flex alignItems={"center"}>
-                <Input value={curr_company?.title} mr={2} readOnly />
-                <Button onClick={onOpen}>회사 검색</Button>
-              </Flex>
-              <FormErrorMessage>{"회사를 선택해주세요"}</FormErrorMessage>
-            </FormControl>
-
-            <Flex gap={"10px"}>
-              <FormControl isRequired isInvalid={!!errors.stDt} mt={"20px"}>
-                <FormLabel>근무 시작일</FormLabel>
-                <Input
-                  type={"date"}
-                  placeholder="근무 시작일 입력해주세요"
-                  {...register("stDt")}
-                />
-                <FormErrorMessage>{errors?.stDt?.message}</FormErrorMessage>
-              </FormControl>
-
-              <FormControl isRequired isInvalid={!!errors.fnsDt} mt={"20px"}>
-                <FormLabel>근무 종료일</FormLabel>
-                <Input
-                  type={"date"}
-                  placeholder="근무 종료일을 입력해주세요"
-                  {...register("fnsDt")}
-                />
-                <FormErrorMessage>{errors?.fnsDt?.message}</FormErrorMessage>
-              </FormControl>
+      <Divider mt={"20px"} mb={"20px"} />
+      <Box>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <FormControl
+            isRequired
+            isReadOnly
+            isInvalid={curr_company === undefined}
+          >
+            <FormLabel>근무 회사</FormLabel>
+            <Flex alignItems={"center"}>
+              <Input value={curr_company?.title} mr={2} readOnly />
+              <Button onClick={onOpen}>회사 검색</Button>
             </Flex>
+            <FormErrorMessage>{"회사를 선택해주세요"}</FormErrorMessage>
+          </FormControl>
 
-            <FormControl mt={"20px"}>
-              <FormLabel>담당 직무/업무</FormLabel>
+          <Flex gap={"10px"}>
+            <FormControl isRequired isInvalid={!!errors.stDt} mt={"20px"}>
+              <FormLabel>근무 시작일</FormLabel>
               <Input
-                type={"text"}
-                value={curr_role}
-                placeholder="담당 직무를 입력해주세요"
-                onKeyDown={TagEnter}
-                onChange={changeTagValue}
+                type={"date"}
+                placeholder="근무 시작일 입력해주세요"
+                {...register("stDt")}
               />
-              {myRoles ? (
-                <Flex mt={2} gap={2}>
-                  {myRoles?.map((item, idx) => {
-                    return (
-                      <Tag key={idx} borderRadius={"full"}>
-                        <TagLabel>{item}</TagLabel>
-                        <TagCloseButton
-                          onClick={() => {
-                            TagDelete(item);
-                          }}
-                        />
-                      </Tag>
-                    );
-                  })}
-                </Flex>
-              ) : null}
+              <FormErrorMessage>{errors?.stDt?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl
-              isRequired
-              isInvalid={!!errors?.description}
-              mt={"20px"}
-            >
-              <FormLabel>근무 내용</FormLabel>
-              <Textarea
-                placeholder="근무 내용을 입력해주세요 (예: [삼성전자] 반도체 프로젝트를 진행했습니다...)"
-                {...register("description")}
+            <FormControl isRequired isInvalid={!!errors.fnsDt} mt={"20px"}>
+              <FormLabel>근무 종료일</FormLabel>
+              <Input
+                type={"date"}
+                placeholder="근무 종료일을 입력해주세요"
+                {...register("fnsDt")}
               />
-              <FormErrorMessage>
-                {errors?.description?.message}
-              </FormErrorMessage>
+              <FormErrorMessage>{errors?.fnsDt?.message}</FormErrorMessage>
             </FormControl>
-            <Button mt={4} isLoading={isSubmitting} type="submit">
-              경력 신청
-            </Button>
-          </form>
-        </Box>
+          </Flex>
+
+          <FormControl mt={"20px"}>
+            <FormLabel>담당 직무/업무</FormLabel>
+            <Input
+              type={"text"}
+              value={curr_role}
+              placeholder="담당 직무를 입력해주세요"
+              onKeyDown={TagEnter}
+              onChange={changeTagValue}
+            />
+            {myRoles ? (
+              <Flex mt={2} gap={2}>
+                {myRoles?.map((item, idx) => {
+                  return (
+                    <Tag key={idx} borderRadius={"full"}>
+                      <TagLabel>{item}</TagLabel>
+                      <TagCloseButton
+                        onClick={() => {
+                          TagDelete(item);
+                        }}
+                      />
+                    </Tag>
+                  );
+                })}
+              </Flex>
+            ) : null}
+          </FormControl>
+
+          <FormControl isRequired isInvalid={!!errors?.description} mt={"20px"}>
+            <FormLabel>근무 내용</FormLabel>
+            <Textarea
+              placeholder="근무 내용을 입력해주세요 (예: [삼성전자] 반도체 프로젝트를 진행했습니다...)"
+              {...register("description")}
+            />
+            <FormErrorMessage>{errors?.description?.message}</FormErrorMessage>
+          </FormControl>
+          <Button mt={4} isLoading={isSubmitting} type="submit">
+            경력 신청
+          </Button>
+        </form>
       </Box>
       <SearchEnterModal
         isOpen={isOpen}

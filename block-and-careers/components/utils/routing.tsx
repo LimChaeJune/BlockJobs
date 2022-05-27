@@ -5,3 +5,6 @@ export const enterprise_recruit_list = "/enterprise/list";
 export const career_recruit_list = "/careers/list";
 
 export const career_post = "/careers/post";
+
+export const user_profile = "/users/profile";
+export const enterprise_profile = "/enterprise/profile";
