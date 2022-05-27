@@ -21,12 +21,10 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { EnterpriseEmployees, GetEmployees } from "@state/datas/enterprisetype";
 import { IndustryEntity } from "restapi/industry/get";
-import {
-  RegisterEnterprise_Body,
-  RegisterEnterprise,
-} from "restapi/enterprise/registerEnterprise";
 import { useRouter } from "next/router";
-import { AccountUserType } from "restapi/users/registerUser";
+import { RegisterEnterprise } from "@restapi/enterprise/post";
+import { RegisterEnterprise_Body } from "@restapi/types/enterprise";
+import { AccountUserType } from "@restapi/types/account";
 import { useRecoilState } from "recoil";
 import { initialWeb3, Web3_Model } from "@state/web3/account";
 import { useCallback } from "react";
@@ -95,7 +93,7 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
   const enterSizes: EnterpriseEmployees[] = GetEmployees();
 
   return (
-    <Modal closeOnOverlayClick isOpen={isOpen} onClose={onClose}>
+    <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <Flex alignItems={"center"} ml={5} pt={2} pb={1}>

@@ -1,13 +1,13 @@
 import { NavList, InavItem } from "@state/datas/navbar";
 import Link from "next/link";
 import { useWeb3 } from "@hooks/Web3Client";
-import { link_selectpage } from "@components/utils/routing";
 import {
-  Web3_Model,
-  initialWeb3,
-  Account_Model,
-  account_state,
-} from "states/web3/account";
+  career_post,
+  enterprise_profile,
+  link_selectpage,
+  user_profile,
+} from "@components/utils/routing";
+import { Web3_Model, initialWeb3, account_state } from "states/web3/account";
 import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import {
@@ -27,9 +27,9 @@ import {
 } from "@chakra-ui/react";
 import colors from "themes/foundations/colors";
 import { utils } from "ethers";
-import { accountCheck } from "restapi/account/accounCheck";
+import { accountCheck } from "restapi/account/get";
 import styled from "@emotion/styled";
-import { AccountUserType } from "restapi/users/registerUser";
+import { AccountUserType, Account_Model } from "restapi/types/account";
 
 const NavBar = (): JSX.Element => {
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
@@ -40,7 +40,6 @@ const NavBar = (): JSX.Element => {
 
   const WalletConn = useCallback(async () => {
     await connect();
-
     // ContractState?.BalanceOf(web3State.address).then((res: BigNumber) => {
     //   console.log(ethers.utils.formatEther(res.toString()));
     //   setbalance(res);
@@ -58,27 +57,29 @@ const NavBar = (): JSX.Element => {
     fetchAccount();
   }, []);
 
+  // Web3 현재 네트워크  확인
   useEffect(() => {
     const working = async () => {
-      if (web3State?.network?.chainId !== 3) {
+      if (web3State?.network?.chainId !== 4) {
         try {
           await window.ethereum.request({
             method: "wallet_switchEthereumChain",
-            params: [{ chainId: utils.hexValue(3) }],
+            params: [{ chainId: utils.hexValue(4) }],
           });
         } catch (e) {}
       }
     };
     working();
-  }, [web3State.network]);
+  }, [web3State.network, existAccountState]);
 
+  // Web3 네트워크 확인 후
   useEffect(() => {
     const effectWorking = async () => {
       if (web3State?.address) {
         await accountCheck(web3State.address)
           .then((res) => {
-            console.log(res.data);
             setExistAccount(res.data);
+            sessionStorage.setItem("account", JSON.stringify(res.data));
           })
           .catch((e) => {
             console.log(e.message);
@@ -87,8 +88,6 @@ const NavBar = (): JSX.Element => {
     };
     effectWorking();
   }, [web3State.address]);
-
-  // 쿠키에 로그인 정보가 있으면 바로 지갑 연결
 
   return (
     <Box borderBottom={`1px solid ${colors.secondery[300]}`}>
@@ -142,37 +141,41 @@ const NavBar = (): JSX.Element => {
                 </Flex>
               </MenuButton>
               {existAccountState ? (
-                existAccountState.accountProvider ===
-                AccountUserType.Customer ? (
+                existAccountState.userType[0] === AccountUserType.Customer ? (
                   <MenuList padding={"0px"}>
-                    <MenuItem>My Page</MenuItem>
-                    <MenuItem>프로필 정보</MenuItem>
+                    <Link href={user_profile}>
+                      <MenuItem>프로필 관리</MenuItem>
+                    </Link>
                     <MenuDivider />
+                    <MenuItem>
+                      <Link href={career_post}>경력 신청</Link>
+                    </MenuItem>
                     <MenuItem>경력 신청 현황</MenuItem>
                     <MenuItem>지원 현황</MenuItem>
                     <MenuItem>받은 제안</MenuItem>
-                    <MenuDivider></MenuDivider>
+                    <MenuDivider margin={0}></MenuDivider>
                     <MenuItem
                       onClick={WalletDisConn}
-                      _hover={{ background: colors.secondery[400] }}
-                      background={colors.secondery[400]}
+                      _hover={{ background: colors.secondery[100] }}
+                      background={colors.secondery[100]}
                     >
                       로그아웃
                     </MenuItem>
                   </MenuList>
                 ) : (
                   <MenuList padding={"0px"}>
-                    {" "}
-                    <MenuItem>기업 정보 관리</MenuItem>
-                    <MenuDivider />
+                    <Link href={enterprise_profile}>
+                      <MenuItem>기업 정보 관리</MenuItem>
+                    </Link>
+                    <MenuDivider margin={0} />
                     <MenuItem>공고 등록</MenuItem>
                     <MenuItem>공고 관리</MenuItem>
                     <MenuItem>신청 받은 경력</MenuItem>
-                    <MenuDivider />
+                    <MenuDivider margin={0} />
                     <MenuItem
                       onClick={WalletDisConn}
-                      _hover={{ background: colors.secondery[400] }}
-                      background={colors.secondery[400]}
+                      _hover={{ background: colors.secondery[100] }}
+                      background={colors.secondery[100]}
                     >
                       로그아웃
                     </MenuItem>

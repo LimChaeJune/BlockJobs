@@ -52,16 +52,12 @@ function SelectPage({
   const selects: SelectTypes[] = selectList();
 
   return (
-    <Flex w={"100%"} alignItems={"center"} flexDirection={"column"}>
-      <Box
-        border={`1px ${colors.secondery[300]} solid`}
-        w="50%"
-        textAlign="center"
-        mt={"10%"}
-        p={20}
-      >
+    <Box w={"100%"}>
+      <Heading size={"lg"}>회원 등록</Heading>
+      <Box mt={10} textAlign="center">
         <Heading fontSize={"xl"} marginTop={"10px"} marginBottom={"10px"}>
-          BlockJobs의 서비스를 이용하시려면 회원 등록을 먼저 진행해주세요
+          BlockJobs의 서비스를 이용하시려면 회원 등록을 먼저 진행해주세요 <br />{" "}
+          (등록 시 토큰 사용을 위한 Approve를 승인해야합니다.)
         </Heading>
         <Flex height={"100%"} width={"100%"}>
           {selects.map((item: SelectTypes, idx) => {
@@ -97,7 +93,7 @@ function SelectPage({
         onClose={onCloseUser}
         rootJobs={rootJobs}
       />
-    </Flex>
+    </Box>
   );
 }
 

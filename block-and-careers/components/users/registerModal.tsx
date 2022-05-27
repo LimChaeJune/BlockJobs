@@ -23,11 +23,11 @@ import { useCallback } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { JobEntity } from "restapi/jobs/get";
-import {
-  AccountUserType,
-  RegisterUser,
-  RegisterUser_Body,
-} from "restapi/users/registerUser";
+import { RegisterUser } from "restapi/users/post";
+
+import { AccountUserType } from "restapi/types/account";
+import { RegisterUser_Body } from "restapi/types/user";
+import { useBlockJobs } from "@hooks/BlockJobsContract";
 
 interface IFormInput {
   phone: string;
@@ -51,6 +51,7 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<IFormInput>();
+  const { approveUser } = useBlockJobs();
 
   const closeClick = useCallback(() => {
     if (confirm("회원등록을 취소하시겠습니까?")) {
@@ -60,6 +61,8 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
   }, []);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    await approveUser(10000);
+
     const RegisterUser_Body: RegisterUser_Body = {
       email: data.email,
       jobsId: data.jobsId,
@@ -70,7 +73,6 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
         accountUserType: AccountUserType.Customer,
       },
     };
-    console.log(RegisterUser_Body);
     const res = await RegisterUser(RegisterUser_Body);
     console.log(res);
     if (res.status == 200) {
