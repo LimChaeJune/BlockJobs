@@ -90,7 +90,13 @@ const NavBar = (): JSX.Element => {
   }, [web3State.address]);
 
   return (
-    <Box borderBottom={`1px solid ${colors.secondery[300]}`}>
+    <Box
+      borderBottom={`1px solid ${colors.secondery[300]}`}
+      position={"fixed"}
+      zIndex={1000}
+      width={"100%"}
+      background={"white"}
+    >
       <Flex
         paddingLeft="10%"
         paddingRight="10%"
@@ -216,7 +222,7 @@ const Link_Btn = styled.span`
   margin-left:12px;
   cursor:pointer;
   &:hover {
-    color: ${colors.primary[400]};
+    color: ${colors.highlight};
   }
 `;
 
