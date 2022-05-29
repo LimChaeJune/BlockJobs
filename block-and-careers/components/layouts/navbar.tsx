@@ -92,17 +92,18 @@ const NavBar = (): JSX.Element => {
   return (
     <Box
       borderBottom={`1px solid ${colors.secondery[300]}`}
-      position={"fixed"}
-      zIndex={1000}
+      height="50px"
+      zIndex={"9999"}
       width={"100%"}
+      position={"fixed"}
       background={"white"}
     >
       <Flex
         paddingLeft="10%"
         paddingRight="10%"
-        height="50px"
         justifyContent="center"
         alignItems="center"
+        height={"100%"}
       >
         <Box>
           <Link href={"/"}>

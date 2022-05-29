@@ -28,6 +28,7 @@ import { AccountUserType } from "@restapi/types/account";
 import { useRecoilState } from "recoil";
 import { initialWeb3, Web3_Model } from "@state/web3/account";
 import { useCallback } from "react";
+import { useBlockJobs } from "@hooks/BlockJobsContract";
 
 interface IFormInput {
   title: string;
@@ -49,6 +50,7 @@ interface modalInput {
 function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
   const router = useRouter();
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
+  const { approveUser } = useBlockJobs();
   const {
     handleSubmit,
     register,
@@ -64,6 +66,8 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
   }, []);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    await approveUser(10000);
+
     const RegisterEnter_Body: RegisterEnterprise_Body = {
       email: data.email,
       industryId: data.industryId,

@@ -26,6 +26,7 @@ import {
   user_career_list,
   token_sawp,
 } from "@components/utils/routing";
+import shadows from "themes/foundations/shadows";
 interface LinkItemProps {
   name: string;
   icon: IconType;
@@ -48,11 +49,13 @@ export default function UserSideBar({
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Box minH="100vh" bg={useColorModeValue("white", "gray.900")}>
+    <Box minH="100%" bg={useColorModeValue("gray.100", "gray.900")}>
       <SidebarContent
         onClose={() => onClose}
         display={{ base: "none", md: "block" }}
         navTitle={title}
+        mt={"16px"}
+        boxShadow={shadows.outline}
       />
       <Drawer
         autoFocus={false}
@@ -69,9 +72,14 @@ export default function UserSideBar({
       </Drawer>
       {/* mobilenav */}
       <MobileNav display={{ base: "flex", md: "none" }} onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4">
+      <Flex
+        ml={{ base: 0, md: 60 }}
+        p="4"
+        flexDirection={"column"}
+        gap={"30px"}
+      >
         {children}
-      </Box>
+      </Flex>
     </Box>
   );
 }
@@ -91,11 +99,11 @@ const SidebarContent = ({ navTitle, onClose, ...rest }: SidebarProps) => {
       borderRightColor={useColorModeValue("gray.200", "gray.700")}
       w={{ base: "full", md: 60 }}
       pos="fixed"
-      h="full"
+      h={{ base: "flex", md: "auto" }}
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Heading>{navTitle}</Heading>
+        <Heading fontSize={"2xl"}>{navTitle}</Heading>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
@@ -129,6 +137,7 @@ const NavItem = ({ icon, isActive, children, href, ...rest }: NavItemProps) => {
         align="center"
         p="4"
         mx="4"
+        mb={2}
         borderRadius="lg"
         role="group"
         cursor="pointer"
