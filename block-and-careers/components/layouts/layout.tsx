@@ -12,10 +12,10 @@ const BlockJobLayout = ({ children }: Props): JSX.Element => {
     <>
       <Box>
         <NavBar />
-        <Box width={"100%"} height={"50px"} />
+        <Box width={"100%"} height={"80px"} />
         <Box
           width={"100%"}
-          minHeight={"calc(100vh - 50px)"}
+          minHeight={"calc(100vh - 80px)"}
           bg={colors.secondery[100]}
         >
           <Box

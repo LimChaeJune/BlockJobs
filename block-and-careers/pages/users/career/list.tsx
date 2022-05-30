@@ -1,18 +1,21 @@
 import ProfileLayout from "@components/layouts/profilelayout";
 import { useRecoilState } from "recoil";
+
 import { Account_Model } from "@restapi/types/account";
 import { Career_Item } from "@restapi/types/career";
+import { EnterPrise_Entity } from "@restapi/types/enterprise";
+
 import { account_state } from "@state/web3/account";
-import { useEffect, useState } from "react";
+import { getEnterSelector } from "@state/enterprise";
+
 import { useBlockJobs } from "@hooks/BlockJobsContract";
 import { Profile_Box, Profile_Info } from "../profile";
 import { Box, Flex, Heading } from "@chakra-ui/react";
-import colors from "themes/foundations/colors";
-import { Item } from "framer-motion/types/components/Reorder/Item";
-import shadows from "themes/foundations/shadows";
+import { useEffect, useState } from "react";
 
 const CareerList = () => {
   const [contractCareer, setCareer] = useState<Career_Item[]>([]);
+
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
   const { getCareerByWorker } = useBlockJobs();
 
@@ -32,7 +35,9 @@ const CareerList = () => {
       title="경력현황"
       navbartitle={`${accountstate?.user.name}님`}
     >
-      <Profile_Box boxTitle="검증되지 않은 경력"></Profile_Box>
+      <Profile_Box boxTitle="검증되지 않은 경력">
+        <Flex></Flex>
+      </Profile_Box>
       <Profile_Box boxTitle="검증된 경력">
         <Flex gap={5} direction={"column"}>
           {contractCareer.map((item, idx) => {
@@ -49,6 +54,8 @@ interface card_props {
 }
 
 const Career_Card = ({ career }: card_props) => {
+  const [enter] = useRecoilState<EnterPrise_Entity[]>(getEnterSelector);
+
   return (
     <>
       <Box
@@ -58,7 +65,10 @@ const Career_Card = ({ career }: card_props) => {
         padding={5}
       >
         <Heading fontSize={"xl"} mb={3}>
-          {career.company}
+          {
+            enter.find((e) => e.account.accountAddress === career.company)
+              ?.title
+          }
         </Heading>
 
         <Flex>
@@ -72,6 +82,7 @@ const Career_Card = ({ career }: card_props) => {
             career.fnsDt.toNumber()
           ).toLocaleDateString()} `}</Profile_Info>
         </Flex>
+        <Profile_Info title="근무내용">{`${career.description}`}</Profile_Info>
       </Box>
     </>
   );

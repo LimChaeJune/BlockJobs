@@ -73,7 +73,9 @@ export const useWeb3 = () => {
 
         if (web3Modal) {
           setBalance(
-            ethers.utils.formatEther(await Contract.BalanceOf(ConnWeb3.address))
+            ethers.utils.formatEther(
+              await Contract?.BalanceOf(ConnWeb3?.address)
+            )
           );
         }
         return Contract;
