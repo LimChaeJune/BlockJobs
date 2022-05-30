@@ -14,7 +14,7 @@ export const enterprise_recruit_list = "/enterprise/list";
 export const enterprise_profile = "/enterprise/profile";
 
 // 유저 경력현황
-export const user_career_list = "/user/career/list";
+export const user_career_list = "/users/career/list";
 // 유저 프로필
 export const user_profile = "/users/profile";
 

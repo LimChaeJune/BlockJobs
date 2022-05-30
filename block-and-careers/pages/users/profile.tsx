@@ -13,6 +13,7 @@ import {
 import { Account_Model } from "@restapi/types/account";
 import colors from "themes/foundations/colors";
 import shadows from "themes/foundations/shadows";
+import ProfileLayout from "@components/layouts/profilelayout";
 
 const Profile_User = () => {
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
@@ -20,24 +21,29 @@ const Profile_User = () => {
   const [balanceState] = useRecoilState<string | undefined>(balance);
 
   return (
-    <Box width={"100%"}>
-      <Heading>{`${accountstate?.user.name}님`}</Heading>
-      <UserNav title="프로필">
-        <Profile_Box boxTitle="지갑정보">
-          <Profile_Info title="지갑 주소">{`${accountstate?.accountAddress}`}</Profile_Info>
-          <Profile_Info title="보유량">{`${balanceState} JJC`}</Profile_Info>
-        </Profile_Box>
+    <ProfileLayout title="프로필" navbartitle={`${accountstate?.user.name}님`}>
+      <Profile_Box boxTitle="정보">
+        <Profile_Info title="기본 이력서">국민대 소프트웨어융합</Profile_Info>
+        <Profile_Info title="학교">국민대 소프트웨어융합</Profile_Info>
+      </Profile_Box>
 
-        <Profile_Box boxTitle="직무">
-          <Box>{`BJC - ${balanceState}`}</Box>
-        </Profile_Box>
+      <Profile_Box boxTitle="지갑정보">
+        <Profile_Info title="지갑 주소">{`${accountstate?.accountAddress}`}</Profile_Info>
+        <Profile_Info title="토큰 보유량">{`${balanceState} JJC`}</Profile_Info>
+      </Profile_Box>
 
-        <Profile_Box boxTitle="지갑정보">
-          <Box>{`${web3state?.address}`}</Box>
-          <Box>{`BJC - ${balanceState}`}</Box>
-        </Profile_Box>
-      </UserNav>
-    </Box>
+      <Profile_Box boxTitle="전문분야">
+        <Profile_Info title="직군">{`${
+          accountstate?.user.job.find((e) => e.level == 0)?.title
+        }`}</Profile_Info>
+        <Profile_Info title="직무">{`${accountstate?.user.job
+          .filter((e) => e.level > 0)
+          .map((r) => r.title)}`}</Profile_Info>
+        <Profile_Info title="경력">{`${accountstate?.user.job
+          .filter((e) => e.level > 0)
+          .map((r) => r.title)}`}</Profile_Info>
+      </Profile_Box>
+    </ProfileLayout>
   );
 };
 
@@ -45,7 +51,7 @@ interface Box_Props {
   boxTitle: string;
   children: ReactNode;
 }
-const Profile_Box = ({ boxTitle, children }: Box_Props) => {
+export const Profile_Box = ({ boxTitle, children }: Box_Props) => {
   return (
     <Box
       w={"100%"}
@@ -67,7 +73,7 @@ interface Info_Props {
   children: ReactNode;
 }
 
-const Profile_Info = ({ title, children }: Info_Props) => {
+export const Profile_Info = ({ title, children }: Info_Props) => {
   return (
     <Flex w={"100%"} mb={"1em"} gap={"5px"} flexDirection={"column"}>
       <Heading fontSize={"md"} color={`${colors.secondery[500]}`}>

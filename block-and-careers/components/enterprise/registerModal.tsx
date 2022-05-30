@@ -66,7 +66,7 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
   }, []);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    await approveUser(10000);
+    // await approveUser(10000);
 
     const RegisterEnter_Body: RegisterEnterprise_Body = {
       email: data.email,

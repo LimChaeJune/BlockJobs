@@ -1,24 +1,7 @@
 import { BigNumber } from "ethers";
 import { useCallback, useEffect } from "react";
 import { useWeb3 } from "./Web3Client";
-
-enum CareerStatus {
-  Wait = 0,
-  approve = 1,
-  reject = 2,
-}
-
-interface Career_Item {
-  id: number;
-  roles: string[];
-  description: string;
-  worker: string;
-  company: string;
-  stDt: number;
-  fnsDt: number;
-  status: CareerStatus;
-}
-
+import { CareerStatus, Career_Item } from "@restapi/types/career";
 interface props_createCareer {
   myRoles: string[];
   description: string;
@@ -150,7 +133,11 @@ export const useBlockJobs = () => {
 
   // 신청인 지갑주소 기준으로 커리어 조회
   const getCareerByWorker = useCallback(
-    async (user_address: string): Promise<Career_Item[]> => {
+    async (user_address: string | undefined): Promise<Career_Item[]> => {
+      if (user_address === undefined) {
+        return [];
+      }
+
       const careerByWorker = await contractState?.getCareerByWorker(
         user_address
       );

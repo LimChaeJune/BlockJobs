@@ -16,7 +16,7 @@ export interface User_Entity {
   phone: string;
   createAt: Date;
   profile: UserProfileEntity;
-  job: JobEntity;
+  job: JobEntity[];
 }
 
 export interface UserProfileEntity {
