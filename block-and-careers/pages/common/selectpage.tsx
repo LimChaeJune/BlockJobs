@@ -72,6 +72,7 @@ function SelectPage({
                 width={"50%"}
                 as={Button}
                 margin={"3px"}
+                bg={"white"}
                 onClick={() => {
                   ButtonClick(item.title);
                 }}

@@ -12,7 +12,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { ChangeEvent, useEffect, useState } from "react";
-import { EnterPrise_Entity } from "restapi/enterprise/get";
+import { EnterPrise_Entity } from "@restapi/types/enterprise";
 import colors from "themes/foundations/colors";
 
 interface modalInput {
@@ -74,21 +74,25 @@ function SearchEnterModal({
               <Td>주소</Td>
               <Td>사업자번호</Td>
             </Tr>
-            {resultEnterprise?.map((item: EnterPrise_Entity, idx) => {
-              return (
-                <Tr
-                  key={idx}
-                  cursor={"pointer"}
-                  _hover={{ background: `${colors.blue[100]}` }}
-                  onClick={() => TrItemClicked(item)}
-                >
-                  <Td>{item.title}</Td>
-                  <Td>{item.email}</Td>
-                  <Td>{item.address}</Td>
-                  <Td>{item.businessNumber}</Td>
-                </Tr>
-              );
-            })}
+            {resultEnterprise ? (
+              resultEnterprise?.map((item: EnterPrise_Entity, idx) => {
+                return (
+                  <Tr
+                    key={idx}
+                    cursor={"pointer"}
+                    _hover={{ background: `${colors.blue[100]}` }}
+                    onClick={() => TrItemClicked(item)}
+                  >
+                    <Td>{item.title}</Td>
+                    <Td>{item.email}</Td>
+                    <Td>{item.address}</Td>
+                    <Td>{item.businessNumber}</Td>
+                  </Tr>
+                );
+              })
+            ) : (
+              <Tr>등록되어 있는 기업이 없습니다.</Tr>
+            )}
           </Thead>
         </Table>
       </ModalContent>

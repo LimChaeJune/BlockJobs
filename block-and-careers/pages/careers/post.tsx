@@ -10,22 +10,18 @@ import {
   TagLabel,
   TagCloseButton,
   Box,
-  Heading,
-  Divider,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import { initialWeb3, Web3_Model } from "@state/web3/account";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
-import { useWeb3 } from "@hooks/Web3Client";
+import { ChangeEvent, useState } from "react";
 import SearchEnterModal from "@components/enterprise/searchEnterpriseModal";
 import { EnterPrise_Entity } from "@restapi/types/enterprise";
-import { AccountUserType } from "restapi/types/account";
 import { InferGetStaticPropsType } from "next";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
-import { BigNumber, ethers } from "ethers";
+import { GetAllEnterPrise } from "@restapi/enterprise/get";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
@@ -88,13 +84,14 @@ function Post({ enterprise }: InferGetStaticPropsType<typeof getStaticProps>) {
   //   console.log(errors.description);
   // };
 
-  const TagEnter = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && curr_role !== undefined) {
+  const AddTag = () => {
+    if (curr_role !== undefined) {
       setMyRoles([...myRoles, curr_role]);
-      setCurrRole(undefined);
+      setCurrRole("");
       setValue("roles", myRoles);
     }
   };
+
   const TagDelete = (tagItem: string) => {
     setMyRoles(myRoles.filter((e) => e !== tagItem));
   };
@@ -105,7 +102,6 @@ function Post({ enterprise }: InferGetStaticPropsType<typeof getStaticProps>) {
 
   return (
     <Box width={"100%"}>
-      <Divider mt={"20px"} mb={"20px"} />
       <Box>
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl
@@ -145,13 +141,17 @@ function Post({ enterprise }: InferGetStaticPropsType<typeof getStaticProps>) {
 
           <FormControl mt={"20px"}>
             <FormLabel>담당 직무/업무</FormLabel>
-            <Input
-              type={"text"}
-              value={curr_role}
-              placeholder="담당 직무를 입력해주세요"
-              onKeyDown={TagEnter}
-              onChange={changeTagValue}
-            />
+            <Flex>
+              <Input
+                type={"text"}
+                value={curr_role}
+                placeholder="담당 직무를 입력해주세요"
+                onChange={changeTagValue}
+              />
+              <Button ml={"10px"} onClick={AddTag}>
+                추가
+              </Button>
+            </Flex>
             {myRoles ? (
               <Flex mt={2} gap={2}>
                 {myRoles?.map((item, idx) => {
@@ -194,18 +194,9 @@ function Post({ enterprise }: InferGetStaticPropsType<typeof getStaticProps>) {
 }
 
 export async function getStaticProps() {
-  const enterprise: EnterPrise_Entity[] = [
-    {
-      title: "text",
-      description: "test",
-      account: {
-        accountAddress: "0x5D69803794eeA5ccF9963aAA1717012783A7cCF6",
-        accountProvider: "test",
-        userType: AccountUserType.Enterprise,
-      },
-      businessNumber: "1234-1234-123",
-    },
-  ];
+  const res = await GetAllEnterPrise();
+  console.log(res.data);
+  const enterprise: EnterPrise_Entity[] = res.data;
 
   return {
     props: {

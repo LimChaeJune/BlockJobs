@@ -61,7 +61,7 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
   }, []);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    await approveUser(10000);
+    // await approveUser(10000);
 
     const RegisterUser_Body: RegisterUser_Body = {
       email: data.email,

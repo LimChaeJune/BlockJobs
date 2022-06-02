@@ -1,19 +1,32 @@
 import BlockJobLayout from "@components/layouts/layout";
 import type { AppContext, AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, Spinner } from "@chakra-ui/react";
 import themes from "themes";
 import App from "next/app";
+import { Suspense } from "react";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <RecoilRoot>
-        <ChakraProvider resetCSS theme={themes}>
-          <BlockJobLayout>
-            <Component {...pageProps} />
-          </BlockJobLayout>
-        </ChakraProvider>
+        <Suspense
+          fallback={
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+              size="xl"
+            ></Spinner>
+          }
+        >
+          <ChakraProvider resetCSS theme={themes}>
+            <BlockJobLayout>
+              <Component {...pageProps} />
+            </BlockJobLayout>
+          </ChakraProvider>
+        </Suspense>
       </RecoilRoot>
     </>
   );

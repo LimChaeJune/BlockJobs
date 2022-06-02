@@ -25,11 +25,13 @@ import {
   MenuDivider,
   LinkBox,
 } from "@chakra-ui/react";
+import { AiOutlineCheckCircle } from "react-icons/ai";
 import colors from "themes/foundations/colors";
 import { utils } from "ethers";
 import { accountCheck } from "restapi/account/get";
 import styled from "@emotion/styled";
 import { AccountUserType, Account_Model } from "restapi/types/account";
+import shadows from "themes/foundations/shadows";
 
 const NavBar = (): JSX.Element => {
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
@@ -90,11 +92,40 @@ const NavBar = (): JSX.Element => {
   }, [web3State.address]);
 
   return (
-    <Box borderBottom={`1px solid ${colors.secondery[300]}`}>
+    <Box
+      borderBottom={`1px solid ${colors.secondery[300]}`}
+      height="80px"
+      zIndex={"2"}
+      width={"100%"}
+      position={"fixed"}
+      background={"white"}
+    >
+      <Flex mt={"5px"} height={"25px"} width={"auto"} justifyContent={"center"}>
+        <Flex
+          alignItems={"center"}
+          border={"1px solid gray"}
+          padding={"0 5px 0 5px"}
+          borderRadius={"md"}
+          height={"25px"}
+          _hover={{ bg: colors.secondery[300], cursor: "pointer" }}
+        >
+          <AiOutlineCheckCircle
+            style={{ color: "green", marginRight: "3px" }}
+          />
+          <ContractBtn
+            target={"_blank"}
+            rel="noopener noreferrer"
+            href={
+              "https://rinkeby.etherscan.io/address/0x09C0b2a052b34fDb8084B9b9E083CD0B49323005"
+            }
+          >
+            0x09C0b2a052b34fDb8084B9b9E083CD0B49323005
+          </ContractBtn>
+        </Flex>
+      </Flex>
       <Flex
         paddingLeft="10%"
         paddingRight="10%"
-        height="50px"
         justifyContent="center"
         alignItems="center"
       >
@@ -211,13 +242,17 @@ const NavBar = (): JSX.Element => {
 
 const Link_Btn = styled.span`
   font-weight: Bold;
-  margin-left:
   font-size: 16px;
-  margin-left:12px;
-  cursor:pointer;
+  margin-left: 12px;
+  cursor: pointer;
   &:hover {
-    color: ${colors.primary[400]};
+    color: ${colors.highlight};
   }
+`;
+
+const ContractBtn = styled.a`
+  font-weight: Bold;
+  font-size: 16px;
 `;
 
 export default NavBar;

@@ -15,28 +15,29 @@ import {
   FlexProps,
   Heading,
 } from "@chakra-ui/react";
-import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
-  FiMenu,
-} from "react-icons/fi";
+import { FiMail, FiUser, FiStar, FiMenu } from "react-icons/fi";
+import { HiOutlineSwitchHorizontal, HiPencil } from "react-icons/hi";
 import { IconType } from "react-icons";
 import { ReactText } from "react";
 import colors from "themes/foundations/colors";
-
+import { useRouter } from "next/router";
+import {
+  user_profile,
+  user_career_list,
+  token_sawp,
+} from "@components/utils/routing";
+import shadows from "themes/foundations/shadows";
 interface LinkItemProps {
   name: string;
   icon: IconType;
+  path: string;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: "Home", icon: FiHome },
-  { name: "Trending", icon: FiTrendingUp },
-  { name: "Explore", icon: FiCompass },
-  { name: "Favourites", icon: FiStar },
-  { name: "Settings", icon: FiSettings },
+  { name: "나의 프로필", icon: FiUser, path: user_profile },
+  { name: "경력현황", icon: HiPencil, path: user_career_list },
+  { name: "관심 공고", icon: FiStar, path: "" },
+  { name: "받은 제안", icon: FiMail, path: "" },
+  { name: "토큰 스왑", icon: HiOutlineSwitchHorizontal, path: token_sawp },
 ];
 
 export default function UserSideBar({
@@ -48,11 +49,13 @@ export default function UserSideBar({
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
+    <Box minH="100%" bg={useColorModeValue("gray.100", "gray.900")}>
       <SidebarContent
         onClose={() => onClose}
         display={{ base: "none", md: "block" }}
         navTitle={title}
+        mt={"16px"}
+        boxShadow={shadows.outline}
       />
       <Drawer
         autoFocus={false}
@@ -69,9 +72,14 @@ export default function UserSideBar({
       </Drawer>
       {/* mobilenav */}
       <MobileNav display={{ base: "flex", md: "none" }} onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4">
+      <Flex
+        ml={{ base: 0, md: 60 }}
+        p="4"
+        flexDirection={"column"}
+        gap={"30px"}
+      >
         {children}
-      </Box>
+      </Flex>
     </Box>
   );
 }
@@ -82,6 +90,8 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ navTitle, onClose, ...rest }: SidebarProps) => {
+  const route = useRouter();
+
   return (
     <Box
       bg={useColorModeValue("white", "gray.900")}
@@ -89,15 +99,20 @@ const SidebarContent = ({ navTitle, onClose, ...rest }: SidebarProps) => {
       borderRightColor={useColorModeValue("gray.200", "gray.700")}
       w={{ base: "full", md: 60 }}
       pos="fixed"
-      h="full"
+      h={{ base: "flex", md: "auto" }}
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Heading>{navTitle}</Heading>
+        <Heading fontSize={"2xl"}>{navTitle}</Heading>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
+        <NavItem
+          key={link.name}
+          icon={link.icon}
+          href={link.path}
+          isActive={route.pathname === link.path}
+        >
           {link.name}
         </NavItem>
       ))}
@@ -107,12 +122,14 @@ const SidebarContent = ({ navTitle, onClose, ...rest }: SidebarProps) => {
 
 interface NavItemProps extends FlexProps {
   icon: IconType;
+  isActive: boolean;
+  href: string;
   children: ReactText;
 }
-const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+const NavItem = ({ icon, isActive, children, href, ...rest }: NavItemProps) => {
   return (
     <Link
-      href="#"
+      href={href}
       style={{ textDecoration: "none" }}
       _focus={{ boxShadow: "none" }}
     >
@@ -120,25 +137,19 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
         align="center"
         p="4"
         mx="4"
+        mb={2}
         borderRadius="lg"
         role="group"
         cursor="pointer"
         _hover={{
-          bg: `${colors.blue[200]}`,
-          color: "white",
+          bg: `${colors.secondery[300]}`,
         }}
+        {...(isActive
+          ? { bg: `${colors.blue[100]}`, color: colors.highlight }
+          : null)}
         {...rest}
       >
-        {icon && (
-          <Icon
-            mr="4"
-            fontSize="16"
-            _groupHover={{
-              color: "white",
-            }}
-            as={icon}
-          />
-        )}
+        {icon && <Icon mr="4" fontSize="16" as={icon} />}
         {children}
       </Flex>
     </Link>

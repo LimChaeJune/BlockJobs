@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import styled from "@emotion/styled";
+import colors from "themes/foundations/colors";
 import NavBar from "./navbar";
 
 interface Props {
@@ -9,20 +10,25 @@ interface Props {
 const BlockJobLayout = ({ children }: Props): JSX.Element => {
   return (
     <>
-      <Container>
+      <Box>
         <NavBar />
-        <Box width={"100%"}>
+        <Box width={"100%"} height={"80px"} />
+        <Box
+          width={"100%"}
+          minHeight={"calc(100vh - 80px)"}
+          bg={colors.secondery[100]}
+        >
           <Box
             width={"1060px"}
             position={"relative"}
             alignItems={"center"}
             margin={"0 auto"}
-            p={"30px"}
+            pt={"30px"}
           >
             {children}
           </Box>
         </Box>
-      </Container>
+      </Box>
     </>
   );
 };
@@ -30,15 +36,12 @@ const BlockJobLayout = ({ children }: Props): JSX.Element => {
 const Container = styled.div`
   display::flex;
   justify-contents:center;
-  flex-direction:column;
-  min-height:100vh;  
+  flex-direction:column;  
 `;
 
 const Content = styled.div`
   display: flex;
   flex: 1;
- 
->
 `;
 
 export default BlockJobLayout;

@@ -71,9 +71,13 @@ export const useWeb3 = () => {
         SetWeb3Provider(web3Provider);
         SetWeb3(ConnWeb3);
 
-        setBalance(
-          ethers.utils.formatEther(await Contract.BalanceOf(ConnWeb3.address))
-        );
+        if (web3Modal) {
+          setBalance(
+            ethers.utils.formatEther(
+              await Contract?.BalanceOf(ConnWeb3?.address)
+            )
+          );
+        }
         return Contract;
       } catch (e) {
         console.log("web3 connection error", e);
