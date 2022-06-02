@@ -16,7 +16,7 @@ export const getEnterSelector = selector<EnterPrise_Entity[]>({
   get: async ({ get }) => {
     try {
       const res = await GetAllEnterPrise();
-      console.log(res);
+      console.log(res.data);
       return res.data;
     } catch (err) {
       throw err;

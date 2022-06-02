@@ -1,6 +1,6 @@
 import { theme } from "@chakra-ui/react";
 
-const primary = theme.colors.teal;
+const primary = theme.colors.whiteAlpha;
 const secondery = theme.colors.gray;
 const blue = theme.colors.twitter;
 const black = theme.colors.black;

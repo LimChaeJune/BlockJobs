@@ -25,7 +25,6 @@ const CareerList = () => {
         accountstate?.accountAddress
       );
       setCareer(value);
-      console.log(value);
     };
     fetch();
   }, [accountstate]);
@@ -41,7 +40,7 @@ const CareerList = () => {
       <Profile_Box boxTitle="검증된 경력">
         <Flex gap={5} direction={"column"}>
           {contractCareer.map((item, idx) => {
-            return <Career_Card career={item} />;
+            return <Career_Card key={idx} career={item} />;
           })}
         </Flex>
       </Profile_Box>
@@ -66,7 +65,7 @@ const Career_Card = ({ career }: card_props) => {
       >
         <Heading fontSize={"xl"} mb={3}>
           {
-            enter.find((e) => e.account.accountAddress === career.company)
+            enter?.find((e) => e.account.accountAddress === career.company)
               ?.title
           }
         </Heading>

@@ -95,7 +95,7 @@ const NavBar = (): JSX.Element => {
     <Box
       borderBottom={`1px solid ${colors.secondery[300]}`}
       height="80px"
-      zIndex={"9999"}
+      zIndex={"2"}
       width={"100%"}
       position={"fixed"}
       background={"white"}

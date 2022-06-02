@@ -35,14 +35,4 @@ export const balance = atom<string | undefined>({
   // dangerouslyAllowMutability: true,
 });
 
-export const getAccountExist = selector<boolean>({
-  key: "getAccountExist",
-  get: async ({ get }) => {
-    const address = get(initialWeb3)?.address;
-    if (address) {
-      const res = await axios.get(`account/CheckAccount/${address}`);
-      return res.data;
-    }
-    return false;
-  },
-});
+

@@ -10,15 +10,13 @@ import {
   TagLabel,
   TagCloseButton,
   Box,
-  Heading,
-  Divider,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import { initialWeb3, Web3_Model } from "@state/web3/account";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ChangeEvent, KeyboardEvent, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import SearchEnterModal from "@components/enterprise/searchEnterpriseModal";
 import { EnterPrise_Entity } from "@restapi/types/enterprise";
 import { InferGetStaticPropsType } from "next";
