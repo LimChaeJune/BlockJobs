@@ -3,10 +3,15 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useCallback, useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { balance, initialWeb3 } from "@state/web3/account";
+import { account_state, balance, initialWeb3 } from "@state/web3/account";
 import { Web3_Model } from "@state/web3/account";
 import { useToast } from "@chakra-ui/react";
 import { BlockJobs_ABI, Contract_Address } from "@state/datas/BlockJobs_ABI";
+import { Account_Model } from "@restapi/types/account";
+import { accountCheck } from "@restapi/account/get";
+import { newIdState } from "@state/user";
+import { useRouter } from "next/router";
+import { main_page } from "@components/utils/routing";
 
 const providerOptions = {
   walletconnect: {
@@ -28,9 +33,20 @@ if (typeof window !== "undefined") {
 
 export const useWeb3 = () => {
   const toast = useToast();
+  const router = useRouter();
+
+  // 등록된 회원인지
+  const [isnew, setisNewId] = useRecoilState<boolean>(newIdState);
+  // 컨트랙트 상태
   const [contractState, SetContract] = useState<ethers.Contract | undefined>();
+  // Web3 정보
   const [web3State, SetWeb3] = useRecoilState<Web3_Model>(initialWeb3);
+  // 지갑 상태
+  const [existAccountState, setExistAccount] =
+    useRecoilState<Account_Model | null>(account_state);
+  // 지갑 BJC 코인 Balance
   const setBalance = useSetRecoilState<string | undefined>(balance);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [modalProvider, SetModalProvider] = useState<any>(null);
   const [web3Provider, SetWeb3Provider] =
@@ -78,6 +94,9 @@ export const useWeb3 = () => {
             )
           );
         }
+
+        await setAccountExist();
+
         return Contract;
       } catch (e) {
         console.log("web3 connection error", e);
@@ -89,9 +108,10 @@ export const useWeb3 = () => {
   const disconnect = useCallback(async () => {
     if (web3Modal) {
       web3Modal.clearCachedProvider();
-      if (modalProvider) {
-        await modalProvider.disconnect();
-      }
+      // if (modalProvider) {
+      //   await modalProvider.disconnect();
+      // }
+      await logoutAccountExist();
 
       toast({
         title: "지갑연결을 해지하였습니다..",
@@ -105,28 +125,54 @@ export const useWeb3 = () => {
         network: null,
       };
       SetWeb3(DisConn);
+      router.push(main_page);
     } else {
       console.error("No Web3Modal");
     }
   }, []);
 
+  const logoutAccountExist = async () => {
+    await setExistAccount(null);
+    sessionStorage.removeItem("account");
+  };
+
+  const setAccountExist = async () => {
+    if (web3State?.address) {
+      await accountCheck(web3State.address)
+        .then((res) => {
+          if (!res.data) {
+            setisNewId(false);
+          }
+          setExistAccount(res.data);
+          console.log(res);
+          sessionStorage.setItem("account", JSON.stringify(res.data));
+        })
+        .catch((e) => {
+          console.log(e.message);
+        });
+    }
+  };
+
   useEffect(() => {
-    const connectContract = async () => {
-      if (web3Modal) {
-        const provider = await web3Modal.connect();
-        const web3Provider = new ethers.providers.Web3Provider(provider);
-        const signer = web3Provider?.getSigner();
-
-        const Contract = new ethers.Contract(
-          Contract_Address,
-          BlockJobs_ABI,
-          signer
-        );
-
-        SetContract(Contract);
+    console.log(isnew);
+    const effectaction = async () => {
+      if (web3State?.address) {
+        await accountCheck(web3State.address)
+          .then((res) => {
+            setExistAccount(res.data);
+            console.log(res);
+            sessionStorage.setItem("account", JSON.stringify(res.data));
+          })
+          .catch((e) => {
+            console.log(e.message);
+          });
       }
     };
-    connectContract();
+    effectaction();
+  }, [isnew]);
+
+  useEffect(() => {
+    setAccountExist();
   }, [web3State]);
 
   useEffect(() => {
@@ -140,6 +186,8 @@ export const useWeb3 = () => {
         });
 
         SetWeb3({ ...web3State, address: accounts[0] });
+
+        router.push("/");
       };
 
       const handleChainChanged = (_hexChainId: string) => {
@@ -184,6 +232,7 @@ export const useWeb3 = () => {
   return {
     connect,
     disconnect,
+    setAccountExist,
     contractState,
   };
 };

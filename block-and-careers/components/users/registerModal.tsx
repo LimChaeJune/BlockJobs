@@ -17,7 +17,7 @@ import {
   Select,
   Spacer,
 } from "@chakra-ui/react";
-import { initialWeb3, Web3_Model } from "@state/web3/account";
+import { account_state, initialWeb3, Web3_Model } from "@state/web3/account";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -25,9 +25,13 @@ import { useRecoilState } from "recoil";
 import { JobEntity } from "restapi/jobs/get";
 import { RegisterUser } from "restapi/users/post";
 
-import { AccountUserType } from "restapi/types/account";
+import { AccountUserType, Account_Model } from "restapi/types/account";
 import { RegisterUser_Body } from "restapi/types/user";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
+import { autoHyphen } from "@components/utils/regex";
+import { accountCheck } from "@restapi/account/get";
+import { newIdState } from "@state/user";
+import { AxiosError } from "axios";
 
 interface IFormInput {
   phone: string;
@@ -43,7 +47,10 @@ interface modalInput {
 }
 
 function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
+  const [isnew, setIsNewId] = useRecoilState<boolean>(newIdState);
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
+  const [existAccountState, setExistAccount] =
+    useRecoilState<Account_Model | null>(account_state);
   const router = useRouter();
   const {
     handleSubmit,
@@ -73,14 +80,17 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
         accountUserType: AccountUserType.Customer,
       },
     };
-    const res = await RegisterUser(RegisterUser_Body);
-    console.log(res);
-    if (res.status == 200) {
-      alert(
-        "사용자 생성을 완료했습니다.\r BlockJobs 서비스를 이용하실 수 있습니다."
-      );
-      router.push("/");
-    }
+    const res = await RegisterUser(RegisterUser_Body)
+      .then((res) => {
+        setIsNewId(true);
+        alert(
+          "사용자 생성을 완료했습니다.\r BlockJobs 서비스를 이용하실 수 있습니다."
+        );
+        router.push("/");
+      })
+      .catch((ex) => {
+        alert(ex.response.data.message);
+      });
   };
 
   return (
@@ -128,7 +138,8 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
               <FormLabel htmlFor="phone">휴대폰 번호</FormLabel>
               <Input
                 id="phone"
-                placeholder="(예시) 01068617798"
+                onInput={autoHyphen}
+                placeholder="(예시) 010-6861-7798"
                 {...register("phone", {
                   required: "휴대폰 번호는 필수 입력 항목입니다.",
                 })}

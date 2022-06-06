@@ -64,10 +64,8 @@ const Career_Card = ({ career }: card_props) => {
         padding={5}
       >
         <Heading fontSize={"xl"} mb={3}>
-          {
-            enter?.find((e) => e.account.accountAddress === career.company)
-              ?.title
-          }
+          {enter?.find((e) => e.account.accountAddress === career.company)
+            ?.title ?? "DB에 등록되지 않은 지갑주소"}
         </Heading>
 
         <Flex>

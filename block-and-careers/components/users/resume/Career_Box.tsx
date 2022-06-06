@@ -8,121 +8,145 @@ import {
   List,
   ListItem,
   CloseButton,
+  Divider,
 } from "@chakra-ui/react";
 import { Input_Box, TextArea_Box } from "@components/utils/Input_Box";
 import { useCallback, useState } from "react";
 import colors from "themes/foundations/colors";
-import { profile_career, UserCareerForm } from "@state/user";
+import { profile_career } from "@state/user";
 import { useRecoilState } from "recoil";
 import { EnterPrise_Entity } from "@restapi/types/enterprise";
 import { getEnterSelector } from "@state/enterprise";
 import DateInput from "@components/utils/date_Input";
+import { numberonly } from "@components/utils/regex";
+import { UserCareerEntity } from "@restapi/types/user";
 
 interface Career_Box_props {
-  career: UserCareerForm;
+  career: UserCareerEntity;
 }
 
 const Career_Box = ({ career }: Career_Box_props) => {
-  const [educationState, setcareer] = useState<UserCareerForm>(career);
   const [careerState, setCareer] =
-    useRecoilState<UserCareerForm[]>(profile_career);
+    useRecoilState<UserCareerEntity[]>(profile_career);
+
+  function UptItem<T>(setItem: T, name: string) {
+    setCareer(
+      careerState.map((item: UserCareerEntity) => {
+        return item.id === career.id ? { ...item, [name]: setItem } : item;
+      })
+    );
+  }
 
   const companySelect = useCallback(
-    (company: EnterPrise_Entity) => {},
+    (company: EnterPrise_Entity) => {
+      setCareer(
+        careerState.map((item: UserCareerEntity) => {
+          return item.id === career.id
+            ? { ...item, company: company.account.accountAddress }
+            : item;
+        })
+      );
+    },
     [career]
   );
 
-  return (
-    <Flex
-      width={"100%"}
-      borderTop={`1px solid ${colors.secondery[300]}`}
-      p={"15px 0px 15px 15px"}
-    >
-      <Box mr={"10px"}>
-        <Checkbox>재직중</Checkbox>
-        <Flex
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          mb={"10px"}
-        >
-          <span>
-            <DateInput
-              value={educationState.startYear}
-              type={"number"}
-              width={"50px"}
-              placeholder="YYYY"
-              onChange={(e) =>
-                setcareer({
-                  ...educationState,
-                  startYear: parseInt(e.target.value),
-                })
-              }
-            />
-            .
-            <DateInput
-              value={educationState.startMonth}
-              type={"number"}
-              width={"35px"}
-              placeholder="MM"
-              ml={1}
-              onChange={(e) =>
-                setcareer({
-                  ...educationState,
-                  endMonth: parseInt(e.target.value),
-                })
-              }
-            />
-          </span>
-          -
-          <span>
-            <DateInput
-              value={educationState.endYear}
-              type={"number"}
-              placeholder="YYYY"
-              width={"50px"}
-              onChange={(e) =>
-                setcareer({
-                  ...educationState,
-                  endYear: parseInt(e.target.value),
-                })
-              }
-            />
-            .
-            <DateInput
-              value={educationState.endMonth}
-              type={"number"}
-              width={"35px"}
-              placeholder="MM"
-              onChange={(e) =>
-                setcareer({
-                  ...educationState,
-                  endMonth: parseInt(e.target.value),
-                })
-              }
-            />
-          </span>
-        </Flex>
+  const Close_Btn_Cllick = useCallback(() => {
+    if (careerState.length === 1) {
+      return;
+    }
 
-        <Flex gap={"5px"} flexDir={"column"}>
-          <CompanyAutoComplete CompanyClick={companySelect} />
-          <Input_Box
-            title="직무"
-            placeholder="(예: 프론트 엔드, 백엔드, 디자인)"
-          />
-        </Flex>
-      </Box>
-      <TextArea_Box
-        title="근무 내용 및 성과"
-        height={"100%"}
-        value={educationState.description}
-        placeholder="(예: OO 웹사이트 화면 개발)"
-      />
-      <CloseButton
-        color={colors.secondery[100]}
-        ml={"10px"}
-        fontSize={"xl"}
-      ></CloseButton>
-    </Flex>
+    setCareer(careerState.filter((e) => e.id !== career.id));
+  }, [careerState]);
+
+  return (
+    <>
+      <Divider />
+      <Flex width={"100%"} p={"15px 0px 15px 15px"}>
+        <Box mr={"10px"}>
+          <Checkbox
+            isChecked={career.currentRunning}
+            onChange={(e) =>
+              UptItem<boolean>(e.target.checked, "currentRunning")
+            }
+          >
+            재직중
+          </Checkbox>
+          <Flex
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            mb={"10px"}
+          >
+            <span>
+              <DateInput
+                value={career.startYear}
+                width={"50px"}
+                placeholder="YYYY"
+                maxLength={4}
+                onChange={(e) =>
+                  UptItem<number>(parseInt(e.target.value), "startYear")
+                }
+              />
+              .
+              <DateInput
+                value={career.startMonth}
+                width={"35px"}
+                placeholder="MM"
+                maxLength={2}
+                onChange={(e) =>
+                  UptItem<number>(parseInt(e.target.value), "startMonth")
+                }
+              />
+            </span>
+            -
+            <span>
+              <DateInput
+                value={career.endYear}
+                placeholder="YYYY"
+                width={"50px"}
+                maxLength={4}
+                onChange={(e) =>
+                  UptItem<number>(parseInt(e.target.value), "endYear")
+                }
+              />
+              .
+              <DateInput
+                value={career.endMonth}
+                width={"35px"}
+                placeholder="MM"
+                maxLength={2}
+                onChange={(e) =>
+                  UptItem<number>(parseInt(e.target.value), "endMonth")
+                }
+              />
+            </span>
+          </Flex>
+
+          <Flex gap={"5px"} flexDir={"column"}>
+            <CompanyAutoComplete CompanyClick={companySelect} />
+            <Input_Box
+              value={career.roles}
+              title="직무 (,로 구분)"
+              placeholder="(예: 프론트 엔드, 백엔드)"
+              onChange={(e) => UptItem<string>(e.target.value, "roles")}
+              _placeholder={{ fontSize: "14px" }}
+            />
+          </Flex>
+        </Box>
+        <TextArea_Box
+          title="근무 내용 및 성과"
+          height={"100%"}
+          value={career.description}
+          onChange={(e) => UptItem<string>(e.target.value, "description")}
+          placeholder="(예: OO 웹사이트 화면 개발)"
+        />
+        <CloseButton
+          color={colors.secondery[100]}
+          ml={"10px"}
+          fontSize={"xl"}
+          onClick={Close_Btn_Cllick}
+        ></CloseButton>
+      </Flex>
+    </>
   );
 };
 

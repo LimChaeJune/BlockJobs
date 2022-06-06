@@ -7,8 +7,14 @@ import {
   Textarea,
   TextareaProps,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import colors from "themes/foundations/colors";
+
+interface Custom_Box_props {
+  title: string;
+  IsFocus: boolean;
+  children: ReactNode;
+}
 
 interface Input_Box_props extends InputProps {
   title: string;
@@ -93,4 +99,28 @@ const TextArea_Box = ({ title, ...rest }: TextArea_Box_props) => {
   );
 };
 
-export { Input_Box, TextArea_Box };
+const Custom_Box = ({ IsFocus, title, children }: Custom_Box_props) => {
+  const [isFocus, setFocus] = useState<boolean>(IsFocus);
+
+  return (
+    <Box
+      flex={1}
+      border={
+        isFocus
+          ? `1px solid ${colors.blue[500]}`
+          : `1px solid ${colors.secondery[300]}`
+      }
+      borderRadius={"sm"}
+      pt={1}
+      pl={2}
+    >
+      <Text color={colors.secondery[400]} fontSize={"sm"}>
+        {title}
+      </Text>
+
+      {children}
+    </Box>
+  );
+};
+
+export { Input_Box, TextArea_Box, Custom_Box };

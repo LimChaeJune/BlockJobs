@@ -34,5 +34,3 @@ export const balance = atom<string | undefined>({
   default: undefined,
   // dangerouslyAllowMutability: true,
 });
-
-
