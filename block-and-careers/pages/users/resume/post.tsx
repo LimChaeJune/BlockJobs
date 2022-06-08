@@ -13,22 +13,18 @@ import { useCallback, useEffect, useState } from "react";
 import colors from "themes/foundations/colors";
 import {
   profile_Education,
-  profile_career,
   profile_Certification,
   profile_Portfolio,
-  getResumeSelector,
   resumeState,
 } from "@state/user";
 import { useRecoilState } from "recoil";
 import Resume_Box from "@components/users/resume/Resume_Box";
 import Education_Box from "@components/users/resume/Education_Box";
-import Career_Box from "@components/users/resume/Career_Box";
 import Certification_Box from "@components/users/resume/Certification_Box";
 import Portfolio_Box from "@components/users/resume/portfolio_Box";
 import { autoHyphen, autoHyphen_birth } from "@components/utils/regex";
 import { account_state } from "@state/web3/account";
 import {
-  UserCareerEntity,
   UserCertificationEntity,
   UserEducationEntity,
   UserPortfolioEntity,
@@ -49,8 +45,6 @@ const ResumeEdit = () => {
 
   const [educationState, setEducation] =
     useRecoilState<UserEducationEntity[]>(profile_Education);
-  const [careerState, setCareer] =
-    useRecoilState<UserCareerEntity[]>(profile_career);
   const [certState, setCert] = useRecoilState<UserCertificationEntity[]>(
     profile_Certification
   );
@@ -87,15 +81,6 @@ const ResumeEdit = () => {
     setEducation([...educationState, neweducation]);
   }, [educationState]);
 
-  // 경력 박스 추가
-  const addCareerBox = useCallback(() => {
-    const newcareer: UserCareerEntity = {
-      id: uuid(),
-      currentRunning: false,
-    };
-    setCareer([...careerState, newcareer]);
-  }, [careerState]);
-
   // 자격증 박스 추가
   const addCertBox = useCallback(() => {
     const newcert: UserCertificationEntity = {
@@ -125,7 +110,6 @@ const ResumeEdit = () => {
         ...userResume,
         title: userResume.title,
         description: userResume.description,
-        careers: careerState,
         portfolioes: portState,
         certifications: certState,
         educations: educationState,
@@ -147,13 +131,11 @@ const ResumeEdit = () => {
       SetResume(newResume);
       addPortfolio();
       addCertBox();
-      addCareerBox();
       addEducationBox();
     } else {
       const uptResume = resumes.find((e) => e.resumeId == routeId);
       SetResume(uptResume);
       setEducation(uptResume?.educations ?? []);
-      setCareer(uptResume?.careers ?? []);
       setCert(uptResume?.certifications ?? []);
       setPortfolio(uptResume?.portfolioes ?? []);
     }
@@ -210,7 +192,7 @@ const ResumeEdit = () => {
                 <Input_Box
                   title="생년월일"
                   type={"text"}
-                  value={user?.birthday.substring(0, 10)}
+                  value={user?.birthday?.substring(0, 10)}
                   onChange={(e) => {
                     UptUserItem<string>(e.target.value, "birthday");
                   }}
@@ -291,20 +273,6 @@ const ResumeEdit = () => {
           >
             {educationState.map((education, idx) => {
               return <Education_Box key={idx} education={education} />;
-            })}
-          </Flex>
-        </Resume_Box>
-
-        <Resume_Box title="경력" comment="최신순으로 작성해주세요">
-          <AddButton onClick={() => addCareerBox()}></AddButton>
-          <Flex
-            gap={3}
-            margin={3}
-            direction={"column"}
-            justifyContent={"between"}
-          >
-            {careerState.map((career, idx) => {
-              return <Career_Box key={idx} career={career} />;
             })}
           </Flex>
         </Resume_Box>

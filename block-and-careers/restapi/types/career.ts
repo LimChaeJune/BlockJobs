@@ -1,9 +1,9 @@
 import { BigNumber } from "ethers";
 
 export enum CareerStatus {
-  Wait = 0,
-  approve = 1,
-  reject = 2,
+  대기중 = 0,
+  승인 = 1,
+  거절 = 2,
 }
 
 export interface Career_Item {

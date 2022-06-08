@@ -86,7 +86,6 @@ export const useWeb3 = () => {
         SetModalProvider(provider);
         SetWeb3Provider(web3Provider);
         SetWeb3(ConnWeb3);
-
         if (web3Modal) {
           setBalance(
             ethers.utils.formatEther(
@@ -94,8 +93,6 @@ export const useWeb3 = () => {
             )
           );
         }
-
-        await setAccountExist();
 
         return Contract;
       } catch (e) {
@@ -154,13 +151,26 @@ export const useWeb3 = () => {
   };
 
   useEffect(() => {
-    console.log(isnew);
+    const connectContract = async () => {
+      if (web3Modal) {
+        const provider = await web3Modal.connect();
+        const web3Provider = new ethers.providers.Web3Provider(provider);
+        const signer = web3Provider?.getSigner();
+
+        const Contract = new ethers.Contract(
+          Contract_Address,
+          BlockJobs_ABI,
+          signer
+        );
+
+        SetContract(Contract);
+      }
+    };
     const effectaction = async () => {
       if (web3State?.address) {
         await accountCheck(web3State.address)
           .then((res) => {
             setExistAccount(res.data);
-            console.log(res);
             sessionStorage.setItem("account", JSON.stringify(res.data));
           })
           .catch((e) => {
@@ -169,11 +179,12 @@ export const useWeb3 = () => {
       }
     };
     effectaction();
-  }, [isnew]);
+    connectContract();
+  }, []);
 
   useEffect(() => {
     setAccountExist();
-  }, [web3State]);
+  }, [web3State?.address]);
 
   useEffect(() => {
     if (modalProvider?.on) {

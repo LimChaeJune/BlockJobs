@@ -12,7 +12,6 @@ interface props_createCareer {
 
 interface approve_Career {
   careerId: string;
-  amount: number;
   status: CareerStatus;
 }
 
@@ -88,29 +87,27 @@ export const useBlockJobs = () => {
       stDt,
       fnsDt,
     }: props_createCareer) => {
-      try {
-        const tx = await contractState?.createCareer(
-          myRoles,
-          description,
-          company_address,
-          new Date(stDt).getTime(),
-          new Date(fnsDt).getTime(),
-          10
-        );
-        const receipt = await tx.wait();
-        const data = receipt.logs[0].data;
-        console.log(data);
-      } catch (e) {
-        console.log(e);
-      }
+      const tx = await contractState?.createCareer(
+        myRoles,
+        description,
+        company_address,
+        new Date(stDt).getTime(),
+        new Date(fnsDt).getTime(),
+        10
+      );
+      const receipt = await tx.wait();
+      const data = receipt.logs[0].data;
+      console.log(receipt);
+      console.log(data);
+      return receipt;
     },
     [contractState]
   );
 
   const approveCareer = useCallback(
-    async ({ careerId, amount, status }: approve_Career) => {
+    async ({ careerId, status }: approve_Career) => {
       try {
-        const tx = await contractState?.approveCareer(careerId, amount, status);
+        const tx = await contractState?.approveCareer(careerId, 10, status);
         const receipt = await tx.wait();
         const data = receipt.logs[0].data;
       } catch (e) {
@@ -122,7 +119,7 @@ export const useBlockJobs = () => {
 
   // 회사의 지갑주소 기준으로 커리어 조회
   const getCareerByComany = useCallback(
-    async (enterprise_address: string): Promise<Career_Item[]> => {
+    async (enterprise_address: string | undefined): Promise<Career_Item[]> => {
       const careersByCompany = await contractState?.getCareerByComany(
         enterprise_address
       );

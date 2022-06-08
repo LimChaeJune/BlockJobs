@@ -39,7 +39,6 @@ export interface UserResumeEntity {
   educations?: UserEducationEntity[];
   certifications?: UserCertificationEntity[];
   portfolioes?: UserPortfolioEntity[];
-  careers?: UserCareerEntity[];
 }
 
 export interface UserEducationEntity extends ProfileDate {
@@ -75,9 +74,9 @@ export interface UserPortfolioEntity {
   resumeId?: string;
 }
 
-export interface UserCareerEntity extends ProfileDate {
+export interface UserCareerEntity {
   id: string;
-  startDt?: Date;
+  stDt?: Date;
   fnsDt?: Date;
   companyAddress?: string;
   description?: string;
@@ -85,7 +84,26 @@ export interface UserCareerEntity extends ProfileDate {
   currentRunning: boolean;
   createAt?: Date;
   updateAt?: Date;
-  resumeId?: string;
+  userId: string;
+  transactionLink?: string;
+}
+
+export interface CreateCareerDto {
+  userId: string;
+  description: string;
+  companyAddress: string;
+  stDt: Date;
+  fnsDt: Date;
+  roles: string;
+}
+
+export interface UpdateCareerDto {
+  careerId: string;
+  description: string;
+  stDt: Date;
+  fnsDt: Date;
+  roles: string;
+  transactionId: string;
 }
 
 export enum ProfileStatus {

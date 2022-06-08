@@ -2,10 +2,10 @@ import { NavList, InavItem } from "@state/datas/navbar";
 import Link from "next/link";
 import { useWeb3 } from "@hooks/Web3Client";
 import {
-  career_post,
   enterprise_profile,
   link_selectpage,
   user_profile,
+  user_Token,
 } from "@components/utils/routing";
 import { Web3_Model, initialWeb3, account_state } from "states/web3/account";
 import { useCallback, useEffect } from "react";
@@ -182,11 +182,10 @@ const NavBar = (): JSX.Element => {
                     </MenuItem>
                     <MenuDivider />
                     <MenuItem>
-                      <Link href={career_post} passHref>
-                        경력 신청
+                      <Link href={user_Token} passHref>
+                        토큰
                       </Link>
                     </MenuItem>
-                    <MenuItem>경력 신청 현황</MenuItem>
                     <MenuItem>지원 현황</MenuItem>
                     <MenuItem>받은 제안</MenuItem>
                     <MenuDivider margin={0}></MenuDivider>

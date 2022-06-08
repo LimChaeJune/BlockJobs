@@ -1,7 +1,9 @@
 import { AxiosResponse } from "axios";
 import client from "../apiClient";
 import {
+  CreateCareerDto,
   RegisterUser_Body,
+  UpdateCareerDto,
   UserResumeEntity,
   User_Entity,
 } from "../types/user";
@@ -31,6 +33,24 @@ export const UptUserProfile = async (
 export const AddUserResume = async (body: UserResumeEntity) => {
   try {
     const res = await client.post("users/resume/add", body);
+    return res;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const AddUserCareer = async (body: CreateCareerDto) => {
+  try {
+    const res = await client.post("users/career", body);
+    return res;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const UpdateUserCareer = async (body: UpdateCareerDto) => {
+  try {
+    const res = await client.post("users/career/update", body);
     return res;
   } catch (err) {
     throw err;

@@ -37,12 +37,14 @@ const Portfolio_Box = ({ portfolio }: portfolio_props) => {
         <Input_Box
           value={portfolio.title}
           title="제목"
+          placeholder="예: 개인 블로그"
           onChange={(e) => UptItem<string>(e.target.value, "title")}
         />
         <Input_Box
           value={portfolio.link}
           boxProps={{ flex: 1 }}
           title="링크"
+          placeholder="http://"
           onChange={(e) => UptItem<string>(e.target.value, "link")}
         />
         <CloseButton

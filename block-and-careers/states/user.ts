@@ -44,12 +44,6 @@ export const profile_Education = atom<UserEducationEntity[]>({
   default: [],
 });
 
-export const profile_career = atom<UserCareerEntity[]>({
-  key: "careerState",
-
-  default: [],
-});
-
 export const profile_Certification = atom<UserCertificationEntity[]>({
   key: "certificationState",
 
