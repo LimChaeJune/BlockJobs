@@ -178,7 +178,7 @@ const Career_Card = ({ career }: card_props) => {
           await RejectOpen(e);
         });
     } catch (e) {
-      console.log(e.message);
+      console.log(e);
     }
   };
 

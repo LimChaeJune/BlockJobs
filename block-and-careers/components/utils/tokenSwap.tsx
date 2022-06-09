@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Heading, Input, Text } from "@chakra-ui/react";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { MdOutlineSwapVert } from "react-icons/md";
 import ethereum from "../../public/images/ethereum.png";
 import racun from "../../public/images/racun.jpg";
@@ -10,14 +10,20 @@ import { useBlockJobs } from "@hooks/BlockJobsContract";
 import LoadingModal from "./loadingModal";
 import { useContractModal } from "@hooks/ContractModalHook";
 import { ethers } from "ethers";
+import { numberDecimal, numberonly } from "./regex";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { account_state, balance, Web3_Model } from "@state/web3/account";
 
 const TokenSwap = () => {
   const { BalanceOf, Sell, Buy } = useBlockJobs();
 
-  const [fromCoin, setFromCoin] = useState<string>();
-  const [toCoin, setToCoin] = useState<string>();
-  const [fromValue, setFromValue] = useState<number>();
-  const [toValue, setToValue] = useState<number>();
+  const setBalance = useSetRecoilState<string | undefined>(balance);
+  const [fromCoin, setFromCoin] = useState<string>("ETH");
+  const [toCoin, setToCoin] = useState<string>("BRC");
+  const [fromValue, setFromValue] = useState<string>("");
+  const [toValue, setToValue] = useState<string>("");
+
+  const pool = 100000;
 
   const {
     isOpen,
@@ -33,11 +39,29 @@ const TokenSwap = () => {
 
   const Btn_Swap_Click = async () => {
     try {
-      await SignOpen(`${career.companyAddress}에게 경력 검증 신청`);
+      await SignOpen(`${fromCoin}을 ${toCoin}으로 스왑`);
 
-      await Buy(ethers.utils.parseEther(fromValue)));
+      await Buy(fromValue.toString())
+        .then(async (receipt) => {
+          console.log(receipt);
+          await SuccessOpen(receipt.transactionHash);
+          await setFromValue("");
+          await setToValue("");
+        })
+        .catch(async (e) => {
+          await RejectOpen(e);
+        });
     } catch (e) {
-      console.log(e.message);
+      console.log(e);
+    }
+  };
+
+  const FromValue_Changed = (e: ChangeEvent<HTMLInputElement>) => {
+    setFromValue(e.target.value);
+    if (parseFloat(e.target.value)) {
+      const fromValue = parseFloat(e.target.value);
+      const toValue = fromValue * pool;
+      setToValue(toValue.toString());
     }
   };
 
@@ -59,10 +83,12 @@ const TokenSwap = () => {
       >
         <Input
           value={fromValue}
+          onChange={FromValue_Changed}
           border={"none"}
           fontSize={"2xl"}
           placeholder={"0.0"}
           width={"100%"}
+          onInput={numberDecimal}
           _focus={{ border: "none" }}
         />
         <Flex
@@ -98,12 +124,15 @@ const TokenSwap = () => {
         _hover={{ border: "gray 1px solid" }}
       >
         <Input
-          value={fromValue}
+          value={toValue}
           border={"none"}
           fontSize={"2xl"}
           placeholder={"0.0"}
           width={"100%"}
+          type="number"
+          step="0.5"
           _focus={{ border: "none" }}
+          readOnly={true}
         />
         <Flex
           shadow={"xl"}
@@ -128,7 +157,12 @@ const TokenSwap = () => {
           <Text fontWeight={"bold"}>BJC</Text>
         </Flex>
       </Flex>
-      <Button width={"100%"} bg={colors.blue[300]} mt={"10px"} onClick={}>
+      <Button
+        width={"100%"}
+        bg={colors.blue[300]}
+        mt={"10px"}
+        onClick={Btn_Swap_Click}
+      >
         스왑
       </Button>
 

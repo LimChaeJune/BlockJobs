@@ -17,3 +17,7 @@ export const autoHyphen_birth = (e: ChangeEvent<HTMLInputElement>) => {
 export const numberonly = (e: ChangeEvent<HTMLInputElement>) => {
   e.target.value = e.target.value.replace(/[^0-9]/g, "");
 };
+
+export const numberDecimal = (e: ChangeEvent<HTMLInputElement>) => {
+  e.target.value = e.target.value.replace(/[^0-9.]/g, "");
+};

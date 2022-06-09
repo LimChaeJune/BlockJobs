@@ -91,8 +91,8 @@ const CareerList = () => {
         <Profile_Box boxTitle="검증을 신청받은 경력">
           <Flex gap={5} direction={"column"}>
             {contractCareer
-              ?.sort((x) => x.id)
-              .reverse()
+              ?.slice()
+              .sort((x) => x.id)
               .map((item, idx) => {
                 return (
                   <Contract_Career_Card
@@ -175,7 +175,6 @@ const Contract_Career_Card = ({
         >
           {CareerStatus[parseInt(career.status.toString())]}
         </Text>
-        <Text>{career.fnsDt.toString()}</Text>
       </Profile_Info>
       <Flex>
         <Profile_Info title="직무">{career.roles.join(", ")}</Profile_Info>

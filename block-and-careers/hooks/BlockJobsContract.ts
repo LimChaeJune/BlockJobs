@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { useCallback, useEffect } from "react";
 import { useWeb3 } from "./Web3Client";
 import { CareerStatus, Career_Item } from "@restapi/types/career";
@@ -55,9 +55,9 @@ export const useBlockJobs = () => {
 
   // Ether로 BJC 구매
   const Buy = useCallback(
-    async (amount: number) => {
+    async (amount: string) => {
       const tx = await contractState?.Buy({
-        value: amount,
+        value: ethers.utils.parseEther(amount),
       });
       const receipt = await tx.wait();
       const data = receipt.logs[0].data;
