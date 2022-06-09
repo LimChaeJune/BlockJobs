@@ -16,36 +16,78 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { FiMail, FiUser, FiStar, FiMenu } from "react-icons/fi";
-import { HiOutlineSwitchHorizontal, HiPencil } from "react-icons/hi";
+import { BsBuilding, BsCoin, BsNewspaper } from "react-icons/bs";
 import { IconType } from "react-icons";
 import { ReactText } from "react";
 import colors from "themes/foundations/colors";
 import { useRouter } from "next/router";
 import {
+  enterprise_career,
+  enterprise_profile,
+  enterprise_token,
+  user_Career,
   user_profile,
-  user_career_list,
-  token_sawp,
+  user_Token,
 } from "@components/utils/routing";
 import shadows from "themes/foundations/shadows";
+import { AccountUserType } from "@restapi/types/account";
+
 interface LinkItemProps {
   name: string;
   icon: IconType;
   path: string;
+  type: AccountUserType;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: "나의 프로필", icon: FiUser, path: user_profile },
-  { name: "경력현황", icon: HiPencil, path: user_career_list },
-  { name: "관심 공고", icon: FiStar, path: "" },
-  { name: "받은 제안", icon: FiMail, path: "" },
-  { name: "토큰 스왑", icon: HiOutlineSwitchHorizontal, path: token_sawp },
+  {
+    name: "나의 프로필",
+    icon: FiUser,
+    path: user_profile,
+    type: AccountUserType.Customer,
+  },
+  {
+    name: "토큰",
+    icon: BsCoin,
+    path: user_Token,
+    type: AccountUserType.Customer,
+  },
+  {
+    name: "신청 경력 현황",
+    icon: BsNewspaper,
+    path: user_Career,
+    type: AccountUserType.Customer,
+  },
+  // { name: "관심 공고", icon: FiStar, path: "" },
+  // { name: "받은 제안", icon: FiMail, path: "" },
+
+  {
+    name: "기업 정보",
+    icon: BsBuilding,
+    path: enterprise_profile,
+    type: AccountUserType.Enterprise,
+  },
+  {
+    name: "토큰",
+    icon: BsCoin,
+    path: enterprise_token,
+    type: AccountUserType.Enterprise,
+  },
+  {
+    name: "받은 경력 현황",
+    icon: BsNewspaper,
+    path: enterprise_career,
+    type: AccountUserType.Enterprise,
+  },
 ];
 
 export default function UserSideBar({
   title,
   children,
+  usertype,
 }: {
   title: string;
   children: ReactNode;
+  usertype: AccountUserType;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
@@ -56,6 +98,7 @@ export default function UserSideBar({
         navTitle={title}
         mt={"16px"}
         boxShadow={shadows.outline}
+        usertype={usertype}
       />
       <Drawer
         autoFocus={false}
@@ -67,7 +110,11 @@ export default function UserSideBar({
         size="full"
       >
         <DrawerContent>
-          <SidebarContent onClose={onClose} navTitle={title} />
+          <SidebarContent
+            onClose={onClose}
+            navTitle={title}
+            usertype={usertype}
+          />
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
@@ -87,9 +134,15 @@ export default function UserSideBar({
 interface SidebarProps extends BoxProps {
   navTitle: string;
   onClose: () => void;
+  usertype: AccountUserType;
 }
 
-const SidebarContent = ({ navTitle, onClose, ...rest }: SidebarProps) => {
+const SidebarContent = ({
+  navTitle,
+  onClose,
+  usertype,
+  ...rest
+}: SidebarProps) => {
   const route = useRouter();
 
   return (
@@ -106,7 +159,7 @@ const SidebarContent = ({ navTitle, onClose, ...rest }: SidebarProps) => {
         <Heading fontSize={"2xl"}>{navTitle}</Heading>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
-      {LinkItems.map((link) => (
+      {LinkItems.filter((e) => e.type == usertype).map((link) => (
         <NavItem
           key={link.name}
           icon={link.icon}

@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { useCallback, useEffect } from "react";
 import { useWeb3 } from "./Web3Client";
 import { CareerStatus, Career_Item } from "@restapi/types/career";
@@ -11,8 +11,7 @@ interface props_createCareer {
 }
 
 interface approve_Career {
-  careerId: string;
-  amount: number;
+  careerId: number;
   status: CareerStatus;
 }
 
@@ -56,13 +55,13 @@ export const useBlockJobs = () => {
 
   // Ether로 BJC 구매
   const Buy = useCallback(
-    async (amount: number) => {
+    async (amount: string) => {
       const tx = await contractState?.Buy({
-        value: amount,
+        value: ethers.utils.parseEther(amount),
       });
       const receipt = await tx.wait();
       const data = receipt.logs[0].data;
-      console.log(data);
+      return receipt;
     },
     [contractState]
   );
@@ -75,7 +74,7 @@ export const useBlockJobs = () => {
       });
       const receipt = await tx.wait();
       const data = receipt.logs[0].data;
-      console.log(data);
+      return receipt;
     },
     [contractState]
   );
@@ -88,31 +87,29 @@ export const useBlockJobs = () => {
       stDt,
       fnsDt,
     }: props_createCareer) => {
-      try {
-        const tx = await contractState?.createCareer(
-          myRoles,
-          description,
-          company_address,
-          new Date(stDt).getTime(),
-          new Date(fnsDt).getTime(),
-          10
-        );
-        const receipt = await tx.wait();
-        const data = receipt.logs[0].data;
-        console.log(data);
-      } catch (e) {
-        console.log(e);
-      }
+      const tx = await contractState?.createCareer(
+        myRoles,
+        description,
+        company_address,
+        new Date(stDt).getTime(),
+        new Date(fnsDt).getTime(),
+        10
+      );
+      const receipt = await tx.wait();
+      const data = receipt.logs[0].data;
+      console.log(receipt);
+      return receipt;
     },
     [contractState]
   );
 
   const approveCareer = useCallback(
-    async ({ careerId, amount, status }: approve_Career) => {
+    async ({ careerId, status }: approve_Career) => {
       try {
-        const tx = await contractState?.approveCareer(careerId, amount, status);
+        const tx = await contractState?.approveCareer(careerId, 10, status);
         const receipt = await tx.wait();
-        const data = receipt.logs[0].data;
+        console.log(receipt);
+        return receipt;
       } catch (e) {
         console.log(e);
       }
@@ -122,7 +119,7 @@ export const useBlockJobs = () => {
 
   // 회사의 지갑주소 기준으로 커리어 조회
   const getCareerByComany = useCallback(
-    async (enterprise_address: string): Promise<Career_Item[]> => {
+    async (enterprise_address: string | undefined): Promise<Career_Item[]> => {
       const careersByCompany = await contractState?.getCareerByComany(
         enterprise_address
       );

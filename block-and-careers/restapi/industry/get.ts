@@ -1,12 +1,7 @@
+import { IndustryEntity } from "@restapi/types/industry";
 import { AxiosResponse } from "axios";
 import client from "../apiClient";
 
-export interface IndustryEntity {
-  id: string;
-  title: string;
-  createAt: Date;
-  updateAt: Date;
-}
 
 export const GetIndustry = async (): Promise<
   AxiosResponse<IndustryEntity[]>

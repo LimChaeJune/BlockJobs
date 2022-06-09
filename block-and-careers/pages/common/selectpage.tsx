@@ -15,6 +15,7 @@ import colors from "themes/foundations/colors";
 import { GetRootJobs } from "restapi/jobs/get";
 import { InferGetStaticPropsType } from "next";
 import { GetIndustry } from "restapi/industry/get";
+import CenterLayout from "@components/layouts/centerlayout";
 
 function SelectPage({
   rootJobs,
@@ -52,49 +53,55 @@ function SelectPage({
   const selects: SelectTypes[] = selectList();
 
   return (
-    <Box w={"100%"}>
-      <Heading size={"lg"}>회원 등록</Heading>
-      <Box mt={10} textAlign="center">
-        <Heading fontSize={"xl"} marginTop={"10px"} marginBottom={"10px"}>
-          BlockJobs의 서비스를 이용하시려면 회원 등록을 먼저 진행해주세요 <br />{" "}
-          (등록 시 토큰 사용을 위한 Approve를 승인해야합니다.)
-        </Heading>
-        <Flex height={"100%"} width={"100%"}>
-          {selects.map((item: SelectTypes, idx) => {
-            return (
-              <Flex
-                key={idx}
-                justifyContent={"center"}
-                alignItems={"center"}
-                flexDirection={"column"}
-                border={`1px ${colors.secondery[300]} solid`}
-                height={"200px"}
-                width={"50%"}
-                as={Button}
-                margin={"3px"}
-                bg={"white"}
-                onClick={() => {
-                  ButtonClick(item.title);
-                }}
-              >
-                {item.title === "기업회원" ? <FaRegBuilding /> : <FaRegUser />}
-                <Text fontSize={"xl"}>{item.title}</Text>
-              </Flex>
-            );
-          })}
-        </Flex>
+    <CenterLayout>
+      <Box w={"100%"}>
+        <Heading size={"lg"}>회원 등록</Heading>
+        <Box mt={10} textAlign="center">
+          <Heading fontSize={"xl"} marginTop={"10px"} marginBottom={"10px"}>
+            BlockJobs의 서비스를 이용하시려면 회원 등록을 먼저 진행해주세요{" "}
+            <br /> (등록 시 토큰 사용을 위한 Approve를 승인해야합니다.)
+          </Heading>
+          <Flex height={"100%"} width={"100%"}>
+            {selects.map((item: SelectTypes, idx) => {
+              return (
+                <Flex
+                  key={idx}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  flexDirection={"column"}
+                  border={`1px ${colors.secondery[300]} solid`}
+                  height={"200px"}
+                  width={"50%"}
+                  as={Button}
+                  margin={"3px"}
+                  bg={"white"}
+                  onClick={() => {
+                    ButtonClick(item.title);
+                  }}
+                >
+                  {item.title === "기업회원" ? (
+                    <FaRegBuilding />
+                  ) : (
+                    <FaRegUser />
+                  )}
+                  <Text fontSize={"xl"}>{item.title}</Text>
+                </Flex>
+              );
+            })}
+          </Flex>
+        </Box>
+        <Register_Enterprise
+          isOpen={isOpenEnterprise}
+          onClose={onCloseEnterprise}
+          rootIndustry={industry}
+        />
+        <Register_User
+          isOpen={isOpenUser}
+          onClose={onCloseUser}
+          rootJobs={rootJobs}
+        />
       </Box>
-      <Register_Enterprise
-        isOpen={isOpenEnterprise}
-        onClose={onCloseEnterprise}
-        rootIndustry={industry}
-      />
-      <Register_User
-        isOpen={isOpenUser}
-        onClose={onCloseUser}
-        rootJobs={rootJobs}
-      />
-    </Box>
+    </CenterLayout>
   );
 }
 

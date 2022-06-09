@@ -1,7 +1,9 @@
 import { Account_Model, RegisterAccount_Body } from "../types/account";
+import { IndustryEntity } from "./industry";
 
 export interface EnterPrise_Entity {
   account: Account_Model;
+  id: string;
   title: string;
   description: string;
   businessNumber: string;
@@ -11,6 +13,7 @@ export interface EnterPrise_Entity {
   thumbnail: string;
   createAt: Date;
   updateAt: Date;
+  industry: IndustryEntity;
 }
 
 export interface RegisterEnterprise_Body {
@@ -22,4 +25,12 @@ export interface RegisterEnterprise_Body {
   title: string;
   employees: string;
   businessNumber: string;
+}
+
+export interface UpdateEnterPriseDto {
+  enterpriseId?: string;
+  email?: string;
+  description?: string;
+  thumbnail?: string;
+  address?: string;
 }

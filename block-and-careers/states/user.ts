@@ -1,63 +1,56 @@
 import { atom, selector } from "recoil";
-import { GetAllEnterPrise } from "restapi/enterprise/get";
-import { Career_Item } from "@restapi/types/career";
+import {
+  UserCareerEntity,
+  UserCertificationEntity,
+  UserEducationEntity,
+  UserPortfolioEntity,
+  UserResumeEntity,
+} from "@restapi/types/user";
+import { GetUserResumes } from "@restapi/users/get";
+import { account_state } from "./web3/account";
 
-export interface ProfileDate {
-  startYear: number | undefined;
-  startMonth: number | undefined;
-  endYear: number | undefined;
-  endMonth: number | undefined;
-}
+export const resumeState = atom<UserResumeEntity[]>({
+  key: "userResumeState",
+  default: [],
+});
 
-export interface UserEducationForm extends ProfileDate {
-  id: number | undefined;
-  name: string | undefined;
-  major: string | undefined;
-  expreience: string | undefined;
-  currentRunning: boolean;
-}
+export const getResumeSelector = selector<UserResumeEntity[]>({
+  key: "userResumeState/get",
+  get: async ({ get }) => {
+    try {
+      const account = get(account_state);
+      const res = await GetUserResumes(account?.user.id ?? "");
+      console.log(res.data);
+      return res.data;
+    } catch (err) {
+      throw err;
+    }
+  },
+  set: ({ set }, newValue) => {
+    set(resumeState, newValue);
+  },
+});
 
-export interface UserCareerForm extends ProfileDate {
-  id: number | undefined;
-  company: string | undefined;
-  roles: string[];
-  description: string | undefined;
-  currentRunning: boolean;
-}
+// 회원 등록되지 않은 지갑
+export const newIdState = atom<boolean>({
+  key: "newIdState",
 
-export interface UserCertificationForm {
-  id: number;
-  title: string;
-  getYear: number | undefined;
-  getMonth: number | undefined;
-  from: string;
-}
+  default: true,
+});
 
-export interface UserPortfolioForm {
-  id: number;
-  title: string;
-  link: string;
-}
-
-export const profile_Education = atom<UserEducationForm[]>({
+export const profile_Education = atom<UserEducationEntity[]>({
   key: "educationState",
 
   default: [],
 });
 
-export const profile_career = atom<UserCareerForm[]>({
-  key: "careerState",
-
-  default: [],
-});
-
-export const profile_Certification = atom<UserCertificationForm[]>({
+export const profile_Certification = atom<UserCertificationEntity[]>({
   key: "certificationState",
 
   default: [],
 });
 
-export const profile_Portfolio = atom<UserPortfolioForm[]>({
+export const profile_Portfolio = atom<UserPortfolioEntity[]>({
   key: "portfolioState",
 
   default: [],

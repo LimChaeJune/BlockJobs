@@ -2,10 +2,10 @@ import { NavList, InavItem } from "@state/datas/navbar";
 import Link from "next/link";
 import { useWeb3 } from "@hooks/Web3Client";
 import {
-  career_post,
   enterprise_profile,
   link_selectpage,
   user_profile,
+  user_Token,
 } from "@components/utils/routing";
 import { Web3_Model, initialWeb3, account_state } from "states/web3/account";
 import { useCallback, useEffect } from "react";
@@ -31,12 +31,12 @@ import { utils } from "ethers";
 import { accountCheck } from "restapi/account/get";
 import styled from "@emotion/styled";
 import { AccountUserType, Account_Model } from "restapi/types/account";
-import shadows from "themes/foundations/shadows";
 
 const NavBar = (): JSX.Element => {
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
-  const [existAccountState, setExistAccount] =
-    useRecoilState<Account_Model | null>(account_state);
+  const [existAccountState] = useRecoilState<Account_Model | null>(
+    account_state
+  );
 
   const { connect, disconnect } = useWeb3();
 
@@ -74,22 +74,23 @@ const NavBar = (): JSX.Element => {
     working();
   }, [web3State.network, existAccountState]);
 
-  // Web3 네트워크 확인 후
-  useEffect(() => {
-    const effectWorking = async () => {
-      if (web3State?.address) {
-        await accountCheck(web3State.address)
-          .then((res) => {
-            setExistAccount(res.data);
-            sessionStorage.setItem("account", JSON.stringify(res.data));
-          })
-          .catch((e) => {
-            console.log(e.message);
-          });
-      }
-    };
-    effectWorking();
-  }, [web3State.address]);
+  // // Web3 네트워크 확인 후 지갑 정보 가져오기
+  // useEffect(() => {
+  //   const effectWorking = async () => {
+  //     if (web3State?.address) {
+  //       await accountCheck(web3State.address)
+  //         .then((res) => {
+  //           setExistAccount(res.data);
+  //           console.log(res);
+  //           sessionStorage.setItem("account", JSON.stringify(res.data));
+  //         })
+  //         .catch((e) => {
+  //           console.log(e.message);
+  //         });
+  //     }
+  //   };
+  //   effectWorking();
+  // }, [web3State.address]);
 
   return (
     <Box
@@ -130,7 +131,7 @@ const NavBar = (): JSX.Element => {
         alignItems="center"
       >
         <Box>
-          <Link href={"/"}>
+          <Link href={"/"} passHref>
             <Heading _hover={{ cursor: "pointer" }} fontSize="xl">
               BlockJobs
             </Heading>
@@ -150,7 +151,7 @@ const NavBar = (): JSX.Element => {
         <Box>
           {web3State?.address ? (
             <Menu>
-              <MenuButton>
+              <MenuButton as={Box}>
                 <Flex
                   justifyContent="center"
                   alignItems="center"
@@ -174,14 +175,17 @@ const NavBar = (): JSX.Element => {
               {existAccountState ? (
                 existAccountState.userType[0] === AccountUserType.Customer ? (
                   <MenuList padding={"0px"}>
-                    <Link href={user_profile}>
-                      <MenuItem>프로필 관리</MenuItem>
-                    </Link>
+                    <MenuItem>
+                      <Link href={user_profile} passHref>
+                        프로필 관리
+                      </Link>
+                    </MenuItem>
                     <MenuDivider />
                     <MenuItem>
-                      <Link href={career_post}>경력 신청</Link>
+                      <Link href={user_Token} passHref>
+                        토큰
+                      </Link>
                     </MenuItem>
-                    <MenuItem>경력 신청 현황</MenuItem>
                     <MenuItem>지원 현황</MenuItem>
                     <MenuItem>받은 제안</MenuItem>
                     <MenuDivider margin={0}></MenuDivider>
@@ -195,9 +199,11 @@ const NavBar = (): JSX.Element => {
                   </MenuList>
                 ) : (
                   <MenuList padding={"0px"}>
-                    <Link href={enterprise_profile}>
-                      <MenuItem>기업 정보 관리</MenuItem>
-                    </Link>
+                    <MenuItem>
+                      <Link href={enterprise_profile} passHref>
+                        기업 정보 관리
+                      </Link>
+                    </MenuItem>
                     <MenuDivider margin={0} />
                     <MenuItem>공고 등록</MenuItem>
                     <MenuItem>공고 관리</MenuItem>
