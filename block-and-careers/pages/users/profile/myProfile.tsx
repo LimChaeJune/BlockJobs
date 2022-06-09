@@ -15,6 +15,7 @@ import {
   Profile_Box,
   Profile_Info,
 } from "@components/users/profile/Profile_Box";
+import CenterLayout from "@components/layouts/centerlayout";
 
 const Profile_User = () => {
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
@@ -42,77 +43,79 @@ const Profile_User = () => {
   }, []);
 
   return (
-    <ProfileLayout
-      title="프로필"
-      usertype={AccountUserType.Customer}
-      navbartitle={`${accountstate?.user?.name}님`}
-    >
-      <Profile_Box boxTitle="정보">
-        {resumes.length > 0 ? (
-          <>
-            <Profile_Info title="기본 이력서">
-              <Flex position={"relative"}>
-                <Select
-                  width={"50%"}
-                  onChange={(e) => CurrResume_Changed(e.target.value)}
-                >
-                  {resumes.map((resume, idx) => {
-                    return (
-                      <option key={idx} value={resume.resumeId}>
-                        {resume.title}
-                      </option>
-                    );
-                  })}
-                </Select>
-                <Icon
-                  position={"absolute"}
-                  top={0}
-                  right={3}
-                  color={colors.blue[500]}
-                  fontSize={"2xl"}
-                  display={"none"}
-                  as={BiPencil}
-                  cursor="pointer"
-                  _groupHover={{ display: "block" }}
-                  onClick={() => UptResume_Click(curr_resume?.resumeId)}
-                ></Icon>
-              </Flex>
-            </Profile_Info>
-            {curr_resume?.educations ? (
-              <Profile_Info title="학교">
-                {`${curr_resume?.educations?.[0].name} (${curr_resume?.educations?.[0].major})` ??
-                  "최종 학력을 입력해주세요"}
+    <CenterLayout>
+      <ProfileLayout
+        title="프로필"
+        usertype={AccountUserType.Customer}
+        navbartitle={`${accountstate?.user?.name}님`}
+      >
+        <Profile_Box boxTitle="정보">
+          {resumes.length > 0 ? (
+            <>
+              <Profile_Info title="기본 이력서">
+                <Flex position={"relative"}>
+                  <Select
+                    width={"50%"}
+                    onChange={(e) => CurrResume_Changed(e.target.value)}
+                  >
+                    {resumes.map((resume, idx) => {
+                      return (
+                        <option key={idx} value={resume.resumeId}>
+                          {resume.title}
+                        </option>
+                      );
+                    })}
+                  </Select>
+                  <Icon
+                    position={"absolute"}
+                    top={0}
+                    right={3}
+                    color={colors.blue[500]}
+                    fontSize={"2xl"}
+                    display={"none"}
+                    as={BiPencil}
+                    cursor="pointer"
+                    _groupHover={{ display: "block" }}
+                    onClick={() => UptResume_Click(curr_resume?.resumeId)}
+                  ></Icon>
+                </Flex>
               </Profile_Info>
-            ) : null}
-          </>
-        ) : (
-          <Box
-            onClick={() => UptResume_Click()}
-            color={colors.highlight}
-            fontSize={"lg"}
-            _hover={{ cursor: "pointer" }}
-          >
-            + 새 이력서 작성하기
-          </Box>
-        )}
-      </Profile_Box>
+              {curr_resume?.educations ? (
+                <Profile_Info title="학교">
+                  {`${curr_resume?.educations?.[0].name} (${curr_resume?.educations?.[0].major})` ??
+                    "최종 학력을 입력해주세요"}
+                </Profile_Info>
+              ) : null}
+            </>
+          ) : (
+            <Box
+              onClick={() => UptResume_Click()}
+              color={colors.highlight}
+              fontSize={"lg"}
+              _hover={{ cursor: "pointer" }}
+            >
+              + 새 이력서 작성하기
+            </Box>
+          )}
+        </Profile_Box>
 
-      <Profile_Box boxTitle="전문분야">
-        <Icon
-          position={"absolute"}
-          top={30}
-          right={30}
-          fontSize={"2xl"}
-          display={"none"}
-          as={BiPencil}
-          cursor="pointer"
-          _groupHover={{ display: "block" }}
-        ></Icon>
-        <Profile_Info title="직군">{`${
-          accountstate?.user?.job?.find((e) => e.level == 0)?.title
-        }`}</Profile_Info>
-      </Profile_Box>
-    </ProfileLayout>
+        <Profile_Box boxTitle="전문분야">
+          <Icon
+            position={"absolute"}
+            top={30}
+            right={30}
+            fontSize={"2xl"}
+            display={"none"}
+            as={BiPencil}
+            cursor="pointer"
+            _groupHover={{ display: "block" }}
+          ></Icon>
+          <Profile_Info title="직군">{`${
+            accountstate?.user?.job?.find((e) => e.level == 0)?.title
+          }`}</Profile_Info>
+        </Profile_Box>
+      </ProfileLayout>
+    </CenterLayout>
   );
 };
 

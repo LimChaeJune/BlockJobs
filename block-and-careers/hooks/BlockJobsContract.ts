@@ -11,7 +11,7 @@ interface props_createCareer {
 }
 
 interface approve_Career {
-  careerId: string;
+  careerId: number;
   status: CareerStatus;
 }
 
@@ -98,7 +98,6 @@ export const useBlockJobs = () => {
       const receipt = await tx.wait();
       const data = receipt.logs[0].data;
       console.log(receipt);
-      console.log(data);
       return receipt;
     },
     [contractState]
@@ -109,7 +108,8 @@ export const useBlockJobs = () => {
       try {
         const tx = await contractState?.approveCareer(careerId, 10, status);
         const receipt = await tx.wait();
-        const data = receipt.logs[0].data;
+        console.log(receipt);
+        return receipt;
       } catch (e) {
         console.log(e);
       }

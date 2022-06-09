@@ -20,7 +20,6 @@ import {
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { EnterpriseEmployees, GetEmployees } from "@state/datas/enterprisetype";
-import { IndustryEntity } from "restapi/industry/get";
 import { useRouter } from "next/router";
 import { RegisterEnterprise } from "@restapi/enterprise/post";
 import { RegisterEnterprise_Body } from "@restapi/types/enterprise";
@@ -29,6 +28,7 @@ import { useRecoilState } from "recoil";
 import { initialWeb3, Web3_Model } from "@state/web3/account";
 import { useCallback } from "react";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
+import { IndustryEntity } from "@restapi/types/industry";
 
 interface IFormInput {
   title: string;

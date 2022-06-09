@@ -18,15 +18,7 @@ const BlockJobLayout = ({ children }: Props): JSX.Element => {
           minHeight={"calc(100vh - 80px)"}
           bg={colors.secondery[100]}
         >
-          <Box
-            width={"1060px"}
-            position={"relative"}
-            alignItems={"center"}
-            margin={"0 auto"}
-            pt={"30px"}
-          >
-            {children}
-          </Box>
+          {children}
         </Box>
       </Box>
     </>

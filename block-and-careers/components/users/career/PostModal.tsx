@@ -75,13 +75,13 @@ function CareerPost({ isOpen, onClose, completeSubmit }: modalInput) {
       fnsDt: data.fnsDt,
       roles: data.roles,
     })
-      .then(() => {
+      .then((res) => {
         completeSubmit();
         reset();
         onClose();
       })
       .catch((err) => {
-        console.log(err.message);
+        alert(err.response.data.message);
       });
   };
 

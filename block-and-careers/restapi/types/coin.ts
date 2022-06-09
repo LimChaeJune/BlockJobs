@@ -3,7 +3,7 @@ export enum CoinType {
   Set = "소비",
 }
 
-interface UserCoinReceiptEntity {
+export interface UserCoinReceiptEntity {
   accountAddress: string;
   id: string;
   description?: string;

@@ -28,6 +28,9 @@ import ProfileLayout from "@components/layouts/profilelayout";
 import CareerPost from "@components/users/career/PostModal";
 import { GetUserCareers } from "@restapi/users/get";
 import { AddUserCareer, UpdateUserCareer } from "@restapi/users/post";
+import CenterLayout from "@components/layouts/centerlayout";
+import LoadingModal from "@components/utils/loadingModal";
+import { useContractModal } from "@hooks/ContractModalHook";
 
 const CareerList = () => {
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
@@ -40,10 +43,7 @@ const CareerList = () => {
 
   const { onClose, isOpen, onOpen } = useDisclosure();
 
-  const CompleteSubmit = () => {
-    getDBCareer();
-  };
-
+  // Db Career 조회
   const getDBCareer = async () => {
     if (accountstate?.user.id) {
       await GetUserCareers(accountstate?.user.id).then((res) => {
@@ -51,6 +51,10 @@ const CareerList = () => {
         setcareer(res.data);
       });
     }
+  };
+
+  const CompleteSubmit = () => {
+    getDBCareer();
   };
 
   // 컨트랙트로 등록된 경력 조회
@@ -68,41 +72,55 @@ const CareerList = () => {
   }, [accountstate?.accountAddress]);
 
   return (
-    <ProfileLayout
-      title="경력 현황"
-      usertype={AccountUserType.Customer}
-      navbartitle={`${accountstate?.user?.name}님`}
-    >
-      <Button
-        bg={colors.blue[200]}
-        color={"white"}
-        _hover={{ bg: colors.blue[300] }}
-        onClick={onOpen}
+    <CenterLayout>
+      <ProfileLayout
+        title="경력 현황"
+        usertype={AccountUserType.Customer}
+        navbartitle={`${accountstate?.user?.name}님`}
       >
-        경력 등록하기
-      </Button>
-      <Profile_Box boxTitle="블록체인에 올라간 경력">
-        <Flex gap={5} direction={"column"}>
-          {contractCareer?.map((item, idx) => {
-            return <Contract_Career_Card key={idx} career={item} />;
-          })}
-        </Flex>
-      </Profile_Box>
+        <Button
+          bg={colors.blue[200]}
+          color={"white"}
+          _hover={{ bg: colors.blue[300] }}
+          onClick={onOpen}
+        >
+          경력 등록하기
+        </Button>
+        <Profile_Box boxTitle="블록체인에 올라간 경력">
+          <Flex gap={5} direction={"column"}>
+            {contractCareer
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .slice(0, 4)
+              ?.map((item, idx) => {
+                return <Contract_Career_Card key={idx} career={item} />;
+              })}
+          </Flex>
+          <Box
+            textAlign={"center"}
+            fontSize={"xl"}
+            cursor={"pointer"}
+            mt={"10px"}
+          >
+            + 더보기
+          </Box>
+        </Profile_Box>
 
-      <Profile_Box boxTitle="증명되지 않은 경력">
-        <Flex gap={5} direction={"column"}>
-          {careers?.map((item, idx) => {
-            return <Career_Card key={idx} career={item} />;
-          })}
-        </Flex>
-      </Profile_Box>
+        <Profile_Box boxTitle="증명되지 않은 경력">
+          <Flex gap={5} direction={"column"}>
+            {careers?.map((item, idx) => {
+              return <Career_Card key={idx} career={item} />;
+            })}
+          </Flex>
+        </Profile_Box>
 
-      <CareerPost
-        isOpen={isOpen}
-        onClose={onClose}
-        completeSubmit={CompleteSubmit}
-      />
-    </ProfileLayout>
+        <CareerPost
+          isOpen={isOpen}
+          onClose={onClose}
+          completeSubmit={CompleteSubmit}
+        />
+      </ProfileLayout>
+    </CenterLayout>
   );
 };
 
@@ -112,12 +130,25 @@ interface card_props {
 
 const Career_Card = ({ career }: card_props) => {
   const [enter] = useRecoilState<EnterPrise_Entity[]>(getEnterSelector);
-
+  // 컨트랙트 Hooks
   const { createCareer } = useBlockJobs();
+  // ContractLoading 모달
+  const {
+    isSignWait,
+    isReject,
+    receiptLink,
+    description,
+    isOpen,
+    SignOpen,
+    RejectOpen,
+    SuccessOpen,
+    onClose,
+  } = useContractModal();
 
   const signCreateCareer = async (data: UserCareerEntity) => {
     try {
-      console.log(data);
+      await SignOpen(`${career.companyAddress}에게 경력 검증 신청`);
+
       await createCareer({
         myRoles: data.roles?.split(", ") ?? [],
         description: data.description ?? "",
@@ -125,6 +156,8 @@ const Career_Card = ({ career }: card_props) => {
         stDt: data.stDt ?? new Date(),
         fnsDt: data.fnsDt ?? new Date(),
       }).then(async (receipt) => {
+        SuccessOpen(receipt.transactionHash);
+
         await UpdateUserCareer({
           description: career.description ?? "",
           roles: career.roles ?? "",
@@ -133,43 +166,48 @@ const Career_Card = ({ career }: card_props) => {
           careerId: career.id,
           transactionId: receipt.transactionHash,
         });
-        console.log(receipt);
       });
     } catch (e) {
-      alert("contract SignTX를 실패했습니다. 다시 시도해주세요");
+      await RejectOpen(e);
     }
   };
 
   return (
-    <>
-      <Box
-        border={"1px solid gray"}
-        boxShadow={"xl"}
-        borderRadius={"md"}
-        padding={5}
+    <Box
+      border={"1px solid gray"}
+      boxShadow={"xl"}
+      borderRadius={"md"}
+      padding={5}
+    >
+      <Heading fontSize={"xl"} mb={3}>
+        {enter?.find((e) => e.account.accountAddress === career.companyAddress)
+          ?.title ?? career.companyAddress}
+      </Heading>
+
+      <Flex>
+        <Profile_Info title="직무">{career.roles}</Profile_Info>
+        <Profile_Info title="근무 기간">{`${career?.stDt} ~ ${career?.fnsDt}`}</Profile_Info>
+      </Flex>
+      <Profile_Info title="근무내용">{`${career.description}`}</Profile_Info>
+
+      <Button
+        background={colors.blue[300]}
+        color={"white"}
+        _hover={{ bg: colors.blue[400] }}
+        onClick={() => signCreateCareer(career)}
       >
-        <Heading fontSize={"xl"} mb={3}>
-          {enter?.find(
-            (e) => e.account.accountAddress === career.companyAddress
-          )?.title ?? career.companyAddress}
-        </Heading>
+        검증하기
+      </Button>
 
-        <Flex>
-          <Profile_Info title="직무">{career.roles}</Profile_Info>
-          <Profile_Info title="근무 기간">{`${career?.stDt} ~ ${career?.fnsDt}`}</Profile_Info>
-        </Flex>
-        <Profile_Info title="근무내용">{`${career.description}`}</Profile_Info>
-
-        <Button
-          background={colors.blue[300]}
-          color={"white"}
-          _hover={{ bg: colors.blue[400] }}
-          onClick={() => signCreateCareer(career)}
-        >
-          검증하기
-        </Button>
-      </Box>
-    </>
+      <LoadingModal
+        isOpen={isOpen}
+        onClose={onClose}
+        isSignWait={isSignWait}
+        isReject={isReject}
+        description={description}
+        reciptLink={receiptLink}
+      />
+    </Box>
   );
 };
 

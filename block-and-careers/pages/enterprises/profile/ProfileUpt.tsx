@@ -18,6 +18,7 @@ import { useState } from "react";
 import { UpdateEnterPriseDto } from "@restapi/types/enterprise";
 import { v4 as uuid } from "uuid";
 import { UpdateEnterprise } from "@restapi/enterprise/post";
+import CenterLayout from "@components/layouts/centerlayout";
 
 const Profile_Enterprise = () => {
   let inputRef: HTMLInputElement | null;
@@ -57,7 +58,7 @@ const Profile_Enterprise = () => {
   };
 
   return (
-    <Box>
+    <CenterLayout>
       <Flex flexDirection={"column"} paddingBottom={"150px"} gap={5}>
         <Heading>{accountstate?.enterprise?.title}</Heading>
         <Flex>
@@ -160,7 +161,7 @@ const Profile_Enterprise = () => {
           기업정보 저장
         </Button>
       </Flex>
-    </Box>
+    </CenterLayout>
   );
 };
 

@@ -1,4 +1,5 @@
 import { Box, Text } from "@chakra-ui/react";
+import CenterLayout from "@components/layouts/centerlayout";
 import ProfileLayout from "@components/layouts/profilelayout";
 import {
   Profile_Box,
@@ -21,38 +22,43 @@ const Token_User = () => {
   useEffect(() => {}, []);
 
   return (
-    <ProfileLayout
-      usertype={AccountUserType.Customer}
-      title="토큰 정보"
-      navbartitle={`${accountstate?.user?.name}님`}
-    >
-      <Profile_Box boxTitle="지갑정보">
-        <Profile_Info title="지갑 주소">
-          <Link
-            href={`https://rinkeby.etherscan.io/address/${accountstate?.accountAddress}`}
-            passHref
-          >
+    <CenterLayout>
+      <ProfileLayout
+        usertype={AccountUserType.Customer}
+        title="토큰 정보"
+        navbartitle={`${accountstate?.user?.name}님`}
+      >
+        <Profile_Box boxTitle="지갑정보">
+          <Profile_Info title="지갑 주소">
+            <Link
+              href={`https://rinkeby.etherscan.io/address/${accountstate?.accountAddress}`}
+              passHref
+            >
+              <Text
+                fontSize={"xl"}
+                cursor={"pointer"}
+                _hover={{
+                  textDecoration: "underline",
+                }}
+              >{`${accountstate?.accountAddress}`}</Text>
+            </Link>
+          </Profile_Info>
+          <Profile_Info title="토큰 보유량">
             <Text
               fontSize={"xl"}
-              cursor={"pointer"}
-              _hover={{
-                textDecoration: "underline",
-              }}
-            >{`${accountstate?.accountAddress}`}</Text>
-          </Link>
-        </Profile_Info>
-        <Profile_Info title="토큰 보유량">
-          <Text fontSize={"xl"} fontWeight="bold">{`${balanceState} JJC`}</Text>
-        </Profile_Info>
-      </Profile_Box>
-      <Profile_Box boxTitle="내역">
-        <Box>
-          {coinReceiptState?.map((receipt: UserCoinReceiptEntity, idx) => {
-            return <Box>{receipt.actionDt.toLocaleDateString()}</Box>;
-          })}
-        </Box>
-      </Profile_Box>
-    </ProfileLayout>
+              fontWeight="bold"
+            >{`${balanceState} JJC`}</Text>
+          </Profile_Info>
+        </Profile_Box>
+        <Profile_Box boxTitle="내역">
+          <Box>
+            {coinReceiptState?.map((receipt: UserCoinReceiptEntity, idx) => {
+              return <Box>{receipt.actionDt.toLocaleDateString()}</Box>;
+            })}
+          </Box>
+        </Profile_Box>
+      </ProfileLayout>
+    </CenterLayout>
   );
 };
 

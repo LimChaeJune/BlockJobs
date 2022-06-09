@@ -17,7 +17,7 @@ const ProfileLayout = ({
 }: Props): JSX.Element => {
   return (
     <Box width={"100%"}>
-      <Heading>{title}</Heading>
+      {/* <Heading>{title}</Heading> */}
       <UserSideBar usertype={usertype} title={navbartitle}>
         {children}
       </UserSideBar>

@@ -41,6 +41,7 @@ export const AddUserResume = async (body: UserResumeEntity) => {
 
 export const AddUserCareer = async (body: CreateCareerDto) => {
   try {
+    console.log(body);
     const res = await client.post("users/career", body);
     return res;
   } catch (err) {
