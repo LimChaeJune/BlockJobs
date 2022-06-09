@@ -61,7 +61,7 @@ export const useBlockJobs = () => {
       });
       const receipt = await tx.wait();
       const data = receipt.logs[0].data;
-      console.log(data);
+      return receipt;
     },
     [contractState]
   );
@@ -74,7 +74,7 @@ export const useBlockJobs = () => {
       });
       const receipt = await tx.wait();
       const data = receipt.logs[0].data;
-      console.log(data);
+      return receipt;
     },
     [contractState]
   );

@@ -7,14 +7,39 @@ import shadows from "themes/foundations/shadows";
 import Image from "next/image";
 import colors from "themes/foundations/colors";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
+import LoadingModal from "./loadingModal";
+import { useContractModal } from "@hooks/ContractModalHook";
+import { ethers } from "ethers";
 
 const TokenSwap = () => {
-  const { BalanceOf } = useBlockJobs();
+  const { BalanceOf, Sell, Buy } = useBlockJobs();
 
   const [fromCoin, setFromCoin] = useState<string>();
   const [toCoin, setToCoin] = useState<string>();
   const [fromValue, setFromValue] = useState<number>();
   const [toValue, setToValue] = useState<number>();
+
+  const {
+    isOpen,
+    isReject,
+    isSignWait,
+    receiptLink,
+    description,
+    onClose,
+    SignOpen,
+    RejectOpen,
+    SuccessOpen,
+  } = useContractModal();
+
+  const Btn_Swap_Click = async () => {
+    try {
+      await SignOpen(`${career.companyAddress}에게 경력 검증 신청`);
+
+      await Buy(ethers.utils.parseEther(fromValue)));
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
 
   return (
     <Box
@@ -103,9 +128,18 @@ const TokenSwap = () => {
           <Text fontWeight={"bold"}>BJC</Text>
         </Flex>
       </Flex>
-      <Button width={"100%"} bg={colors.blue[300]} mt={"10px"}>
+      <Button width={"100%"} bg={colors.blue[300]} mt={"10px"} onClick={}>
         스왑
       </Button>
+
+      <LoadingModal
+        isOpen={isOpen}
+        onClose={onClose}
+        isSignWait={isSignWait}
+        isReject={isReject}
+        description={description}
+        reciptLink={receiptLink}
+      />
     </Box>
   );
 };

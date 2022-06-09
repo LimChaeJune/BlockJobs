@@ -35,6 +35,8 @@ import { useContractModal } from "@hooks/ContractModalHook";
 const CareerList = () => {
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
 
+  // 현재 보여주고 있는 경력 카운터
+  const [currCnt, setCurrCnt] = useState<number>(4);
   // 컨트랙트로 등록된 경력
   const [contractCareer, setCareer] = useState<Career_Item[]>([]);
   // DB에 등록된 경력
@@ -91,19 +93,23 @@ const CareerList = () => {
             {contractCareer
               .slice()
               .sort((a, b) => b.id - a.id)
-              .slice(0, 4)
+              .slice(0, currCnt)
               ?.map((item, idx) => {
                 return <Contract_Career_Card key={idx} career={item} />;
               })}
           </Flex>
-          <Box
-            textAlign={"center"}
-            fontSize={"xl"}
-            cursor={"pointer"}
-            mt={"10px"}
-          >
-            + 더보기
-          </Box>
+          {currCnt < contractCareer?.length ? null : (
+            <Box
+              textAlign={"center"}
+              fontSize={"xl"}
+              cursor={"pointer"}
+              mt={"10px"}
+              fontWeight={"bold"}
+              onClick={() => setCurrCnt(currCnt + 4)}
+            >
+              + 더보기
+            </Box>
+          )}
         </Profile_Box>
 
         <Profile_Box boxTitle="증명되지 않은 경력">
@@ -155,20 +161,24 @@ const Career_Card = ({ career }: card_props) => {
         company_address: data.companyAddress,
         stDt: data.stDt ?? new Date(),
         fnsDt: data.fnsDt ?? new Date(),
-      }).then(async (receipt) => {
-        SuccessOpen(receipt.transactionHash);
+      })
+        .then(async (receipt) => {
+          SuccessOpen(receipt.transactionHash);
 
-        await UpdateUserCareer({
-          description: career.description ?? "",
-          roles: career.roles ?? "",
-          stDt: career.stDt ?? new Date(),
-          fnsDt: career.fnsDt ?? new Date(),
-          careerId: career.id,
-          transactionId: receipt.transactionHash,
+          await UpdateUserCareer({
+            description: career.description ?? "",
+            roles: career.roles ?? "",
+            stDt: career.stDt ?? new Date(),
+            fnsDt: career.fnsDt ?? new Date(),
+            careerId: career.id,
+            transactionId: receipt.transactionHash,
+          });
+        })
+        .catch(async (e) => {
+          await RejectOpen(e);
         });
-      });
     } catch (e) {
-      await RejectOpen(e);
+      console.log(e.message);
     }
   };
 
