@@ -11,8 +11,12 @@ import {
   ModalHeader,
   ModalOverlay,
   Textarea,
+  useDisclosure,
 } from "@chakra-ui/react";
+import LoadingModal from "@components/utils/loadingModal";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useBlockJobs } from "@hooks/BlockJobsContract";
+import { useContractModal } from "@hooks/ContractModalHook";
 import { Account_Model } from "@restapi/types/account";
 import { account_state } from "@state/web3/account";
 import { useCallback } from "react";
@@ -44,6 +48,19 @@ interface modalInput {
 
 const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
   const [accountState] = useRecoilState<Account_Model | null>(account_state);
+  const { createReview } = useBlockJobs();
+  const {
+    isOpen: isOpenContractModal,
+    onClose: onCloseContractModal,
+    onOpen: onOpenContractModal,
+    receiptLink,
+    isSignWait,
+    isReject,
+    description,
+    SignOpen,
+    RejectOpen,
+    SuccessOpen,
+  } = useContractModal();
 
   const {
     handleSubmit,
@@ -52,7 +69,21 @@ const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
     formState: { isSubmitting, errors },
   } = useForm<IFormInput>({ resolver: yupResolver(career_Schema) });
 
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {};
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    await SignOpen(`${companyAddress}에 리뷰 작성`);
+
+    await createReview({
+      title: data.title,
+      content: data.content,
+      company: companyAddress,
+    })
+      .then(async (recepit) => {
+        await SuccessOpen(recepit.transactionHash);
+      })
+      .catch(async (e) => {
+        await RejectOpen(e);
+      });
+  };
 
   const closeClick = useCallback(() => {
     if (confirm("리뷰 등록을 취소하시겠습니까?")) {
@@ -66,14 +97,14 @@ const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>리뷰 등록</ModalHeader>
-        <Box padding={5}>
-          <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Box padding={5}>
             <FormControl isRequired>
               <FormLabel>리뷰 제목</FormLabel>
               <Input
                 type={"title"}
-                placeholder="근무 종료일을 입력해주세요"
-                {...register("content")}
+                placeholder="리뷰 제목을 입력해주세요"
+                {...register("title")}
               />
               <FormErrorMessage>{errors?.title?.message}</FormErrorMessage>
             </FormControl>
@@ -82,20 +113,33 @@ const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
               <Textarea
                 minH={"200px"}
                 resize={"none"}
-                placeholder="근무 종료일을 입력해주세요"
+                placeholder="리뷰 내용을 입력해주세요"
                 {...register("content")}
               />
               <FormErrorMessage>{errors?.content?.message}</FormErrorMessage>
             </FormControl>
-          </form>
-        </Box>
-        <ModalFooter>
-          <Button colorScheme={"blue"} marginRight={"10px"}>
-            리뷰 등록
-          </Button>
-          <Button onClick={closeClick}>취소</Button>
-        </ModalFooter>
+          </Box>
+          <ModalFooter>
+            <Button
+              colorScheme={"blue"}
+              marginRight={"10px"}
+              isLoading={isSubmitting}
+              type="submit"
+            >
+              리뷰 등록
+            </Button>
+            <Button onClick={closeClick}>취소</Button>
+          </ModalFooter>
+        </form>
       </ModalContent>
+      <LoadingModal
+        isSignWait={isSignWait}
+        isReject={isReject}
+        reciptLink={receiptLink}
+        description={description}
+        isOpen={isOpenContractModal}
+        onClose={onCloseContractModal}
+      />
     </Modal>
   );
 };

@@ -28,6 +28,19 @@ export const GetUserResumes = async (
   }
 };
 
+export const GetUserResumeById = async (
+  resumeId: string
+): Promise<AxiosResponse<UserResumeEntity>> => {
+  try {
+    const res = await client.get<UserResumeEntity>(
+      `users/resumeById/${resumeId}`
+    );
+    return res;
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const GetUserByAccount = async (
   accountAddress: string
 ): Promise<AxiosResponse<User_Entity>> => {

@@ -7,7 +7,7 @@ interface Props {
 const CenterLayout = ({ children }: Props): JSX.Element => {
   return (
     <Box
-      width={"1060px"}
+      width={{ xl: "1060px", md: "100%" }}
       position={"relative"}
       alignItems={"center"}
       margin={"0 auto"}

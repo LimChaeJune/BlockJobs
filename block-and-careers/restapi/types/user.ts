@@ -25,6 +25,7 @@ export interface User_Entity {
   address: string;
   male: string;
   userType: string;
+  profilePicture: string;
   createAt?: Date;
   job: JobEntity[];
   resumes: UserResumeEntity[];

@@ -1,4 +1,4 @@
-export const Contract_Address = "0x854022530f96DFb690dd378F90358dC96584ffC9";
+export const Contract_Address = "0x290C6093b9d9B937ED5B0bA11D7a61Fd42Fe18D0";
 export const BlockJobs_ABI = [
   {
     inputs: [
@@ -26,34 +26,13 @@ export const BlockJobs_ABI = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-    ],
-    name: "approveUser",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "sell",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "address payable",
         name: "_tokenContractAddress",
+        type: "address",
+      },
+      {
+        internalType: "address payable",
+        name: "_nftContractAddress",
         type: "address",
       },
     ],
@@ -109,6 +88,32 @@ export const BlockJobs_ABI = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_tokenOwner",
+        type: "address",
+      },
+    ],
+    name: "approveForNFT",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
+    ],
+    name: "approveUser",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "string[]",
         name: "_role",
         type: "string[]",
@@ -156,12 +161,76 @@ export const BlockJobs_ABI = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "nftId",
+        name: "careerId",
         type: "uint256",
       },
     ],
     name: "createCareer_event",
     type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_title",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_content",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "_company",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
+    ],
+    name: "createReview",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "_tokenURI",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "_reviewId",
+        type: "uint256",
+      },
+    ],
+    name: "mintNft",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "sell",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
   },
   {
     inputs: [
@@ -208,7 +277,7 @@ export const BlockJobs_ABI = [
   },
   {
     inputs: [],
-    name: "_owner",
+    name: "_deployAddress",
     outputs: [
       {
         internalType: "address",
@@ -244,6 +313,19 @@ export const BlockJobs_ABI = [
     outputs: [
       {
         internalType: "contract BlockJobsCoin",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "BlockJobsNftAddress",
+    outputs: [
+      {
+        internalType: "contract BlockJobsNft",
         name: "",
         type: "address",
       },
@@ -369,7 +451,7 @@ export const BlockJobs_ABI = [
         type: "address",
       },
     ],
-    name: "getCareerByComany",
+    name: "getCareerByCompany",
     outputs: [
       {
         components: [
@@ -535,6 +617,285 @@ export const BlockJobs_ABI = [
   {
     inputs: [],
     name: "GetEther",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
+    ],
+    name: "getNftBalanceOf",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_nftId",
+        type: "uint256",
+      },
+    ],
+    name: "getNftOwnerOf",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_nftId",
+        type: "uint256",
+      },
+    ],
+    name: "getNftTokenUri",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_company",
+        type: "address",
+      },
+    ],
+    name: "getReviewByCompany",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "id",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "title",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "content",
+            type: "string",
+          },
+          {
+            internalType: "address",
+            name: "company",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "writer",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "createDt",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "nftUri",
+            type: "string",
+          },
+        ],
+        internalType: "struct CareerContract.Review[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_writer",
+        type: "address",
+      },
+    ],
+    name: "getReviewByWriter",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "id",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "title",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "content",
+            type: "string",
+          },
+          {
+            internalType: "address",
+            name: "company",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "writer",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "createDt",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "nftUri",
+            type: "string",
+          },
+        ],
+        internalType: "struct CareerContract.Review[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "Review_mapping",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
+      },
+      {
+        internalType: "string",
+        name: "title",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "content",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "company",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "writer",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "createDt",
+        type: "uint256",
+      },
+      {
+        internalType: "string",
+        name: "nftUri",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "ReviewByCompany_mapping",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "ReviewByWriter_mapping",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "ReviewTotalSupply",
     outputs: [
       {
         internalType: "uint256",

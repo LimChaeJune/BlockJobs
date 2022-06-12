@@ -36,11 +36,16 @@ import { v4 as uuid } from "uuid";
 import { AddUserResume, UptUserProfile } from "@restapi/users/post";
 import { user_profile } from "@components/utils/routing";
 import CenterLayout from "@components/layouts/centerlayout";
+import { useS3 } from "@hooks/S3Client";
+import { GetUserResumeById, GetUserResumes } from "@restapi/users/get";
+import { accountCheck } from "@restapi/account/get";
 
 const ResumeEdit = () => {
+  let inputRef: HTMLInputElement | null;
+
   const router = useRouter();
   const resumes = useRecoilValue<UserResumeEntity[]>(resumeState);
-  const [loginAccount] = useRecoilState(account_state);
+  const [loginAccount, setAccountState] = useRecoilState(account_state);
   const [user, SetUser] = useState<User_Entity | undefined>(loginAccount?.user);
   const [userResume, SetResume] = useState<UserResumeEntity | null>();
 
@@ -51,6 +56,11 @@ const ResumeEdit = () => {
   );
   const [portState, setPortfolio] =
     useRecoilState<UserPortfolioEntity[]>(profile_Portfolio);
+  const [imageUrl, setImageUrl] = useState<string | undefined>(
+    loginAccount?.user.profilePicture
+  );
+
+  const { handleFileInput, fileBaseUrl } = useS3();
 
   // 이력서 User 변경
   function UptUserItem<T>(setItem: T, name: string) {
@@ -73,7 +83,17 @@ const ResumeEdit = () => {
     }
   }
 
-  // 자격증 박스 추가
+  const ChangeImageUrl = (fileid: string) => {
+    setImageUrl(fileBaseUrl + `${fileid}.png`);
+    if (user) {
+      SetUser({
+        ...user,
+        profilePicture: fileBaseUrl + `${fileid}.png`,
+      });
+    }
+  };
+
+  // 학력 박스 추가
   const addEducationBox = useCallback(() => {
     const neweducation: UserEducationEntity = {
       id: uuid(),
@@ -103,6 +123,14 @@ const ResumeEdit = () => {
     // user 정보 변경
     if (user) {
       await UptUserProfile(user);
+      await accountCheck(loginAccount?.accountAddress ?? "").then(
+        async (res) => {
+          console.log(res.data);
+          if (res.data) {
+            await setAccountState(res.data);
+          }
+        }
+      );
     }
 
     // resume 정보 변경
@@ -123,23 +151,27 @@ const ResumeEdit = () => {
 
   useEffect(() => {
     const routeId = router.query.resumeId;
-    if (router.query.resumeId === "newid") {
-      const newResume: UserResumeEntity = {
-        resumeId: uuid(),
-        userId: user?.id,
-        title: user?.name,
-      };
-      SetResume(newResume);
-      addPortfolio();
-      addCertBox();
-      addEducationBox();
-    } else {
-      const uptResume = resumes.find((e) => e.resumeId == routeId);
-      SetResume(uptResume);
-      setEducation(uptResume?.educations ?? []);
-      setCert(uptResume?.certifications ?? []);
-      setPortfolio(uptResume?.portfolioes ?? []);
-    }
+
+    const setting = async () => {
+      if (router.query.resumeId === "newid") {
+        const newResume: UserResumeEntity = {
+          resumeId: uuid(),
+          userId: user?.id,
+          title: user?.name,
+        };
+        SetResume(newResume);
+        addPortfolio();
+        addCertBox();
+        addEducationBox();
+      } else {
+        const uptResume = await GetUserResumeById(routeId?.toString() ?? "");
+        SetResume(uptResume.data);
+        setEducation(uptResume?.data?.educations ?? []);
+        setCert(uptResume?.data.certifications ?? []);
+        setPortfolio(uptResume?.data.portfolioes ?? []);
+      }
+    };
+    setting();
   }, []);
 
   return (
@@ -233,9 +265,21 @@ const ResumeEdit = () => {
               bg={colors.secondery[400]}
             /> */}
                 <Image
-                  src="https://via.placeholder.com/130x150"
+                  src={imageUrl ?? "https://via.placeholder.com/130x150"}
                   width={"130px"}
                   height={"150px"}
+                />
+                <Input
+                  ref={(refParam) => (inputRef = refParam)}
+                  type={"file"}
+                  hidden={true}
+                  onChange={(e) =>
+                    handleFileInput({
+                      id: `user/${uuid()}`,
+                      e: e,
+                      uploadComplete: ChangeImageUrl,
+                    })
+                  }
                 />
                 <Button
                   w={"100%"}
@@ -244,6 +288,7 @@ const ResumeEdit = () => {
                   height={"25px"}
                   fontSize={"md"}
                   background={"transparent"}
+                  onClick={() => inputRef?.click()}
                 >
                   사진 변경
                 </Button>

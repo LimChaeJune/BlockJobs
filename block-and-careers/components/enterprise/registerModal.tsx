@@ -207,11 +207,11 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
               <FormLabel htmlFor="businessNumber">사업자 번호</FormLabel>
               <Input
                 id="businessNumber"
-                onInput={numberDecimal}
                 placeholder="(예시) 123-45-67890"
                 {...register("businessNumber", {
                   required: "사업자 번호는 필수 입력 항목입니다.",
                 })}
+                onInput={numberDecimal}
               />
               <FormErrorMessage>
                 {errors.businessNumber?.message}

@@ -98,7 +98,7 @@ const CareerList = () => {
                 return <Contract_Career_Card key={idx} career={item} />;
               })}
           </Flex>
-          {currCnt < contractCareer?.length ? null : (
+          {currCnt < contractCareer?.length ? (
             <Box
               textAlign={"center"}
               fontSize={"xl"}
@@ -109,7 +109,7 @@ const CareerList = () => {
             >
               + 더보기
             </Box>
-          )}
+          ) : null}
         </Profile_Box>
 
         <Profile_Box boxTitle="증명되지 않은 경력">

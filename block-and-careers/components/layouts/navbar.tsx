@@ -100,10 +100,10 @@ const NavBar = (): JSX.Element => {
             target={"_blank"}
             rel="noopener noreferrer"
             href={
-              "https://rinkeby.etherscan.io/address/0x09C0b2a052b34fDb8084B9b9E083CD0B49323005"
+              "https://rinkeby.etherscan.io/address/0x290C6093b9d9B937ED5B0bA11D7a61Fd42Fe18D0"
             }
           >
-            0x09C0b2a052b34fDb8084B9b9E083CD0B49323005
+            0x290C6093b9d9B937ED5B0bA11D7a61Fd42Fe18D0
           </ContractBtn>
         </Flex>
       </Flex>

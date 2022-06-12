@@ -82,7 +82,10 @@ const Profile_User = () => {
               </Profile_Info>
               {curr_resume?.educations ? (
                 <Profile_Info title="학교">
-                  {`${curr_resume?.educations?.[0].name} (${curr_resume?.educations?.[0].major})` ??
+                  {`${
+                    curr_resume?.educations?.[0].name ??
+                    "최종 학력을 입력해주세요"
+                  } -${curr_resume?.educations?.[0].major ?? ""}` ??
                     "최종 학력을 입력해주세요"}
                 </Profile_Info>
               ) : null}
