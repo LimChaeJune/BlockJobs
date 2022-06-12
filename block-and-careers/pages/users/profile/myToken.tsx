@@ -5,6 +5,7 @@ import {
   Profile_Box,
   Profile_Info,
 } from "@components/users/profile/Profile_Box";
+import TokenSwap from "@components/utils/tokenSwap";
 import { AccountUserType, Account_Model } from "@restapi/types/account";
 import { UserCoinReceiptEntity } from "@restapi/types/coin";
 import { account_state, balance } from "@state/web3/account";
@@ -49,6 +50,9 @@ const Token_User = () => {
               fontWeight="bold"
             >{`${balanceState} JJC`}</Text>
           </Profile_Info>
+        </Profile_Box>
+        <Profile_Box boxTitle="스왑">
+          <TokenSwap />
         </Profile_Box>
         <Profile_Box boxTitle="내역">
           <Box>

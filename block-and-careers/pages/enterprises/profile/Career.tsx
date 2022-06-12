@@ -65,6 +65,8 @@ const CareerList = () => {
     from: string;
     status: CareerStatus;
   }) => {
+    console.log(careerid);
+    console.log(status);
     await SignOpen(`${from}이 신청한 경력을 '${CareerStatus[status]}' 검증`);
 
     await approveCareer({ careerId: careerid, status: status })

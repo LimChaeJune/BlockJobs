@@ -1,7 +1,8 @@
 import { BigNumber, ethers } from "ethers";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useWeb3 } from "./Web3Client";
 import { CareerStatus, Career_Item } from "@restapi/types/career";
+import { Review_Item } from "@restapi/types/review";
 interface props_createCareer {
   myRoles: string[];
   description: string;
@@ -10,12 +11,20 @@ interface props_createCareer {
   fnsDt: Date;
 }
 
+interface props_createReview {
+  title: string;
+  content: string;
+  company: String;
+}
+
 interface approve_Career {
   careerId: number;
   status: CareerStatus;
 }
 
 export const useBlockJobs = () => {
+  const reviewCreateAmount = 5;
+  const careerCreateAmount = 10;
   const { connect, contractState } = useWeb3();
 
   useEffect(() => {
@@ -74,11 +83,29 @@ export const useBlockJobs = () => {
       });
       const receipt = await tx.wait();
       const data = receipt.logs[0].data;
+
       return receipt;
     },
     [contractState]
   );
 
+  // 리뷰 작성
+  const createReview = useCallback(
+    async ({ title, content, company }: props_createReview) => {
+      const tx = await contractState?.createReview({
+        title,
+        content,
+        company,
+        reviewCreateAmount,
+      });
+      const receipt = await tx.wait();
+      const data = receipt.logs[0].data;
+      return receipt;
+    },
+    [contractState]
+  );
+
+  // 경력 신청
   const createCareer = useCallback(
     async ({
       myRoles,
@@ -93,34 +120,59 @@ export const useBlockJobs = () => {
         company_address,
         new Date(stDt).getTime(),
         new Date(fnsDt).getTime(),
-        10
+        careerCreateAmount
       );
       const receipt = await tx.wait();
       const data = receipt.logs[0].data;
-      console.log(receipt);
       return receipt;
     },
     [contractState]
   );
 
+  // 경력 증명
   const approveCareer = useCallback(
     async ({ careerId, status }: approve_Career) => {
       try {
-        const tx = await contractState?.approveCareer(careerId, 10, status);
+        const tx = await contractState?.approveCareer(
+          careerId,
+          careerCreateAmount,
+          status
+        );
         const receipt = await tx.wait();
-        console.log(receipt);
         return receipt;
       } catch (e) {
         console.log(e);
       }
     },
-    []
+    [contractState]
+  );
+
+  // 회사의 지갑주소 기준으로 리뷰 조회
+  const getReviewByCompany = useCallback(
+    async (enterprise_address: string | undefined): Promise<Review_Item[]> => {
+      const reviewByCompany = await contractState?.getCareerByCompany(
+        enterprise_address
+      );
+      return reviewByCompany;
+    },
+    [contractState]
+  );
+
+  // 작성자 지갑주소 기준으로 리뷰 조회
+  const getReviewByWriter = useCallback(
+    async (user_address: string | undefined): Promise<Review_Item[]> => {
+      const reviewByWriter = await contractState?.getReviewByWriter(
+        user_address
+      );
+      return reviewByWriter;
+    },
+    [contractState]
   );
 
   // 회사의 지갑주소 기준으로 커리어 조회
-  const getCareerByComany = useCallback(
+  const getCareerByCompany = useCallback(
     async (enterprise_address: string | undefined): Promise<Career_Item[]> => {
-      const careersByCompany = await contractState?.getCareerByComany(
+      const careersByCompany = await contractState?.getCareerByCompany(
         enterprise_address
       );
       return careersByCompany;
@@ -134,7 +186,6 @@ export const useBlockJobs = () => {
       if (user_address === undefined) {
         return [];
       }
-
       const careerByWorker = await contractState?.getCareerByWorker(
         user_address
       );
@@ -158,10 +209,13 @@ export const useBlockJobs = () => {
     BalanceOf,
     Buy,
     Sell,
+    createReview,
     createCareer,
     approveCareer,
-    getCareerByComany,
+    getCareerByCompany,
     getCareerByWorker,
+    getReviewByCompany,
+    getReviewByWriter,
     getCareerDetail,
   };
 };
