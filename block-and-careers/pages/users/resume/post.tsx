@@ -17,7 +17,7 @@ import {
   profile_Portfolio,
   resumeState,
 } from "@state/user";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import Resume_Box from "@components/users/resume/Resume_Box";
 import Education_Box from "@components/users/resume/Education_Box";
 import Certification_Box from "@components/users/resume/Certification_Box";
@@ -39,7 +39,7 @@ import CenterLayout from "@components/layouts/centerlayout";
 
 const ResumeEdit = () => {
   const router = useRouter();
-  const [resumes, SetResumes] = useRecoilState<UserResumeEntity[]>(resumeState);
+  const resumes = useRecoilValue<UserResumeEntity[]>(resumeState);
   const [loginAccount] = useRecoilState(account_state);
   const [user, SetUser] = useState<User_Entity | undefined>(loginAccount?.user);
   const [userResume, SetResume] = useState<UserResumeEntity | null>();

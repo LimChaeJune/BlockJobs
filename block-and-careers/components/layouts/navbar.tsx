@@ -2,6 +2,7 @@ import { NavList, InavItem } from "@state/datas/navbar";
 import Link from "next/link";
 import { useWeb3 } from "@hooks/Web3Client";
 import {
+  enterprise_career,
   enterprise_profile,
   link_selectpage,
   user_profile,
@@ -73,24 +74,6 @@ const NavBar = (): JSX.Element => {
     };
     working();
   }, [web3State.network, existAccountState]);
-
-  // // Web3 네트워크 확인 후 지갑 정보 가져오기
-  // useEffect(() => {
-  //   const effectWorking = async () => {
-  //     if (web3State?.address) {
-  //       await accountCheck(web3State.address)
-  //         .then((res) => {
-  //           setExistAccount(res.data);
-  //           console.log(res);
-  //           sessionStorage.setItem("account", JSON.stringify(res.data));
-  //         })
-  //         .catch((e) => {
-  //           console.log(e.message);
-  //         });
-  //     }
-  //   };
-  //   effectWorking();
-  // }, [web3State.address]);
 
   return (
     <Box
@@ -180,14 +163,11 @@ const NavBar = (): JSX.Element => {
                         프로필 관리
                       </Link>
                     </MenuItem>
-                    <MenuDivider />
                     <MenuItem>
                       <Link href={user_Token} passHref>
                         토큰
                       </Link>
                     </MenuItem>
-                    <MenuItem>지원 현황</MenuItem>
-                    <MenuItem>받은 제안</MenuItem>
                     <MenuDivider margin={0}></MenuDivider>
                     <MenuItem
                       onClick={WalletDisConn}
@@ -204,10 +184,11 @@ const NavBar = (): JSX.Element => {
                         기업 정보 관리
                       </Link>
                     </MenuItem>
-                    <MenuDivider margin={0} />
-                    <MenuItem>공고 등록</MenuItem>
-                    <MenuItem>공고 관리</MenuItem>
-                    <MenuItem>신청 받은 경력</MenuItem>
+                    <MenuItem>
+                      <Link href={enterprise_career} passHref>
+                        신청 받은 경력
+                      </Link>
+                    </MenuItem>
                     <MenuDivider margin={0} />
                     <MenuItem
                       onClick={WalletDisConn}

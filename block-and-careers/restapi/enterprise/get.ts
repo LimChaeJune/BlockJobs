@@ -13,11 +13,11 @@ export const GetAllEnterPrise = async (): Promise<
   }
 };
 
-export const GetEnterPriseByAccount = async (
-  address: string
+export const GetEnterPriseById = async (
+  id: string | string[]
 ): Promise<AxiosResponse<EnterPrise_Entity>> => {
   try {
-    const res = await client.get(`enterprise/${address}`);
+    const res = await client.get(`enterprise/byid/${id}`);
     return res;
   } catch (err) {
     throw err;

@@ -162,7 +162,6 @@ export const useWeb3 = () => {
           BlockJobs_ABI,
           signer
         );
-
         SetContract(Contract);
       }
     };
@@ -180,7 +179,7 @@ export const useWeb3 = () => {
     };
     effectaction();
     connectContract();
-  }, []);
+  }, [connect]);
 
   useEffect(() => {
     setAccountExist();

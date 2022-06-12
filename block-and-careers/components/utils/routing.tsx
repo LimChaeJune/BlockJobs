@@ -18,6 +18,10 @@ export const enterprise_profileUpt = "/enterprises/profile/ProfileUpt";
 export const enterprise_token = "/enterprises/profile/Token";
 // 기업 경력증명 신청
 export const enterprise_career = "/enterprises/profile/Career";
+// 기업리스트
+export const link_companiespage = "/enterprises/list";
+// 기업 상세보기
+export const link_companyDetail = "/enterprises/detail";
 
 // 유저 프로필 (나의 프로필)
 export const user_profile = "/users/profile/myProfile";
