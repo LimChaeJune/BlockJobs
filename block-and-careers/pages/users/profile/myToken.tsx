@@ -48,7 +48,7 @@ const Token_User = () => {
             <Text
               fontSize={"xl"}
               fontWeight="bold"
-            >{`${balanceState} JJC`}</Text>
+            >{`${balanceState} BJC`}</Text>
           </Profile_Info>
         </Profile_Box>
         <Profile_Box boxTitle="스왑">

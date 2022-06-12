@@ -13,11 +13,13 @@ import { ethers } from "ethers";
 import { numberDecimal, numberonly } from "./regex";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { account_state, balance, Web3_Model } from "@state/web3/account";
+import { Account_Model } from "@restapi/types/account";
 
 const TokenSwap = () => {
   const { BalanceOf, Sell, Buy } = useBlockJobs();
 
   const setBalance = useSetRecoilState<string | undefined>(balance);
+  const accountState = useRecoilValue<Account_Model | null>(account_state);
   const [fromCoin, setFromCoin] = useState<string>("ETH");
   const [toCoin, setToCoin] = useState<string>("BRC");
   const [fromValue, setFromValue] = useState<string>("");
@@ -45,8 +47,15 @@ const TokenSwap = () => {
         .then(async (receipt) => {
           console.log(receipt);
           await SuccessOpen(receipt.transactionHash);
+          // 초기화
           await setFromValue("");
           await setToValue("");
+          // 토큰 수정
+          await setBalance(
+            ethers.utils.formatEther(
+              await BalanceOf(accountState?.accountAddress)
+            )
+          );
         })
         .catch(async (e) => {
           await RejectOpen(e);

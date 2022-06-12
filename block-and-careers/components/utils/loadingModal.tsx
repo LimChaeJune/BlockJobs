@@ -10,9 +10,7 @@ import {
   Spinner,
   Text,
 } from "@chakra-ui/react";
-import { Description } from "@ethersproject/properties";
 import Link from "next/link";
-import { ReactNode, useState } from "react";
 import { AiOutlineWarning } from "react-icons/ai";
 import { BsArrowUpCircle } from "react-icons/bs";
 import colors from "themes/foundations/colors";
@@ -79,6 +77,8 @@ const LoadingModal = ({
                   fontSize={"md"}
                   color={colors.red[300]}
                   cursor={"pointer"}
+                  width={"100%"}
+                  noOfLines={3}
                 >
                   {description}
                 </Text>

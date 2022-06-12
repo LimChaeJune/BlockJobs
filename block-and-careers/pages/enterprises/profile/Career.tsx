@@ -28,7 +28,7 @@ import { useContractModal } from "@hooks/ContractModalHook";
 
 const CareerList = () => {
   // Contract Hooks
-  const { getCareerByComany, approveCareer } = useBlockJobs();
+  const { getCareerByCompany, approveCareer } = useBlockJobs();
 
   // 지갑 상태
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
@@ -49,7 +49,7 @@ const CareerList = () => {
 
   // 컨트랙트로 등록된 경력 조회
   const getContractCareer = async () => {
-    const value: Career_Item[] = await getCareerByComany(
+    const value: Career_Item[] = await getCareerByCompany(
       accountstate?.accountAddress
     );
     setCareer(value);

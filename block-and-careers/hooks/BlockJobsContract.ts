@@ -14,7 +14,7 @@ interface props_createCareer {
 interface props_createReview {
   title: string;
   content: string;
-  company: String;
+  company: string | undefined;
 }
 
 interface approve_Career {
@@ -92,12 +92,13 @@ export const useBlockJobs = () => {
   // 리뷰 작성
   const createReview = useCallback(
     async ({ title, content, company }: props_createReview) => {
-      const tx = await contractState?.createReview({
+      console.log(title, content, company, reviewCreateAmount);
+      const tx = await contractState?.createReview(
         title,
         content,
         company,
-        reviewCreateAmount,
-      });
+        reviewCreateAmount
+      );
       const receipt = await tx.wait();
       const data = receipt.logs[0].data;
       return receipt;
@@ -150,7 +151,7 @@ export const useBlockJobs = () => {
   // 회사의 지갑주소 기준으로 리뷰 조회
   const getReviewByCompany = useCallback(
     async (enterprise_address: string | undefined): Promise<Review_Item[]> => {
-      const reviewByCompany = await contractState?.getCareerByCompany(
+      const reviewByCompany = await contractState?.getReviewByCompany(
         enterprise_address
       );
       return reviewByCompany;
