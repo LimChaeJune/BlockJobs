@@ -13,6 +13,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useBlockJobs } from "@hooks/BlockJobsContract";
 import { Account_Model } from "@restapi/types/account";
 import { account_state } from "@state/web3/account";
 import { useCallback } from "react";
