@@ -7,13 +7,17 @@ import { account_state } from "@state/web3/account";
 import { resumeState } from "@state/user";
 import colors from "themes/foundations/colors";
 import ProfileLayout from "@components/layouts/profilelayout";
-import { enterprise_profileUpt } from "@components/utils/routing";
+import {
+  enterprise_profileUpt,
+  link_unAuthorize,
+} from "@components/utils/routing";
 import { AccountUserType, Account_Model } from "@restapi/types/account";
 import {
   Profile_Box,
   Profile_Info,
 } from "@components/users/profile/Profile_Box";
 import CenterLayout from "@components/layouts/centerlayout";
+import { useUserLogin } from "@hooks/LoginCheck";
 
 const Profile_Enterprise = () => {
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
@@ -23,6 +27,12 @@ const Profile_Enterprise = () => {
     router.push({
       pathname: enterprise_profileUpt,
     });
+  }, []);
+
+  const { IsEnterprise } = useUserLogin();
+  // 로그인 확인
+  useEffect(() => {
+    IsEnterprise();
   }, []);
 
   return (

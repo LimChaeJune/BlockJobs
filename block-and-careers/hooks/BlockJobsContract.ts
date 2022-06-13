@@ -22,14 +22,22 @@ interface approve_Career {
   status: CareerStatus;
 }
 
+interface mintNft {
+  owner: string;
+  tokenURI: string;
+  reviewId: number;
+}
+
 export const useBlockJobs = () => {
   const reviewCreateAmount = 5;
   const careerCreateAmount = 10;
-  const { connect, contractState } = useWeb3();
+  const { connect } = useWeb3();
+  const [contractState, setContract] = useState<ethers.Contract>();
 
   useEffect(() => {
     const fetchAsync = async () => {
-      await connect();
+      const contract = await connect();
+      await setContract(contract);
     };
     fetchAsync();
   }, []);
@@ -148,6 +156,20 @@ export const useBlockJobs = () => {
     [contractState]
   );
 
+  // NFT 민팅
+  const mintNft = useCallback(
+    async ({ owner, tokenURI, reviewId }: mintNft) => {
+      try {
+        const tx = await contractState?.mintNft(owner, tokenURI, reviewId);
+        const receipt = await tx.wait();
+        return receipt;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [contractState]
+  );
+
   // 회사의 지갑주소 기준으로 리뷰 조회
   const getReviewByCompany = useCallback(
     async (enterprise_address: string | undefined): Promise<Review_Item[]> => {
@@ -218,5 +240,7 @@ export const useBlockJobs = () => {
     getReviewByCompany,
     getReviewByWriter,
     getCareerDetail,
+    mintNft,
+    contractState,
   };
 };

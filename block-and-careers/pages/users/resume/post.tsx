@@ -39,6 +39,7 @@ import CenterLayout from "@components/layouts/centerlayout";
 import { useS3 } from "@hooks/S3Client";
 import { GetUserResumeById, GetUserResumes } from "@restapi/users/get";
 import { accountCheck } from "@restapi/account/get";
+import { useUserLogin } from "@hooks/LoginCheck";
 
 const ResumeEdit = () => {
   let inputRef: HTMLInputElement | null;
@@ -61,6 +62,12 @@ const ResumeEdit = () => {
   );
 
   const { handleFileInput, fileBaseUrl } = useS3();
+
+  const { IsCustomer } = useUserLogin();
+  // 로그인 확인
+  useEffect(() => {
+    IsCustomer();
+  }, []);
 
   // 이력서 User 변경
   function UptUserItem<T>(setItem: T, name: string) {

@@ -31,7 +31,8 @@ import { useEffect, useState } from "react";
 import colors from "themes/foundations/colors";
 
 const CompanyDetail = () => {
-  const { getCareerByCompany, getReviewByCompany } = useBlockJobs();
+  const { getCareerByCompany, getReviewByCompany, contractState } =
+    useBlockJobs();
   // 기업 상세 정보
   const [enterprise, setEnterprise] = useState<EnterPrise_Entity>();
   // 컨트랙트 상 경력
@@ -60,7 +61,6 @@ const CompanyDetail = () => {
         enterprise?.account?.accountAddress
       );
       setReviews(value);
-      console.log(value);
     }
   };
 
@@ -74,7 +74,6 @@ const CompanyDetail = () => {
     const fetchAction = async () => {
       if (routeId) {
         await GetEnterPriseById(routeId).then(async (res) => {
-          console.log(res);
           await setEnterprise(res.data);
         });
       }
@@ -88,7 +87,7 @@ const CompanyDetail = () => {
       await getContractReview();
     };
     fetchAction();
-  }, [enterprise]);
+  }, [enterprise, contractState]);
 
   return (
     <CenterLayout>

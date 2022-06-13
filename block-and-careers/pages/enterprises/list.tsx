@@ -1,11 +1,12 @@
 import { Box, Stack, Text, Image, Heading, Badge } from "@chakra-ui/react";
 import CenterLayout from "@components/layouts/centerlayout";
 import { link_companyDetail } from "@components/utils/routing";
+import { useUserLogin } from "@hooks/LoginCheck";
 import { GetAllEnterPrise } from "@restapi/enterprise/get";
 import { EnterPrise_Entity } from "@restapi/types/enterprise";
 import { InferGetStaticPropsType } from "next";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import colors from "themes/foundations/colors";
 
 export async function getStaticProps() {

@@ -63,7 +63,6 @@ export const useWeb3 = () => {
 
         const sessionCheck = sessionStorage.getItem("account");
         if (localStorage.getItem("injected") && !sessionCheck) {
-          console.log(sessionCheck);
           toast({
             title: "지갑연결에 성공했습니다.",
             status: "success",
@@ -86,6 +85,8 @@ export const useWeb3 = () => {
         SetModalProvider(provider);
         SetWeb3Provider(web3Provider);
         SetWeb3(ConnWeb3);
+        SetContract(Contract);
+
         if (web3Modal) {
           setBalance(
             ethers.utils.formatEther(
@@ -93,7 +94,6 @@ export const useWeb3 = () => {
             )
           );
         }
-
         return Contract;
       } catch (e) {
         console.log("web3 connection error", e);
@@ -141,7 +141,6 @@ export const useWeb3 = () => {
             setisNewId(false);
           }
           setExistAccount(res.data);
-          console.log(res);
           sessionStorage.setItem("account", JSON.stringify(res.data));
         })
         .catch((e) => {
@@ -150,21 +149,22 @@ export const useWeb3 = () => {
     }
   };
 
-  useEffect(() => {
-    const connectContract = async () => {
-      if (web3Modal) {
-        const provider = await web3Modal.connect();
-        const web3Provider = new ethers.providers.Web3Provider(provider);
-        const signer = web3Provider?.getSigner();
+  const connectContract = async () => {
+    if (web3Modal) {
+      const provider = await web3Modal.connect();
+      const web3Provider = new ethers.providers.Web3Provider(provider);
+      const signer = web3Provider?.getSigner();
 
-        const Contract = new ethers.Contract(
-          Contract_Address,
-          BlockJobs_ABI,
-          signer
-        );
-        SetContract(Contract);
-      }
-    };
+      const Contract = new ethers.Contract(
+        Contract_Address,
+        BlockJobs_ABI,
+        signer
+      );
+      return Contract;
+    }
+  };
+
+  useEffect(() => {
     const effectaction = async () => {
       if (web3State?.address) {
         await accountCheck(web3State.address)

@@ -16,7 +16,12 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { FiMail, FiUser, FiStar, FiMenu } from "react-icons/fi";
-import { BsBuilding, BsCoin, BsNewspaper } from "react-icons/bs";
+import {
+  BsPencilSquare,
+  BsBuilding,
+  BsCoin,
+  BsNewspaper,
+} from "react-icons/bs";
 import { IconType } from "react-icons";
 import { ReactText } from "react";
 import colors from "themes/foundations/colors";
@@ -27,6 +32,7 @@ import {
   enterprise_token,
   user_Career,
   user_profile,
+  user_Review,
   user_Token,
 } from "@components/utils/routing";
 import shadows from "themes/foundations/shadows";
@@ -43,6 +49,12 @@ const LinkItems: Array<LinkItemProps> = [
     name: "나의 프로필",
     icon: FiUser,
     path: user_profile,
+    type: AccountUserType.Customer,
+  },
+  {
+    name: "나의 리뷰",
+    icon: BsPencilSquare,
+    path: user_Review,
     type: AccountUserType.Customer,
   },
   {

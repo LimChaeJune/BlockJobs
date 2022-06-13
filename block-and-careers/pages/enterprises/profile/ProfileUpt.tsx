@@ -14,11 +14,13 @@ import colors from "themes/foundations/colors";
 import { Account_Model } from "@restapi/types/account";
 import Resume_Box from "@components/users/resume/Resume_Box";
 import { useS3 } from "@hooks/S3Client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UpdateEnterPriseDto } from "@restapi/types/enterprise";
 import { v4 as uuid } from "uuid";
 import { UpdateEnterprise } from "@restapi/enterprise/post";
 import CenterLayout from "@components/layouts/centerlayout";
+import { link_unAuthorize } from "@components/utils/routing";
+import { useUserLogin } from "@hooks/LoginCheck";
 
 const Profile_Enterprise = () => {
   let inputRef: HTMLInputElement | null;
@@ -56,6 +58,12 @@ const Profile_Enterprise = () => {
   const Btn_Save_Enterprise = async () => {
     await UpdateEnterprise(updateEnterState);
   };
+
+  const { IsEnterprise } = useUserLogin();
+  // 로그인 확인
+  useEffect(() => {
+    IsEnterprise();
+  }, []);
 
   return (
     <CenterLayout>
