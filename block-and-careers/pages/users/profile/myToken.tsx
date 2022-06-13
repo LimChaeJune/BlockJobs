@@ -5,7 +5,9 @@ import {
   Profile_Box,
   Profile_Info,
 } from "@components/users/profile/Profile_Box";
+import { link_unAuthorize } from "@components/utils/routing";
 import TokenSwap from "@components/utils/tokenSwap";
+import { useUserLogin } from "@hooks/LoginCheck";
 import { AccountUserType, Account_Model } from "@restapi/types/account";
 import { UserCoinReceiptEntity } from "@restapi/types/coin";
 import { account_state, balance } from "@state/web3/account";
@@ -21,6 +23,12 @@ const Token_User = () => {
     useState<UserCoinReceiptEntity[]>();
 
   useEffect(() => {}, []);
+
+  const { IsCustomer } = useUserLogin();
+  // 로그인 확인
+  useEffect(() => {
+    IsCustomer();
+  }, []);
 
   return (
     <CenterLayout>

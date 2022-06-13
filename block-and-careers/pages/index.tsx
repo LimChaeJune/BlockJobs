@@ -96,11 +96,13 @@ const Home: NextPage = () => {
         alignItems={"center"}
       >
         <Fade duration={2000}>
-          <Box>
-            <Heading>
-              클릭 한번으로 <br /> 경력을 영구히 보관
-            </Heading>
-          </Box>
+          {
+            <Box>
+              <Heading>
+                클릭 한번으로 <br /> 경력을 영구히 보관
+              </Heading>
+            </Box>
+          }
         </Fade>
       </Flex>
     </Box>

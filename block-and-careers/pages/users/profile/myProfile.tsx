@@ -7,7 +7,7 @@ import { account_state } from "@state/web3/account";
 import { resumeState } from "@state/user";
 import colors from "themes/foundations/colors";
 import ProfileLayout from "@components/layouts/profilelayout";
-import { user_resume } from "@components/utils/routing";
+import { link_unAuthorize, user_resume } from "@components/utils/routing";
 import { AccountUserType, Account_Model } from "@restapi/types/account";
 import { UserResumeEntity } from "@restapi/types/user";
 import { GetUserResumes } from "@restapi/users/get";
@@ -16,6 +16,7 @@ import {
   Profile_Info,
 } from "@components/users/profile/Profile_Box";
 import CenterLayout from "@components/layouts/centerlayout";
+import { useUserLogin } from "@hooks/LoginCheck";
 
 const Profile_User = () => {
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
@@ -40,6 +41,12 @@ const Profile_User = () => {
       });
     };
     action();
+  }, []);
+
+  const { IsCustomer } = useUserLogin();
+  // 로그인 확인
+  useEffect(() => {
+    IsCustomer();
   }, []);
 
   return (

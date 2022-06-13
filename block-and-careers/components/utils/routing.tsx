@@ -1,5 +1,7 @@
 // 회원등록
 export const link_selectpage = "/common/selectpage";
+// 권한없는 페이지
+export const link_unAuthorize = "/common/unauthpage";
 
 // 인재채용 목록
 export const person_recruit_list = "/person/list";
@@ -29,6 +31,8 @@ export const user_profile = "/users/profile/myProfile";
 export const user_Token = "/users/profile/myToken";
 // 유저 프로필 (경력 현황)
 export const user_Career = "/users/profile/myCareer";
+// 유저 리뷰 (나의 리뷰)
+export const user_Review = "/users/profile/myReview";
 
 // 유저 이력서
 export const user_resume = "/users/resume/post";

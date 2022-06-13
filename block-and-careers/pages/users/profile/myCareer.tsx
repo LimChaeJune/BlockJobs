@@ -31,6 +31,8 @@ import { AddUserCareer, UpdateUserCareer } from "@restapi/users/post";
 import CenterLayout from "@components/layouts/centerlayout";
 import LoadingModal from "@components/utils/loadingModal";
 import { useContractModal } from "@hooks/ContractModalHook";
+import { useUserLogin } from "@hooks/LoginCheck";
+import { link_unAuthorize } from "@components/utils/routing";
 
 const CareerList = () => {
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
@@ -41,7 +43,7 @@ const CareerList = () => {
   const [contractCareer, setCareer] = useState<Career_Item[]>([]);
   // DB에 등록된 경력
   const [careers, setcareer] = useState<UserCareerEntity[]>([]);
-  const { getCareerByWorker } = useBlockJobs();
+  const { getCareerByWorker, contractState } = useBlockJobs();
 
   const { onClose, isOpen, onOpen } = useDisclosure();
 
@@ -67,11 +69,17 @@ const CareerList = () => {
     setCareer(value);
   };
 
+  const { IsCustomer } = useUserLogin();
+  // 로그인 확인
+  useEffect(() => {
+    IsCustomer(link_unAuthorize);
+  }, []);
+
   useEffect(() => {
     // DB에 등록된 경력
     getContractCareer();
     getDBCareer();
-  }, [accountstate?.accountAddress]);
+  }, [accountstate?.accountAddress, contractCareer]);
 
   return (
     <CenterLayout>
@@ -91,12 +99,17 @@ const CareerList = () => {
         <Profile_Box boxTitle="블록체인에 올라간 경력">
           <Flex gap={5} direction={"column"}>
             {contractCareer
-              .slice()
+              ?.slice()
               .sort((a, b) => b.id - a.id)
               .slice(0, currCnt)
               ?.map((item, idx) => {
                 return <Contract_Career_Card key={idx} career={item} />;
-              })}
+              }) ?? (
+              <Heading textAlign={"center"} fontSize={"xl"}>
+                아직 블록체인에 등록되어 있는 경력이 없네요 위에 "경력 등록하기"
+                버튼을 눌러 경력을 추가해보아요😄
+              </Heading>
+            )}
           </Flex>
           {currCnt < contractCareer?.length ? (
             <Box

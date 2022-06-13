@@ -1,3 +1,5 @@
+import { BigNumber } from "ethers";
+
 export interface Review_Item {
   id: number;
   title: string;
@@ -5,5 +7,5 @@ export interface Review_Item {
   nfturl: string;
   company: string;
   writer: string;
-  createDt: number;
+  createDt: BigNumber;
 }

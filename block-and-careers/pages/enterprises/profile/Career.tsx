@@ -25,10 +25,12 @@ import colors from "themes/foundations/colors";
 import CenterLayout from "@components/layouts/centerlayout";
 import LoadingModal from "@components/utils/loadingModal";
 import { useContractModal } from "@hooks/ContractModalHook";
+import { useUserLogin } from "@hooks/LoginCheck";
+import { link_unAuthorize } from "@components/utils/routing";
 
 const CareerList = () => {
   // Contract Hooks
-  const { getCareerByCompany, approveCareer } = useBlockJobs();
+  const { getCareerByCompany, approveCareer, contractState } = useBlockJobs();
 
   // 지갑 상태
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
@@ -65,8 +67,6 @@ const CareerList = () => {
     from: string;
     status: CareerStatus;
   }) => {
-    console.log(careerid);
-    console.log(status);
     await SignOpen(`${from}이 신청한 경력을 '${CareerStatus[status]}' 검증`);
 
     await approveCareer({ careerId: careerid, status: status })
@@ -81,7 +81,13 @@ const CareerList = () => {
   useEffect(() => {
     // DB에 등록된 경력
     getContractCareer();
-  }, [accountstate?.accountAddress]);
+  }, [accountstate?.accountAddress, contractState]);
+
+  const { IsEnterprise } = useUserLogin();
+  // 로그인 확인
+  useEffect(() => {
+    IsEnterprise("/common/unauthpage");
+  }, []);
 
   return (
     <CenterLayout>
