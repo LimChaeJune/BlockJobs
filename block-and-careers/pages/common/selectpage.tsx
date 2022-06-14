@@ -9,13 +9,14 @@ import {
 import Register_Enterprise from "@components/enterprise/registerModal";
 import Register_User from "@components/users/registerModal";
 import { selectList, SelectTypes } from "@state/datas/usertype";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FaRegBuilding, FaRegUser } from "react-icons/fa";
 import colors from "themes/foundations/colors";
 import { GetRootJobs } from "restapi/jobs/get";
 import { InferGetStaticPropsType } from "next";
 import { GetIndustry } from "restapi/industry/get";
 import CenterLayout from "@components/layouts/centerlayout";
+import { useUserLogin } from "@hooks/LoginCheck";
 
 function SelectPage({
   rootJobs,
@@ -29,6 +30,9 @@ function SelectPage({
   //   };
   //   item();
   // },[]);
+  const selects: SelectTypes[] = selectList();
+
+  const { IsLoginByRoute } = useUserLogin();
 
   const {
     isOpen: isOpenEnterprise,
@@ -50,7 +54,9 @@ function SelectPage({
     }
   }, []);
 
-  const selects: SelectTypes[] = selectList();
+  useEffect(() => {
+    IsLoginByRoute("/");
+  }, []);
 
   return (
     <CenterLayout>

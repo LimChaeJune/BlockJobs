@@ -29,6 +29,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import colors from "themes/foundations/colors";
+import opensea from "../../public/images/opensea.png";
+import NextImage from "next/image";
 
 const CompanyDetail = () => {
   const { getCareerByCompany, getReviewByCompany, contractState } =
@@ -211,6 +213,19 @@ const ReviewCard = ({ review }: reviewCard_props) => {
       p={3}
       borderRadius={"xl"}
     >
+      {review.nftUri ? (
+        <Link
+          href={`https://testnets.opensea.io/assets/rinkeby/0x32718cc60088797c20b6f09d22c260061afe0b93/${review.id}`}
+          passHref
+        >
+          <Flex alignItems={"center"} gap={"5px"} cursor={"pointer"} mb={"5px"}>
+            <NextImage src={opensea} width={"30px"} height={"30px"} />
+            <Text fontSize={"sm"} fontWeight={"bold"} color={colors.blue[400]}>
+              OpenSea에서 내 NFT 보기
+            </Text>
+          </Flex>
+        </Link>
+      ) : null}
       <Heading fontSize={"sm"}>{"작성자"}</Heading>
       <Box>{`${review.writer}`}</Box>
       <Divider />

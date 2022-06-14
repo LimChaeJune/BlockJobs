@@ -98,7 +98,12 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
   const enterSizes: EnterpriseEmployees[] = GetEmployees();
 
   return (
-    <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      closeOnOverlayClick={false}
+      isOpen={isOpen}
+      onClose={onClose}
+      closeOnEsc={false}
+    >
       <ModalOverlay />
       <ModalContent>
         <Flex alignItems={"center"} ml={5} pt={2} pb={1}>

@@ -22,7 +22,7 @@ import {
 import { useRecoilState } from "recoil";
 import { account_state, initialWeb3, Web3_Model } from "@state/web3/account";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { EnterPrise_Entity } from "@restapi/types/enterprise";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -30,6 +30,7 @@ import colors from "themes/foundations/colors";
 import { getEnterSelector } from "@state/enterprise";
 import { AddUserCareer } from "@restapi/users/post";
 import { Account_Model } from "@restapi/types/account";
+import { GetAllEnterPrise } from "@restapi/enterprise/get";
 
 interface IFormInput {
   roles: string;
@@ -97,7 +98,12 @@ function CareerPost({ isOpen, onClose, completeSubmit }: modalInput) {
   }, []);
 
   return (
-    <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      closeOnOverlayClick={false}
+      isOpen={isOpen}
+      onClose={onClose}
+      closeOnEsc={false}
+    >
       <ModalOverlay />
       <ModalContent>
         <Flex alignItems={"center"} ml={5} pt={2} pb={1}>
@@ -107,7 +113,6 @@ function CareerPost({ isOpen, onClose, completeSubmit }: modalInput) {
         </Flex>
         <ModalHeader>경력 등록</ModalHeader>
         <ModalBody>
-          {" "}
           <Box>
             <form onSubmit={handleSubmit(onSubmit)}>
               <FormControl isRequired isInvalid={curr_company === undefined}>
@@ -181,9 +186,10 @@ interface companyAutoComplete {
 const CompanyAutoComplete = ({ CompanyClick }: companyAutoComplete) => {
   const [currValue, setInput] = useState("");
   const [IsAutoComplete, setAutoComplete] = useState<boolean>(false);
-  const [enterprises] = useRecoilState<EnterPrise_Entity[]>(getEnterSelector);
-  const [findEnterprise, setfindEnterprise] =
-    useState<EnterPrise_Entity[]>(enterprises);
+  const [enterprises, setenterprise] = useState<EnterPrise_Entity[]>();
+  const [findEnterprise, setfindEnterprise] = useState<
+    EnterPrise_Entity[] | undefined
+  >(enterprises);
 
   const InputChanged = (value: string) => {
     setInput(value);
@@ -200,6 +206,17 @@ const CompanyAutoComplete = ({ CompanyClick }: companyAutoComplete) => {
     CompanyClick(selectValue);
   };
 
+  useEffect(() => {
+    const action = async () => {
+      await GetAllEnterPrise().then((res) => {
+        console.log(res);
+        setenterprise(res.data);
+        setfindEnterprise(res.data);
+      });
+    };
+    action();
+  }, []);
+
   return (
     <Box position={"relative"}>
       <Input
@@ -211,6 +228,7 @@ const CompanyAutoComplete = ({ CompanyClick }: companyAutoComplete) => {
             setAutoComplete(false);
           }, 200);
         }}
+        readOnly
       />
       {IsAutoComplete ? (
         <Box
@@ -222,7 +240,7 @@ const CompanyAutoComplete = ({ CompanyClick }: companyAutoComplete) => {
           zIndex={20}
         >
           <List>
-            <ListItem>
+            {/* <ListItem>
               <Box
                 height={"40px"}
                 bg={colors.secondery[200]}
@@ -231,10 +249,10 @@ const CompanyAutoComplete = ({ CompanyClick }: companyAutoComplete) => {
               >
                 {`' ${currValue} ' 직접 입력하기`}
               </Box>
-            </ListItem>
-            {findEnterprise?.map((enter) => {
+            </ListItem> */}
+            {findEnterprise?.map((enter, idx) => {
               return (
-                <ListItem>
+                <ListItem key={idx}>
                   <Box
                     padding={"5px"}
                     width={"100%"}

@@ -5,14 +5,7 @@ import { EnterPrise_Entity } from "@restapi/types/enterprise";
 import { account_state } from "@state/web3/account";
 import { getEnterSelector } from "@state/enterprise";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import {
   Profile_Box,
@@ -25,8 +18,6 @@ import colors from "themes/foundations/colors";
 import CenterLayout from "@components/layouts/centerlayout";
 import LoadingModal from "@components/utils/loadingModal";
 import { useContractModal } from "@hooks/ContractModalHook";
-import { useUserLogin } from "@hooks/LoginCheck";
-import { link_unAuthorize } from "@components/utils/routing";
 
 const CareerList = () => {
   // Contract Hooks
@@ -82,12 +73,6 @@ const CareerList = () => {
     // DB에 등록된 경력
     getContractCareer();
   }, [accountstate?.accountAddress, contractState]);
-
-  const { IsEnterprise } = useUserLogin();
-  // 로그인 확인
-  useEffect(() => {
-    IsEnterprise("/common/unauthpage");
-  }, []);
 
   return (
     <CenterLayout>
@@ -161,8 +146,6 @@ const Contract_Career_Card = ({
   useEffect(() => {
     getuserAccount();
   }, []);
-
-  const [enter] = useRecoilState<EnterPrise_Entity[]>(getEnterSelector);
 
   return (
     <Box

@@ -1,7 +1,6 @@
 import { useRecoilState } from "recoil";
 
 import { AccountUserType, Account_Model } from "@restapi/types/account";
-import { CareerStatus, Career_Item } from "@restapi/types/career";
 import { EnterPrise_Entity } from "@restapi/types/enterprise";
 
 import { account_state } from "@state/web3/account";
@@ -23,7 +22,9 @@ import { useIpfs } from "@hooks/Ipfsupload";
 import { useContractModal } from "@hooks/ContractModalHook";
 import LoadingModal from "@components/utils/loadingModal";
 import { useUserLogin } from "@hooks/LoginCheck";
-import { link_unAuthorize } from "@components/utils/routing";
+import Link from "next/link";
+import opensea from "../../../public/images/opensea.png";
+import Image from "next/image";
 
 const ReviewList = () => {
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
@@ -33,7 +34,7 @@ const ReviewList = () => {
   const [reviewes, setReviewes] = useState<Review_Item[]>([]);
 
   // IPFS Hook
-  const { dataURItoBlob, UploadIpfs } = useIpfs();
+  const { dataURItoBlob, UploadIpfs, infura } = useIpfs();
   // Contract Hook
   const { getReviewByWriter, mintNft, contractState } = useBlockJobs();
 
@@ -81,7 +82,7 @@ const ReviewList = () => {
             await SignOpen(`${reviewId}번 리뷰 nft 발행`);
             await mintNft({
               owner: accountstate?.accountAddress,
-              tokenURI: hash,
+              tokenURI: infura + hash,
               reviewId: reviewId,
             })
               .then(async (receipt) => {
@@ -126,8 +127,8 @@ const ReviewList = () => {
                   );
                 }) ?? (
                 <Heading textAlign={"center"} fontSize={"xl"}>
-                  아직 블록체인에 등록되어 있는 경력이 없네요 위에 "경력
-                  등록하기" 버튼을 눌러 경력을 추가해보아요😄
+                  아직 작성한 리뷰가 없습니다. 내가 증명받은 기업에 리뷰 작성해
+                  토큰을 보상으로 받아보아요😄
                 </Heading>
               )}
             </Flex>
@@ -179,17 +180,23 @@ const Review_Box = ({ review, mintingClick }: contract_review_props) => {
         borderRadius={"md"}
         padding={5}
       >
-        <Flex>
-          <Heading fontSize={"md"} mb={3}>
-            회사:
-            {`${
-              enter?.find((e) => e.account.accountAddress === review.company)
-                ?.title ?? "회원등록 되지 않은 주소"
-            } (${review.company})`}
-          </Heading>
-          <Spacer />
-          {review.nfturl ? (
-            review.nfturl
+        <Box float={"right"}>
+          {review.nftUri ? (
+            <Link
+              href={`https://testnets.opensea.io/assets/rinkeby/0x32718cc60088797c20b6f09d22c260061afe0b93/${review.id}`}
+              passHref
+            >
+              <Flex alignItems={"center"} gap={"5px"} cursor={"pointer"}>
+                <Image src={opensea} width={"30px"} height={"30px"} />
+                <Text
+                  fontSize={"sm"}
+                  fontWeight={"bold"}
+                  color={colors.blue[400]}
+                >
+                  OpenSea에서 내 NFT 보기
+                </Text>
+              </Flex>
+            </Link>
           ) : (
             <Button
               onClick={() =>
@@ -199,6 +206,16 @@ const Review_Box = ({ review, mintingClick }: contract_review_props) => {
               NFT 발행
             </Button>
           )}
+        </Box>
+        <Flex>
+          <Heading fontSize={"md"} mb={3}>
+            회사:
+            {`${
+              enter?.find((e) => e.account.accountAddress === review.company)
+                ?.title ?? "회원등록 되지 않은 주소"
+            } (${review.company})`}
+          </Heading>
+          <Spacer />
         </Flex>
         <Profile_Info title="제목">
           <Heading fontSize={"sm"}>{`${review.title}`}</Heading>

@@ -52,7 +52,6 @@ const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
   const {
     isOpen: isOpenContractModal,
     onClose: onCloseContractModal,
-    onOpen: onOpenContractModal,
     receiptLink,
     isSignWait,
     isReject,
@@ -76,9 +75,12 @@ const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
       title: data.title,
       content: data.content,
       company: companyAddress,
+      createDt: new Date(),
+      nftUri: "",
     })
       .then(async (recepit) => {
         await SuccessOpen(recepit.transactionHash);
+        onClose();
       })
       .catch(async (e) => {
         await RejectOpen(e);
