@@ -15,6 +15,8 @@ interface props_createReview {
   title: string;
   content: string;
   company: string | undefined;
+  createDt: Date;
+  nftUri: string;
 }
 
 interface approve_Career {
@@ -99,12 +101,19 @@ export const useBlockJobs = () => {
 
   // 리뷰 작성
   const createReview = useCallback(
-    async ({ title, content, company }: props_createReview) => {
-      console.log(title, content, company, reviewCreateAmount);
+    async ({
+      title,
+      content,
+      company,
+      createDt,
+      nftUri,
+    }: props_createReview) => {
       const tx = await contractState?.createReview(
         title,
         content,
         company,
+        new Date(createDt).getTime(),
+        nftUri,
         reviewCreateAmount
       );
       const receipt = await tx.wait();

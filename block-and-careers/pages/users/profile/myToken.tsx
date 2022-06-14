@@ -7,6 +7,7 @@ import {
 } from "@components/users/profile/Profile_Box";
 import { link_unAuthorize } from "@components/utils/routing";
 import TokenSwap from "@components/utils/tokenSwap";
+import { useContractModal } from "@hooks/ContractModalHook";
 import { useUserLogin } from "@hooks/LoginCheck";
 import { AccountUserType, Account_Model } from "@restapi/types/account";
 import { UserCoinReceiptEntity } from "@restapi/types/coin";
@@ -21,8 +22,6 @@ const Token_User = () => {
 
   const [coinReceiptState, setCoinRecepits] =
     useState<UserCoinReceiptEntity[]>();
-
-  useEffect(() => {}, []);
 
   const { IsCustomer } = useUserLogin();
   // 로그인 확인

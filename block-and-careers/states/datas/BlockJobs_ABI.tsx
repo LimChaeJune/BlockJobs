@@ -1,4 +1,4 @@
-export const Contract_Address = "0x290C6093b9d9B937ED5B0bA11D7a61Fd42Fe18D0";
+export const Contract_Address = "0x0f6F940D7Fa357A4960893B995758b020f4eC7fF";
 export const BlockJobs_ABI = [
   {
     inputs: [
@@ -184,6 +184,16 @@ export const BlockJobs_ABI = [
         internalType: "address",
         name: "_company",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "createDt",
+        type: "uint256",
+      },
+      {
+        internalType: "string",
+        name: "_nftUri",
+        type: "string",
       },
       {
         internalType: "uint256",

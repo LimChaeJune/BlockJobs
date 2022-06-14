@@ -4,7 +4,7 @@ export interface Review_Item {
   id: number;
   title: string;
   content: string;
-  nfturl: string;
+  nftUri: string;
   company: string;
   writer: string;
   createDt: BigNumber;

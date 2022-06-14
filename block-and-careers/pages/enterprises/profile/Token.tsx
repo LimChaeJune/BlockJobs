@@ -24,7 +24,7 @@ const Token_Enterpirse = () => {
   const { IsEnterprise } = useUserLogin();
   // 로그인 확인
   useEffect(() => {
-    IsEnterprise(link_unAuthorize);
+    IsEnterprise();
   }, []);
 
   return (

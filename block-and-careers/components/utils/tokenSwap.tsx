@@ -115,14 +115,14 @@ const TokenSwap = () => {
           <Text fontWeight={"bold"}>ETH</Text>
         </Flex>
       </Flex>
-      <Button
+      {/* <Button
         position={"absolute"}
         top={"100px"}
         right={"45%"}
         border={"white 3px solid"}
       >
         <MdOutlineSwapVert fontSize={"20px"} />
-      </Button>
+      </Button> */}
       <Flex
         marginTop={"10px"}
         bg={"#F7F4F8"}

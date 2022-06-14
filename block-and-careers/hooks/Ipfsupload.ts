@@ -1,6 +1,8 @@
 import { create } from "ipfs-http-client";
 
 export const useIpfs = () => {
+  const infura = "https://ipfs.infura.io/ipfs/";
+
   // URI를 Blob 형식으로 변경
   const dataURItoBlob = (dataURI: string) => {
     // convert base64/URLEncoded data component to raw binary data held in a string
@@ -25,11 +27,12 @@ export const useIpfs = () => {
     const cid = await client.add(form);
 
     console.log(cid.path);
-    const meta = { name, description, img: cid.path };
+    const meta = { name, description, image: infura + cid.path };
+    console.log(meta);
     const buffer = Buffer.from(JSON.stringify(meta));
     await client.add(buffer);
     return cid.path;
   };
 
-  return { dataURItoBlob, UploadIpfs };
+  return { dataURItoBlob, UploadIpfs, infura };
 };
