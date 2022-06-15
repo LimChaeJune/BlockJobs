@@ -101,7 +101,7 @@ const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
         <ModalHeader>리뷰 등록</ModalHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box padding={5}>
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={!!errors.title}>
               <FormLabel>리뷰 제목</FormLabel>
               <Input
                 type={"title"}
@@ -110,7 +110,7 @@ const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
               />
               <FormErrorMessage>{errors?.title?.message}</FormErrorMessage>
             </FormControl>
-            <FormControl mt={"5px"} isRequired>
+            <FormControl mt={"5px"} isRequired isInvalid={!!errors.content}>
               <FormLabel>리뷰 내용</FormLabel>
               <Textarea
                 minH={"200px"}

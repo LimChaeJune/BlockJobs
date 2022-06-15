@@ -19,13 +19,13 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { EnterpriseEmployees, GetEmployees } from "@state/datas/enterprisetype";
 import { useRouter } from "next/router";
 import { RegisterEnterprise } from "@restapi/enterprise/post";
 import { RegisterEnterprise_Body } from "@restapi/types/enterprise";
 import { AccountUserType } from "@restapi/types/account";
 import { useRecoilState } from "recoil";
 import { initialWeb3, Web3_Model } from "@state/web3/account";
+import { EnterpriseEmployees, GetEmployees } from "@state/datas/enterprisetype";
 import { useCallback } from "react";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
 import { IndustryEntity } from "@restapi/types/industry";

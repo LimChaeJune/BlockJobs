@@ -1,13 +1,22 @@
-import { Box, Stack, Text, Image, Heading, Badge } from "@chakra-ui/react";
+import {
+  Box,
+  Stack,
+  Text,
+  Image,
+  Heading,
+  Badge,
+  Flex,
+  border,
+} from "@chakra-ui/react";
 import CenterLayout from "@components/layouts/centerlayout";
 import { link_companyDetail } from "@components/utils/routing";
-import { useUserLogin } from "@hooks/LoginCheck";
 import { GetAllEnterPrise } from "@restapi/enterprise/get";
 import { EnterPrise_Entity } from "@restapi/types/enterprise";
 import { InferGetStaticPropsType } from "next";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import colors from "themes/foundations/colors";
+import NextImage from "next/image";
+import noimage from "../../public/images/noimage.png";
 
 export async function getStaticProps() {
   const res_industry = await GetAllEnterPrise();
@@ -27,9 +36,11 @@ function Companies({
     <CenterLayout>
       <Heading mb={"50px"}>기업 목록</Heading>
       <Box>
-        {companies?.map((item, idx) => {
-          return <Company_Card company={item} key={idx} />;
-        })}
+        <Flex flexWrap={"wrap"}>
+          {companies?.map((item, idx) => {
+            return <Company_Card company={item} key={idx} />;
+          })}
+        </Flex>
       </Box>
     </CenterLayout>
   );
@@ -47,31 +58,55 @@ const Company_Card = ({ company }: companyCard_props) => {
         query: { enterpriseId: company.id },
       }}
     >
-      <Stack
+      <Box
         width={{ xl: "25%", md: "50%", sm: "50%" }}
-        border={`1px solid ${colors.secondery[400]}`}
-        borderRadius={"xl"}
-        cursor={"pointer"}
+        padding={"10px"}
+        minH={{ xl: "320px" }}
       >
-        <Image src={company.thumbnail ?? ""} objectFit={"cover"} />
-        <Box p={5}>
-          <Badge
-            borderRadius="full"
-            px="2"
-            background={colors.blue[400]}
-            color={colors.white}
-            fontSize={"sm"}
-          >
-            {company.employees}
-          </Badge>
-          <Heading mt={"5px"} mb={"5px"} fontSize={"md"}>
-            {company.title}
-          </Heading>
-          <Box>
-            <Text noOfLines={2}>{company.description}</Text>
+        <Stack
+          height={"100%"}
+          border={`1px solid ${colors.secondery[400]}`}
+          borderRadius={"xl"}
+          cursor={"pointer"}
+        >
+          <Box position={"relative"} height={"45%"} width={"100%"}>
+            {company.thumbnail ? (
+              <Image
+                borderRadius={"10px 10px 0 0"}
+                width={"100%"}
+                height={"100%"}
+                src={company.thumbnail ?? ""}
+                objectFit={"cover"}
+              />
+            ) : (
+              <NextImage
+                style={{ borderRadius: "10px 10px 0 0" }}
+                layout="fill"
+                objectFit={"cover"}
+                src={noimage}
+              />
+            )}
           </Box>
-        </Box>
-      </Stack>
+
+          <Box p={5}>
+            <Badge
+              borderRadius="full"
+              px="2"
+              background={colors.blue[400]}
+              color={colors.white}
+              fontSize={"sm"}
+            >
+              {company.employees}
+            </Badge>
+            <Heading mt={"5px"} mb={"5px"} fontSize={"md"}>
+              {company.title}
+            </Heading>
+            <Box>
+              <Text noOfLines={2}>{company.description}</Text>
+            </Box>
+          </Box>
+        </Stack>
+      </Box>
     </Link>
   );
 };

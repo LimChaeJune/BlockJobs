@@ -34,7 +34,7 @@ const ReviewList = () => {
   const [reviewes, setReviewes] = useState<Review_Item[]>([]);
 
   // IPFS Hook
-  const { dataURItoBlob, UploadIpfs, infura } = useIpfs();
+  const { dataURItoBlob, UploadIpfs } = useIpfs();
   // Contract Hook
   const { getReviewByWriter, mintNft, contractState } = useBlockJobs();
 
@@ -77,12 +77,12 @@ const ReviewList = () => {
           dataURItoBlob(canvas.toDataURL("image/png")),
           reviewName,
           description
-        ).then(async (hash) => {
+        ).then(async (imgUrl) => {
           if (accountstate?.accountAddress) {
             await SignOpen(`${reviewId}번 리뷰 nft 발행`);
             await mintNft({
               owner: accountstate?.accountAddress,
-              tokenURI: infura + hash,
+              tokenURI: imgUrl,
               reviewId: reviewId,
             })
               .then(async (receipt) => {
@@ -170,7 +170,6 @@ interface contract_review_props {
 
 const Review_Box = ({ review, mintingClick }: contract_review_props) => {
   const [enter] = useRecoilState<EnterPrise_Entity[]>(getEnterSelector);
-  console.log(review);
   return (
     <>
       <Box
@@ -183,7 +182,7 @@ const Review_Box = ({ review, mintingClick }: contract_review_props) => {
         <Box float={"right"}>
           {review.nftUri ? (
             <Link
-              href={`https://testnets.opensea.io/assets/rinkeby/0x32718cc60088797c20b6f09d22c260061afe0b93/${review.id}`}
+              href={`https://testnets.opensea.io/assets/rinkeby/0x90a30F0de9a6E6117cdC35e2f7aB6503e4190198/${review.id}`}
               passHref
             >
               <Flex alignItems={"center"} gap={"5px"} cursor={"pointer"}>
@@ -208,13 +207,17 @@ const Review_Box = ({ review, mintingClick }: contract_review_props) => {
           )}
         </Box>
         <Flex>
-          <Heading fontSize={"md"} mb={3}>
-            회사:
-            {`${
-              enter?.find((e) => e.account.accountAddress === review.company)
-                ?.title ?? "회원등록 되지 않은 주소"
-            } (${review.company})`}
-          </Heading>
+          <Box>
+            <Heading fontSize={"small"} color={colors.blue[200]} mb={2}>
+              {review.company}
+            </Heading>
+            <Heading fontSize={"md"} mb={3}>
+              {`${
+                enter?.find((e) => e.account.accountAddress === review.company)
+                  ?.title ?? "회원등록 되지 않은 주소"
+              }`}
+            </Heading>
+          </Box>
           <Spacer />
         </Flex>
         <Profile_Info title="제목">
