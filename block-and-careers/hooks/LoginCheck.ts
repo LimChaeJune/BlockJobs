@@ -39,11 +39,17 @@ export const useUserLogin = () => {
   // 로그인 되어있을 때 이동
   const IsLoginByRoute = (routeUrl: string) => {
     var getSession = sessionStorage.getItem("account");
-    if (!getSession || getSession.trim() === "") {
-      return;
-    }
 
-    route.push(routeUrl);
+    if (
+      !getSession ||
+      getSession == undefined ||
+      getSession == '""' ||
+      getSession.length == 0
+    ) {
+      return;
+    } else {
+      route.push(routeUrl);
+    }
   };
 
   return { IsLoginCheck, IsCustomer, IsEnterprise, IsLoginByRoute };

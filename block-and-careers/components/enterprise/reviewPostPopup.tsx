@@ -11,17 +11,13 @@ import {
   ModalHeader,
   ModalOverlay,
   Textarea,
-  useDisclosure,
 } from "@chakra-ui/react";
 import LoadingModal from "@components/utils/loadingModal";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
 import { useContractModal } from "@hooks/ContractModalHook";
-import { Account_Model } from "@restapi/types/account";
-import { account_state } from "@state/web3/account";
 import { useCallback } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useRecoilState } from "recoil";
 import * as yup from "yup";
 
 interface IFormInput {
@@ -47,7 +43,6 @@ interface modalInput {
 }
 
 const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
-  const [accountState] = useRecoilState<Account_Model | null>(account_state);
   const { createReview } = useBlockJobs();
   const {
     isOpen: isOpenContractModal,
@@ -92,7 +87,7 @@ const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
       reset();
       onClose();
     }
-  }, []);
+  }, [reset, onClose]);
 
   return (
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
@@ -101,7 +96,7 @@ const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
         <ModalHeader>리뷰 등록</ModalHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box padding={5}>
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={!!errors.title}>
               <FormLabel>리뷰 제목</FormLabel>
               <Input
                 type={"title"}
@@ -110,7 +105,7 @@ const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
               />
               <FormErrorMessage>{errors?.title?.message}</FormErrorMessage>
             </FormControl>
-            <FormControl mt={"5px"} isRequired>
+            <FormControl mt={"5px"} isRequired isInvalid={!!errors.content}>
               <FormLabel>리뷰 내용</FormLabel>
               <Textarea
                 minH={"200px"}

@@ -18,7 +18,10 @@ module.exports = {
 
     // Handle module aliases
     "^@pages/(.*)$": "<rootDir>/pages/$1",
-    "^@components/(.*)$": "<rootDir>/components/$1"
+    "^@components/(.*)$": "<rootDir>/components/$1",
+    "^@restapi/(.*)$": "<rootDir>/restapi/$1",
+    "^@state/(.*)$": "<rootDir>/states/$1",    
+    "^@hooks/(.*)$": "<rootDir>/hooks/$1"
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/.next/"],

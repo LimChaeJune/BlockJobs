@@ -8,7 +8,7 @@ import { getEnterSelector } from "@state/enterprise";
 
 import { useBlockJobs } from "@hooks/BlockJobsContract";
 import { Flex, Heading, Text, Box, Spacer, Button } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Profile_Box,
   Profile_Info,
@@ -34,7 +34,7 @@ const ReviewList = () => {
   const [reviewes, setReviewes] = useState<Review_Item[]>([]);
 
   // IPFS Hook
-  const { dataURItoBlob, UploadIpfs, infura } = useIpfs();
+  const { dataURItoBlob, UploadIpfs } = useIpfs();
   // Contract Hook
   const { getReviewByWriter, mintNft, contractState } = useBlockJobs();
 
@@ -51,12 +51,12 @@ const ReviewList = () => {
   } = useContractModal();
 
   // 컨트랙트로 등록된 경력 조회
-  const getContractReview = async () => {
+  const getContractReview = useCallback(async () => {
     const value: Review_Item[] = await getReviewByWriter(
       accountstate?.accountAddress
     );
     setReviewes(value);
-  };
+  }, [setReviewes, accountstate?.accountAddress, getReviewByWriter]);
 
   const { IsCustomer } = useUserLogin();
   // 로그인 확인
@@ -77,12 +77,12 @@ const ReviewList = () => {
           dataURItoBlob(canvas.toDataURL("image/png")),
           reviewName,
           description
-        ).then(async (hash) => {
+        ).then(async (imgUrl) => {
           if (accountstate?.accountAddress) {
             await SignOpen(`${reviewId}번 리뷰 nft 발행`);
             await mintNft({
               owner: accountstate?.accountAddress,
-              tokenURI: infura + hash,
+              tokenURI: imgUrl,
               reviewId: reviewId,
             })
               .then(async (receipt) => {
@@ -101,7 +101,7 @@ const ReviewList = () => {
   useEffect(() => {
     // DB에 등록된 경력
     getContractReview();
-  }, [accountstate?.accountAddress, contractState]);
+  }, [accountstate?.accountAddress, contractState, getContractReview]);
 
   return (
     <CenterLayout>
@@ -113,22 +113,25 @@ const ReviewList = () => {
         <Box>
           <Profile_Box boxTitle="내가 작성한 리뷰">
             <Flex gap={5} direction={"column"}>
-              {reviewes
-                ?.slice()
-                .sort((a, b) => b.id - a.id)
-                .slice(0, currCnt)
-                ?.map((item, idx) => {
-                  return (
-                    <Review_Box
-                      key={idx}
-                      review={item}
-                      mintingClick={Minting_Click}
-                    />
-                  );
-                }) ?? (
+              {reviewes?.length > 0 ? (
+                reviewes
+                  ?.slice()
+                  .sort((a, b) => b.id - a.id)
+                  .slice(0, currCnt)
+                  ?.map((item, idx) => {
+                    return (
+                      <Review_Box
+                        key={idx}
+                        review={item}
+                        mintingClick={Minting_Click}
+                      />
+                    );
+                  })
+              ) : (
                 <Heading textAlign={"center"} fontSize={"xl"}>
-                  아직 작성한 리뷰가 없습니다. 내가 증명받은 기업에 리뷰 작성해
-                  토큰을 보상으로 받아보아요😄
+                  아직 작성한 리뷰가 없습니다.
+                  <br />
+                  내가 증명받은 기업에 리뷰 작성해 토큰을 보상으로 받아보아요😄
                 </Heading>
               )}
             </Flex>
@@ -165,12 +168,11 @@ interface contract_review_props {
     reviewId: number,
     reviewName: string,
     description: string
-  ) => {};
+  ) => void;
 }
 
 const Review_Box = ({ review, mintingClick }: contract_review_props) => {
   const [enter] = useRecoilState<EnterPrise_Entity[]>(getEnterSelector);
-  console.log(review);
   return (
     <>
       <Box
@@ -183,11 +185,16 @@ const Review_Box = ({ review, mintingClick }: contract_review_props) => {
         <Box float={"right"}>
           {review.nftUri ? (
             <Link
-              href={`https://testnets.opensea.io/assets/rinkeby/0x32718cc60088797c20b6f09d22c260061afe0b93/${review.id}`}
+              href={`https://testnets.opensea.io/assets/rinkeby/0x90a30F0de9a6E6117cdC35e2f7aB6503e4190198/${review.id}`}
               passHref
             >
               <Flex alignItems={"center"} gap={"5px"} cursor={"pointer"}>
-                <Image src={opensea} width={"30px"} height={"30px"} />
+                <Image
+                  src={opensea}
+                  alt="opensea"
+                  width={"30px"}
+                  height={"30px"}
+                />
                 <Text
                   fontSize={"sm"}
                   fontWeight={"bold"}
@@ -208,13 +215,17 @@ const Review_Box = ({ review, mintingClick }: contract_review_props) => {
           )}
         </Box>
         <Flex>
-          <Heading fontSize={"md"} mb={3}>
-            회사:
-            {`${
-              enter?.find((e) => e.account.accountAddress === review.company)
-                ?.title ?? "회원등록 되지 않은 주소"
-            } (${review.company})`}
-          </Heading>
+          <Box>
+            <Heading fontSize={"small"} color={colors.blue[200]} mb={2}>
+              {review.company}
+            </Heading>
+            <Heading fontSize={"md"} mb={3}>
+              {`${
+                enter?.find((e) => e.account.accountAddress === review.company)
+                  ?.title ?? "회원등록 되지 않은 주소"
+              }`}
+            </Heading>
+          </Box>
           <Spacer />
         </Flex>
         <Profile_Info title="제목">

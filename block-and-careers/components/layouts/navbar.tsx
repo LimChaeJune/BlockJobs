@@ -5,6 +5,7 @@ import {
   enterprise_career,
   enterprise_profile,
   link_selectpage,
+  user_Career,
   user_profile,
   user_Token,
 } from "@components/utils/routing";
@@ -28,10 +29,9 @@ import {
 } from "@chakra-ui/react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import colors from "themes/foundations/colors";
-import { utils } from "ethers";
-import { accountCheck } from "restapi/account/get";
 import styled from "@emotion/styled";
 import { AccountUserType, Account_Model } from "restapi/types/account";
+import { utils } from "ethers";
 
 const NavBar = (): JSX.Element => {
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
@@ -43,24 +43,20 @@ const NavBar = (): JSX.Element => {
 
   const WalletConn = useCallback(async () => {
     await connect();
-    // ContractState?.BalanceOf(web3State.address).then((res: BigNumber) => {
-    //   console.log(ethers.utils.formatEther(res.toString()));
-    //   setbalance(res);
-    // });
-  }, []);
+  }, [connect]);
 
   const WalletDisConn = useCallback(async () => {
     await disconnect();
-  }, []);
+  }, [disconnect]);
 
   useEffect(() => {
     const fetchAccount = async () => {
       await WalletConn();
     };
     fetchAccount();
-  }, []);
+  }, [WalletConn]);
 
-  // Web3 현재 네트워크  확인
+  //Web3 현재 네트워크  확인
   useEffect(() => {
     const working = async () => {
       if (web3State?.network?.chainId !== 4) {
@@ -100,10 +96,10 @@ const NavBar = (): JSX.Element => {
             target={"_blank"}
             rel="noopener noreferrer"
             href={
-              "https://rinkeby.etherscan.io/address/0x290C6093b9d9B937ED5B0bA11D7a61Fd42Fe18D0"
+              "https://rinkeby.etherscan.io/address/0x5e749D8b6B3e1CcE83a2eFDf6aB88BBb9d2533d5"
             }
           >
-            0x290C6093b9d9B937ED5B0bA11D7a61Fd42Fe18D0
+            0x5e749D8b6B3e1CcE83a2eFDf6aB88BBb9d2533d5
           </ContractBtn>
         </Flex>
       </Flex>
@@ -160,7 +156,12 @@ const NavBar = (): JSX.Element => {
                   <MenuList padding={"0px"}>
                     <MenuItem>
                       <Link href={user_profile} passHref>
-                        프로필 관리
+                        나의 프로필
+                      </Link>
+                    </MenuItem>
+                    <MenuItem>
+                      <Link href={user_Career} passHref>
+                        경력 신청
                       </Link>
                     </MenuItem>
                     <MenuItem>

@@ -215,13 +215,13 @@ const ReviewCard = ({ review }: reviewCard_props) => {
     >
       {review.nftUri ? (
         <Link
-          href={`https://testnets.opensea.io/assets/rinkeby/0x32718cc60088797c20b6f09d22c260061afe0b93/${review.id}`}
+          href={`https://testnets.opensea.io/assets/rinkeby/0x90a30F0de9a6E6117cdC35e2f7aB6503e4190198/${review.id}`}
           passHref
         >
           <Flex alignItems={"center"} gap={"5px"} cursor={"pointer"} mb={"5px"}>
             <NextImage src={opensea} width={"30px"} height={"30px"} />
             <Text fontSize={"sm"} fontWeight={"bold"} color={colors.blue[400]}>
-              OpenSea에서 내 NFT 보기
+              OpenSea에서 보기
             </Text>
           </Flex>
         </Link>

@@ -1,3 +1,4 @@
+import { Console } from "console";
 import { create } from "ipfs-http-client";
 
 export const useIpfs = () => {
@@ -23,15 +24,36 @@ export const useIpfs = () => {
   };
 
   const UploadIpfs = async (form: Blob, name: string, description: string) => {
-    const client = create({ url: "https://ipfs.infura.io:5001/api/v0" });
-    const cid = await client.add(form);
+    const projectId = process.env.NEXT_PUBLIC_IPFS_ID;
+    const projectSecret = process.env.NEXT_PUBLIC_IPFS_KEY;
+    const auth =
+      `Basic ` +
+      Buffer.from(projectId + ":" + projectSecret).toString("base64");
 
+    const client = create({
+      host: "ipfs.infura.io",
+      port: 5001,
+      protocol: "https",
+      headers: {
+        authorizeation: auth,
+      },
+    });
+    const cid = await client.add(form);
+    console.log(cid.cid);
     console.log(cid.path);
-    const meta = { name, description, image: infura + cid.path };
+    console.log(cid.cid.toV1().toString());
+    const imageUri = infura + cid.path;
+    console.log(imageUri);
+    const meta = {
+      name: name,
+      description: description,
+      image: imageUri,
+    };
     console.log(meta);
     const buffer = Buffer.from(JSON.stringify(meta));
-    await client.add(buffer);
-    return cid.path;
+    const resultUri = await client.add(buffer);
+    console.log(resultUri);
+    return resultUri.path;
   };
 
   return { dataURItoBlob, UploadIpfs, infura };

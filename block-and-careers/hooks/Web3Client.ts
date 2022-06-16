@@ -9,7 +9,6 @@ import { useToast } from "@chakra-ui/react";
 import { BlockJobs_ABI, Contract_Address } from "@state/datas/BlockJobs_ABI";
 import { Account_Model } from "@restapi/types/account";
 import { accountCheck } from "@restapi/account/get";
-import { newIdState } from "@state/user";
 import { useRouter } from "next/router";
 import { main_page } from "@components/utils/routing";
 
@@ -17,7 +16,7 @@ const providerOptions = {
   walletconnect: {
     package: WalletConnectProvider,
     options: {
-      infuraId: process.env.INFURA_PUBLIC_ID,
+      infuraId: process.env.NEXT_PUBLIC_INFURA_PUBLIC_ID,
     },
   },
 };
@@ -35,15 +34,14 @@ export const useWeb3 = () => {
   const toast = useToast();
   const router = useRouter();
 
-  // 등록된 회원인지
-  const [isnew, setisNewId] = useRecoilState<boolean>(newIdState);
   // 컨트랙트 상태
   const [contractState, SetContract] = useState<ethers.Contract | undefined>();
   // Web3 정보
   const [web3State, SetWeb3] = useRecoilState<Web3_Model>(initialWeb3);
   // 지갑 상태
-  const [existAccountState, setExistAccount] =
-    useRecoilState<Account_Model | null>(account_state);
+  const setExistAccount = useSetRecoilState<Account_Model | null>(
+    account_state
+  );
   // 지갑 BJC 코인 Balance
   const setBalance = useSetRecoilState<string | undefined>(balance);
 
@@ -55,7 +53,9 @@ export const useWeb3 = () => {
   const connect = useCallback(async () => {
     if (web3Modal) {
       try {
-        const provider = await web3Modal.connect();
+        const provider = await web3Modal?.connect().catch((e) => {
+          console.log(e);
+        });
         const web3Provider = new ethers.providers.Web3Provider(provider);
         const signer = web3Provider?.getSigner();
         const address = await signer.getAddress();
@@ -96,9 +96,13 @@ export const useWeb3 = () => {
         }
         return Contract;
       } catch (e) {
-        console.log("web3 connection error", e);
+        toast({
+          title: `에러가 발성했습니다. ${e}`,
+          status: "error",
+          position: "bottom-right",
+          isClosable: true,
+        });
       }
-    } else {
     }
   }, []);
 
@@ -133,13 +137,10 @@ export const useWeb3 = () => {
     sessionStorage.removeItem("account");
   };
 
-  const setAccountExist = async () => {
+  const setAccountExist = useCallback(async () => {
     if (web3State?.address) {
       await accountCheck(web3State.address)
         .then((res) => {
-          if (!res.data) {
-            setisNewId(false);
-          }
           setExistAccount(res.data);
           sessionStorage.setItem("account", JSON.stringify(res.data));
         })
@@ -147,7 +148,7 @@ export const useWeb3 = () => {
           console.log(e.message);
         });
     }
-  };
+  }, [setExistAccount, web3State.address]);
 
   const connectContract = async () => {
     if (web3Modal) {
@@ -179,11 +180,11 @@ export const useWeb3 = () => {
     };
     effectaction();
     connectContract();
-  }, [connect]);
+  }, [connect, setExistAccount, web3State.address]);
 
   useEffect(() => {
     setAccountExist();
-  }, [web3State?.address]);
+  }, [web3State?.address, setAccountExist]);
 
   useEffect(() => {
     if (modalProvider?.on) {
