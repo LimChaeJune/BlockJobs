@@ -5,10 +5,9 @@ import {
   Profile_Box,
   Profile_Info,
 } from "@components/users/profile/Profile_Box";
-import { link_unAuthorize } from "@components/utils/routing";
 import TokenSwap from "@components/utils/tokenSwap";
-import { useContractModal } from "@hooks/ContractModalHook";
 import { useUserLogin } from "@hooks/LoginCheck";
+import { GetCoinByAccount } from "@restapi/coin/get";
 import { AccountUserType, Account_Model } from "@restapi/types/account";
 import { UserCoinReceiptEntity } from "@restapi/types/coin";
 import { account_state, balance } from "@state/web3/account";
@@ -20,14 +19,26 @@ const Token_User = () => {
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
   const [balanceState] = useRecoilState<string | undefined>(balance);
 
-  const [coinReceiptState, setCoinRecepits] =
-    useState<UserCoinReceiptEntity[]>();
+  const [coinReceiptState, setCoinRecepits] = useState<UserCoinReceiptEntity[]>(
+    []
+  );
 
   const { IsCustomer } = useUserLogin();
   // 로그인 확인
   useEffect(() => {
     IsCustomer();
-  }, []);
+  }, [accountstate?.accountAddress]);
+
+  useEffect(() => {
+    const effectAction = async () => {
+      if (accountstate?.accountAddress) {
+        await GetCoinByAccount(accountstate?.accountAddress).then((res) => {
+          setCoinRecepits(res.data);
+        });
+      }
+    };
+    effectAction();
+  }, [accountstate?.accountAddress]);
 
   return (
     <CenterLayout>
@@ -63,9 +74,11 @@ const Token_User = () => {
         </Profile_Box>
         <Profile_Box boxTitle="내역">
           <Box>
-            {coinReceiptState?.map((receipt: UserCoinReceiptEntity, idx) => {
-              return <Box>{receipt.actionDt.toLocaleDateString()}</Box>;
-            })}
+            {coinReceiptState?.length > 0
+              ? coinReceiptState?.map((recipt, idx) => {
+                  return <Box key={idx}>{recipt.cointype}</Box>;
+                })
+              : "아직 BRC 토큰을 이용한 내역이 없습니다. 😗"}
           </Box>
         </Profile_Box>
       </ProfileLayout>

@@ -1,27 +1,23 @@
-import { Box, Button, Flex, Heading, Input, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
-import { MdOutlineSwapVert } from "react-icons/md";
-import ethereum from "../../public/images/ethereum.png";
-import racun from "../../public/images/racun.jpg";
-import shadows from "themes/foundations/shadows";
 import Image from "next/image";
 import colors from "themes/foundations/colors";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
 import LoadingModal from "./loadingModal";
 import { useContractModal } from "@hooks/ContractModalHook";
 import { ethers } from "ethers";
-import { numberDecimal, numberonly } from "./regex";
+import { numberDecimal } from "./regex";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { account_state, balance, Web3_Model } from "@state/web3/account";
+import { account_state, balance } from "@state/web3/account";
 import { Account_Model } from "@restapi/types/account";
 
 const TokenSwap = () => {
-  const { BalanceOf, Sell, Buy } = useBlockJobs();
+  const { BalanceOf, Buy } = useBlockJobs();
 
   const setBalance = useSetRecoilState<string | undefined>(balance);
   const accountState = useRecoilValue<Account_Model | null>(account_state);
-  const [fromCoin, setFromCoin] = useState<string>("ETH");
-  const [toCoin, setToCoin] = useState<string>("BRC");
+  const [fromCoin] = useState<string>("ETH");
+  const [toCoin] = useState<string>("BRC");
   const [fromValue, setFromValue] = useState<string>("");
   const [toValue, setToValue] = useState<string>("");
 
@@ -69,7 +65,11 @@ const TokenSwap = () => {
     setFromValue(e.target.value);
     if (parseFloat(e.target.value)) {
       const fromValue = parseFloat(e.target.value);
+      console.log(fromValue);
       const toValue = fromValue * pool;
+      setToValue(toValue.toString());
+    } else {
+      const toValue = 0;
       setToValue(toValue.toString());
     }
   };
@@ -77,7 +77,7 @@ const TokenSwap = () => {
   return (
     <Box
       position={"relative"}
-      width={"450px"}
+      width={{ xl: "450px", sm: "100%" }}
       shadow={"xl"}
       borderRadius={"xl"}
       padding={"20px"}
@@ -91,6 +91,7 @@ const TokenSwap = () => {
         _hover={{ border: "gray 1px solid" }}
       >
         <Input
+          aria-label="from-input"
           value={fromValue}
           onChange={FromValue_Changed}
           border={"none"}
@@ -111,7 +112,12 @@ const TokenSwap = () => {
           marginRight={"10px"}
           gap={"10px"}
         >
-          <Image src={ethereum} width={"24px"} height={"24px"} />
+          <Image
+            src={"/images/ethereum.png"}
+            width={"24px"}
+            height={"24px"}
+            alt="ETH"
+          />
           <Text fontWeight={"bold"}>ETH</Text>
         </Flex>
       </Flex>
@@ -133,6 +139,7 @@ const TokenSwap = () => {
         _hover={{ border: "gray 1px solid" }}
       >
         <Input
+          aria-label="to-input"
           value={toValue}
           border={"none"}
           fontSize={"2xl"}
@@ -161,7 +168,12 @@ const TokenSwap = () => {
             border={"1px"}
             overflow={"hidden"}
           >
-            <Image src={racun} width={"24px"} height={"24px"} />
+            <Image
+              src={"/images/racun.jpg"}
+              width={"24px"}
+              height={"24px"}
+              alt="BJC"
+            />
           </Box>
           <Text fontWeight={"bold"}>BJC</Text>
         </Flex>

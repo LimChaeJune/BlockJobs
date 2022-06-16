@@ -19,8 +19,9 @@ import { UpdateEnterPriseDto } from "@restapi/types/enterprise";
 import { v4 as uuid } from "uuid";
 import { UpdateEnterprise } from "@restapi/enterprise/post";
 import CenterLayout from "@components/layouts/centerlayout";
-import { link_unAuthorize } from "@components/utils/routing";
 import { useUserLogin } from "@hooks/LoginCheck";
+import { enterprise_profile } from "@components/utils/routing";
+import { useWeb3 } from "@hooks/Web3Client";
 
 const Profile_Enterprise = () => {
   let inputRef: HTMLInputElement | null;
@@ -29,13 +30,14 @@ const Profile_Enterprise = () => {
 
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
   const [updateEnterState, setUpdateEnter] = useState<UpdateEnterPriseDto>({
-    enterpriseId: accountstate?.enterprise.id,
+    enterpriseId: accountstate?.enterprise?.id,
     ...accountstate?.enterprise,
   });
   const { handleFileInput, fileBaseUrl } = useS3();
   const [imageUrl, setImageUrl] = useState<string | undefined>(
     updateEnterState?.thumbnail
   );
+  const { setAccountExist } = useWeb3();
 
   function UptEnterItem<T>(setItem: T, name: string) {
     if (updateEnterState) {
@@ -56,7 +58,11 @@ const Profile_Enterprise = () => {
 
   // 저장
   const Btn_Save_Enterprise = async () => {
-    await UpdateEnterprise(updateEnterState);
+    await UpdateEnterprise(updateEnterState).then(() => {
+      // 데이터 업데이트한 거 다시 조회
+      setAccountExist();
+      router.push(enterprise_profile);
+    });
   };
 
   const { IsEnterprise } = useUserLogin();
@@ -82,10 +88,11 @@ const Profile_Enterprise = () => {
               })
             }
           />
-          <Box width={"300px"} height={"270px"} m={3} pos={"relative"}>
+          <Box width={"50%"} height={"270px"} pos={"relative"}>
             <Image
+              alt="placeholder"
               src={imageUrl ? imageUrl : `https://via.placeholder.com/300x270`}
-              width={"300px"}
+              width={"100%"}
               height={"270px"}
             />
             <Button
@@ -95,6 +102,7 @@ const Profile_Enterprise = () => {
               height={"25px"}
               fontSize={"md"}
               background={"transparent"}
+              color={"white"}
               onClick={() => inputRef?.click()}
             >
               대표 사진 변경

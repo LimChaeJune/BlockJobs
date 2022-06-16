@@ -1,16 +1,12 @@
-import { Box, Flex, Icon, Select } from "@chakra-ui/react";
-import { useCallback, useEffect, useState } from "react";
+import { Flex, Icon } from "@chakra-ui/react";
+import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { useRouter } from "next/router";
 import { BiPencil } from "react-icons/bi";
 import { account_state } from "@state/web3/account";
-import { resumeState } from "@state/user";
 import colors from "themes/foundations/colors";
 import ProfileLayout from "@components/layouts/profilelayout";
-import {
-  enterprise_profileUpt,
-  link_unAuthorize,
-} from "@components/utils/routing";
+import { enterprise_profileUpt } from "@components/utils/routing";
 import { AccountUserType, Account_Model } from "@restapi/types/account";
 import {
   Profile_Box,

@@ -124,6 +124,11 @@ const CareerList = () => {
     getDBCareer();
   }, [accountstate?.user, contractCareer, contractState]);
 
+  const { IsCustomer } = useUserLogin();
+  useEffect(() => {
+    IsCustomer();
+  }, []);
+
   return (
     <CenterLayout>
       <ProfileLayout
@@ -141,16 +146,18 @@ const CareerList = () => {
         </Button>
         <Profile_Box boxTitle="블록체인에 올라간 경력">
           <Flex gap={5} direction={"column"}>
-            {contractCareer
-              ?.slice()
-              .sort((a, b) => b.id - a.id)
-              .slice(0, currCnt)
-              ?.map((item, idx) => {
-                return <Contract_Career_Card key={idx} career={item} />;
-              }) ?? (
+            {contractCareer?.length > 0 ? (
+              contractCareer
+                ?.slice()
+                .sort((a, b) => b.id - a.id)
+                .slice(0, currCnt)
+                ?.map((item, idx) => {
+                  return <Contract_Career_Card key={idx} career={item} />;
+                })
+            ) : (
               <Heading textAlign={"center"} fontSize={"xl"}>
-                아직 블록체인에 등록되어 있는 경력이 없네요 위에 "경력 등록하기"
-                버튼을 눌러 경력을 추가해보아요😄
+                아직 블록체인에 등록되어 있는 경력이 없네요 위에 &quot 경력
+                등록하기 &quot 버튼을 눌러 경력을 추가해보아요😄
               </Heading>
             )}
           </Flex>

@@ -75,7 +75,11 @@ const Home: NextPage = () => {
             BlockJobs 가이드 보기
           </Button>
         </Box>
-        <Flex gap={"10px"} marginTop={"100px"}>
+        <Flex
+          gap={"10px"}
+          marginTop={"100px"}
+          flexDir={{ xl: "row", sm: "column" }}
+        >
           {mainBtns.map((item, idx) => {
             return (
               <MainBtnBox

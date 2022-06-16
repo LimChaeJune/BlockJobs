@@ -1,11 +1,9 @@
 import { useRecoilState } from "recoil";
 import { AccountUserType, Account_Model } from "@restapi/types/account";
 import { CareerStatus, Career_Item } from "@restapi/types/career";
-import { EnterPrise_Entity } from "@restapi/types/enterprise";
 import { account_state } from "@state/web3/account";
-import { getEnterSelector } from "@state/enterprise";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import {
   Profile_Box,
@@ -83,18 +81,24 @@ const CareerList = () => {
       >
         <Profile_Box boxTitle="검증을 신청받은 경력">
           <Flex gap={5} direction={"column"}>
-            {contractCareer
-              ?.slice()
-              .sort((x) => x.id)
-              .map((item, idx) => {
-                return (
-                  <Contract_Career_Card
-                    Career_Approve={Btn_Click_Career}
-                    key={idx}
-                    career={item}
-                  />
-                );
-              })}
+            {contractCareer?.length > 0 ? (
+              contractCareer
+                ?.slice()
+                .sort((x) => x.id)
+                .map((item, idx) => {
+                  return (
+                    <Contract_Career_Card
+                      Career_Approve={Btn_Click_Career}
+                      key={idx}
+                      career={item}
+                    />
+                  );
+                })
+            ) : (
+              <Heading textAlign={"center"} fontSize={"xl"}>
+                신청 받은 경력이 없습니다.
+              </Heading>
+            )}
           </Flex>
         </Profile_Box>
         <LoadingModal
