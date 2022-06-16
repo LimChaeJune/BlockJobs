@@ -4,10 +4,9 @@ import { useRecoilState } from "recoil";
 import { useRouter } from "next/router";
 import { BiPencil } from "react-icons/bi";
 import { account_state } from "@state/web3/account";
-import { resumeState } from "@state/user";
 import colors from "themes/foundations/colors";
 import ProfileLayout from "@components/layouts/profilelayout";
-import { link_unAuthorize, user_resume } from "@components/utils/routing";
+import { user_resume } from "@components/utils/routing";
 import { AccountUserType, Account_Model } from "@restapi/types/account";
 import { UserResumeEntity } from "@restapi/types/user";
 import { GetUserResumes } from "@restapi/users/get";
@@ -20,7 +19,7 @@ import { useUserLogin } from "@hooks/LoginCheck";
 
 const Profile_User = () => {
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
-  const [resumes, setResumes] = useRecoilState<UserResumeEntity[]>(resumeState);
+  const [resumes, setResumes] = useState<UserResumeEntity[]>([]);
   const [curr_resume, setCurrResume] = useState<UserResumeEntity | null>();
   const router = useRouter();
 
@@ -29,19 +28,22 @@ const Profile_User = () => {
   }, []);
 
   const CurrResume_Changed = (resumeId: string) => {
-    setCurrResume(resumes.find((e) => e.resumeId === resumeId));
+    setCurrResume(resumes?.find((e) => e.resumeId === resumeId));
   };
 
-  useEffect(() => {
-    const action = async () => {
-      await GetUserResumes(accountstate?.user.id ?? "").then((res) => {
+  const resumseSetting = async () => {
+    if (accountstate?.user.id) {
+      await GetUserResumes(accountstate?.user.id).then((res) => {
         console.log(res);
         setResumes(res.data);
         setCurrResume(res.data[0] ?? null);
       });
-    };
-    action();
-  }, []);
+    }
+  };
+
+  useEffect(() => {
+    resumseSetting();
+  }, [accountstate?.user.id]);
 
   const { IsCustomer } = useUserLogin();
   // 로그인 확인

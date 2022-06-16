@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 
 const client: AxiosInstance = axios.create({
-  baseURL: "http://localhost:5001/",
+  baseURL: process.env.NEXT_PUBLIC_API_SERVER,
 
   timeout: 10000000,
   headers: {

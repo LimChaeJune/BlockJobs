@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Flex,
   Icon,
@@ -9,6 +8,7 @@ import {
   ModalOverlay,
   Spinner,
   Text,
+  Tooltip,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { AiOutlineWarning } from "react-icons/ai";
@@ -72,16 +72,18 @@ const LoadingModal = ({
                   color={colors.red[400]}
                   fontSize={"80px"}
                 />
-                <Text
-                  textAlign={"center"}
-                  fontSize={"md"}
-                  color={colors.red[300]}
-                  cursor={"pointer"}
-                  width={"100%"}
-                  noOfLines={3}
-                >
-                  {description}
-                </Text>
+                <Tooltip placement="auto" label={description}>
+                  <Text
+                    textAlign={"center"}
+                    fontSize={"md"}
+                    color={colors.red[300]}
+                    cursor={"pointer"}
+                    width={"100%"}
+                    noOfLines={3}
+                  >
+                    {description}
+                  </Text>
+                </Tooltip>
                 <Button
                   width={"100%"}
                   color={colors.white}

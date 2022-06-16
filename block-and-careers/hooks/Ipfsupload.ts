@@ -1,4 +1,3 @@
-import { Console } from "console";
 import { create } from "ipfs-http-client";
 
 export const useIpfs = () => {
@@ -14,9 +13,9 @@ export const useIpfs = () => {
       byteString = unescape(dataURI.split(",")[1]);
     }
     // 마임타입 추출
-    let mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+    const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
     // write the bytes of the string to a typed array
-    let ia = new Uint8Array(byteString.length);
+    const ia = new Uint8Array(byteString.length);
     for (let i = 0; i < byteString.length; i++) {
       ia[i] = byteString.charCodeAt(i);
     }

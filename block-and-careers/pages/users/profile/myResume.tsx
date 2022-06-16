@@ -80,7 +80,6 @@ const ResumeEdit = () => {
   // 이력서 State 변경
   function UptResumeItem<T>(setItem: T, name: string) {
     if (userResume) {
-      console.log(userResume.description);
       SetResume({
         ...userResume,
         [name]: setItem,
@@ -105,7 +104,7 @@ const ResumeEdit = () => {
       currentRunning: false,
     };
     setEducation([...educationState, neweducation]);
-  }, [educationState]);
+  }, [educationState, setEducation]);
 
   // 자격증 박스 추가
   const addCertBox = useCallback(() => {
@@ -113,7 +112,7 @@ const ResumeEdit = () => {
       id: uuid(),
     };
     setCert([...certState, newcert]);
-  }, [certState]);
+  }, [certState, setCert]);
 
   // 포트폴리오 박스 추가
   const addPortfolio = useCallback(() => {
@@ -121,7 +120,7 @@ const ResumeEdit = () => {
       id: uuid(),
     };
     setPortfolio([...portState, newPort]);
-  }, [portState]);
+  }, [portState, setPortfolio]);
 
   // 이력서 저장
   const SaveResume = async () => {
@@ -130,7 +129,6 @@ const ResumeEdit = () => {
       await UptUserProfile(user);
       await accountCheck(loginAccount?.accountAddress ?? "").then(
         async (res) => {
-          console.log(res.data);
           if (res.data) {
             await setAccountState(res.data);
           }
@@ -170,6 +168,7 @@ const ResumeEdit = () => {
         addEducationBox();
       } else {
         const uptResume = await GetUserResumeById(routeId?.toString() ?? "");
+        SetUser(loginAccount?.user);
         SetResume(uptResume.data);
         setEducation(uptResume?.data?.educations ?? []);
         setCert(uptResume?.data.certifications ?? []);
@@ -177,7 +176,7 @@ const ResumeEdit = () => {
       }
     };
     setting();
-  }, []);
+  }, [loginAccount?.user.id]);
 
   return (
     <CenterLayout>

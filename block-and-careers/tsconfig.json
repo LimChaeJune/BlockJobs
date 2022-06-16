@@ -11,7 +11,7 @@
       "@restapi/*": ["restapi/*"],
       "@asset/*": ["public/*"],
     },
-    "target": "es5",
+    "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -26,6 +26,6 @@
     "jsx": "preserve",
     "incremental": true,    
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_document.tsx", "jest.setup.js", "pages/404.js", "__test__/pages/common/selectpage.test.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_document.tsx", "pages/404.js"],
   "exclude": ["node_modules"]
 }
