@@ -15,9 +15,8 @@ import {
   profile_Education,
   profile_Certification,
   profile_Portfolio,
-  resumeState,
 } from "@state/user";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import Resume_Box from "@components/users/resume/Resume_Box";
 import Education_Box from "@components/users/resume/Education_Box";
 import Certification_Box from "@components/users/resume/Certification_Box";
@@ -37,7 +36,7 @@ import { AddUserResume, UptUserProfile } from "@restapi/users/post";
 import { user_profile } from "@components/utils/routing";
 import CenterLayout from "@components/layouts/centerlayout";
 import { useS3 } from "@hooks/S3Client";
-import { GetUserResumeById, GetUserResumes } from "@restapi/users/get";
+import { GetUserResumeById } from "@restapi/users/get";
 import { accountCheck } from "@restapi/account/get";
 import { useUserLogin } from "@hooks/LoginCheck";
 
@@ -45,7 +44,6 @@ const ResumeEdit = () => {
   let inputRef: HTMLInputElement | null;
 
   const router = useRouter();
-  const resumes = useRecoilValue<UserResumeEntity[]>(resumeState);
   const [loginAccount, setAccountState] = useRecoilState(account_state);
   const [user, SetUser] = useState<User_Entity | undefined>(loginAccount?.user);
   const [userResume, SetResume] = useState<UserResumeEntity | null>();
@@ -272,6 +270,7 @@ const ResumeEdit = () => {
                 bg={colors.secondery[400]}
               /> */}
                 <Image
+                  alt="placeholder"
                   src={imageUrl ?? "https://via.placeholder.com/130x150"}
                   width={"130px"}
                   height={"150px"}
@@ -388,8 +387,8 @@ const ResumeEdit = () => {
           gap={"30px"}
         >
           <Box fontSize={"sm"} fontWeight={"bold"}>
-            이곳에서 작성한 경력은 블록체인으로 검증이 가능하니 정확히
-            작성해주세요! 😊
+            이곳에서 작성한 이력서 내용으로 기업에서 블록체인으로 검증이
+            가능하니 정확히 작성해주세요! 😊
           </Box>
           <Button
             background={colors.blue[500]}
@@ -411,9 +410,7 @@ const ResumeEdit = () => {
   );
 };
 
-interface addBtn_props extends ButtonProps {}
-
-const AddButton = ({ ...rest }: addBtn_props) => {
+const AddButton = ({ ...rest }: ButtonProps) => {
   return (
     <Button
       color={colors.highlight}

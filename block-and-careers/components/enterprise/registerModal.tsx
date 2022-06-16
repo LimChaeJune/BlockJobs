@@ -30,6 +30,9 @@ import { useCallback } from "react";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
 import { IndustryEntity } from "@restapi/types/industry";
 import { numberDecimal } from "@components/utils/regex";
+import { useWeb3 } from "@hooks/Web3Client";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 interface IFormInput {
   title: string;
@@ -48,16 +51,32 @@ interface modalInput {
   rootIndustry: IndustryEntity[];
 }
 
+const enter_register_schema = yup.object().shape({
+  title: yup
+    .string()
+    .required("기업명은 필수입력 내용입니다.")
+    .max(100, "기업명은 최대 100자 입니다."),
+  email: yup.string().required("이메일은 필수입력 내용입니다."),
+  description: yup
+    .string()
+    .required("기업내용은 필수입력 내용입니다.")
+    .min(10, "기업내용은 최소 100자 입니다.")
+    .max(50, "기업내용은 최대 50자 입니다."),
+  businessNumber: yup.string().required("이메일은 필수입력 내용입니다."),
+  address: yup.string().required("주소는 필수입력 내용입니다."),
+});
+
 function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
   const router = useRouter();
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
+  const { setAccountExist } = useWeb3();
   const { approveUser } = useBlockJobs();
   const {
     handleSubmit,
     register,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<IFormInput>();
+  } = useForm<IFormInput>({ resolver: yupResolver(enter_register_schema) });
 
   const closeClick = useCallback(() => {
     if (confirm("회원등록을 취소하시겠습니까?")) {
@@ -67,7 +86,7 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
   }, []);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    // await approveUser(10000);
+    await approveUser(10000);
 
     const RegisterEnter_Body: RegisterEnterprise_Body = {
       email: data.email,
@@ -82,17 +101,19 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
         accountUserType: AccountUserType.Enterprise,
       },
     };
-    console.log(RegisterEnter_Body);
-    const res = await RegisterEnterprise(RegisterEnter_Body);
-    console.log(res);
-    if (res.status == 200) {
-      alert(
-        "사용자 생성을 완료했습니다.\r BlockJobs 서비스를 이용하실 수 있습니다."
-      );
-      router.push("/");
-    } else {
-      alert(res.data);
-    }
+
+    await RegisterEnterprise(RegisterEnter_Body)
+      .then(async () => {
+        await setAccountExist().then(() => {
+          alert(
+            "사용자 생성을 완료했습니다.\r BlockJobs 서비스를 이용하실 수 있습니다."
+          );
+          router.push("/");
+        });
+      })
+      .catch((ex) => {
+        alert(ex.response.data.message);
+      });
   };
 
   const enterSizes: EnterpriseEmployees[] = GetEmployees();
@@ -115,7 +136,7 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
         <ModalHeader>기업 등록</ModalHeader>
         <ModalBody>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <FormControl isRequired isInvalid={errors.title !== undefined}>
+            <FormControl isRequired isInvalid={!!errors.title}>
               <FormLabel htmlFor="title">회사 이름</FormLabel>
               <Input
                 id="title"
@@ -130,13 +151,10 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
               <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl
-              isRequired
-              isInvalid={errors.description !== undefined}
-              mt={3}
-            >
+            <FormControl isRequired isInvalid={!!errors.description} mt={3}>
               <FormLabel htmlFor="description">회사 정보</FormLabel>
               <Textarea
+                maxLength={50}
                 id="description"
                 placeholder="회사 정보를 입력해주세요"
                 {...register("description", {
@@ -146,7 +164,7 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
               <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isRequired mt={3}>
+            <FormControl isRequired mt={3} isInvalid={!!errors.email}>
               <FormLabel htmlFor="email">대표 이메일</FormLabel>
               <Input
                 id="email"
@@ -159,7 +177,7 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
               <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isRequired mt={3}>
+            <FormControl isRequired mt={3} isInvalid={!!errors.address}>
               <FormLabel htmlFor="address">대표 주소</FormLabel>
               <Input
                 id="address"
@@ -172,7 +190,7 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
               <FormErrorMessage>{errors.address?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isRequired mt={3}>
+            <FormControl isRequired mt={3} isInvalid={!!errors.employees}>
               <FormLabel htmlFor="employees">회사 규모</FormLabel>
               <Select
                 {...register("employees", {
@@ -190,7 +208,7 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
               <FormErrorMessage>{errors.employees?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isRequired mt={3}>
+            <FormControl isRequired mt={3} isInvalid={!!errors.industryId}>
               <FormLabel htmlFor="industryId">산업군</FormLabel>
               <Select
                 {...register("industryId", {
@@ -208,9 +226,10 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
               <FormErrorMessage>{errors.industryId?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isRequired mt={3}>
+            <FormControl isRequired mt={3} isInvalid={!!errors.businessNumber}>
               <FormLabel htmlFor="businessNumber">사업자 번호</FormLabel>
               <Input
+                maxLength={12}
                 id="businessNumber"
                 placeholder="(예시) 123-45-67890"
                 {...register("businessNumber", {

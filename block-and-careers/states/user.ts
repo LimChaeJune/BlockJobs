@@ -1,6 +1,5 @@
 import { atom, selector } from "recoil";
 import {
-  UserCareerEntity,
   UserCertificationEntity,
   UserEducationEntity,
   UserPortfolioEntity,
@@ -29,13 +28,6 @@ export const getResumeSelector = selector<UserResumeEntity[]>({
   set: ({ set }, newValue) => {
     set(resumeState, newValue);
   },
-});
-
-// 회원 등록되지 않은 지갑
-export const newIdState = atom<boolean>({
-  key: "newIdState",
-
-  default: true,
 });
 
 export const profile_Education = atom<UserEducationEntity[]>({

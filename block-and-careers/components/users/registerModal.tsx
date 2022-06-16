@@ -17,7 +17,7 @@ import {
   Select,
   Spacer,
 } from "@chakra-ui/react";
-import { account_state, initialWeb3, Web3_Model } from "@state/web3/account";
+import { initialWeb3, Web3_Model } from "@state/web3/account";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -25,13 +25,13 @@ import { useRecoilState } from "recoil";
 import { JobEntity } from "restapi/jobs/get";
 import { RegisterUser } from "restapi/users/post";
 
-import { AccountUserType, Account_Model } from "restapi/types/account";
+import { AccountUserType } from "restapi/types/account";
 import { RegisterUser_Body } from "restapi/types/user";
-import { useBlockJobs } from "@hooks/BlockJobsContract";
 import { autoHyphen } from "@components/utils/regex";
-import { accountCheck } from "@restapi/account/get";
-import { newIdState } from "@state/user";
-import { AxiosError } from "axios";
+import { useWeb3 } from "@hooks/Web3Client";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useBlockJobs } from "@hooks/BlockJobsContract";
 
 interface IFormInput {
   phone: string;
@@ -46,18 +46,26 @@ interface modalInput {
   rootJobs: JobEntity[];
 }
 
+const user_register_schema = yup.object().shape({
+  title: yup
+    .string()
+    .required("이름은 필수입력 내용입니다.")
+    .min(2, "이름은 최소 2자 입니다.")
+    .max(1000, "이름은 최대 10자 입니다."),
+  email: yup.string().required("이메일은 필수입력 내용입니다."),
+  phone: yup.string().required("핸드폰 번호는 필수입력 내용입니다."),
+});
+
 function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
-  const [isnew, setIsNewId] = useRecoilState<boolean>(newIdState);
   const [web3State] = useRecoilState<Web3_Model>(initialWeb3);
-  const [existAccountState, setExistAccount] =
-    useRecoilState<Account_Model | null>(account_state);
+  const { setAccountExist } = useWeb3();
   const router = useRouter();
   const {
     handleSubmit,
     register,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<IFormInput>();
+  } = useForm<IFormInput>({ resolver: yupResolver(user_register_schema) });
   const { approveUser } = useBlockJobs();
 
   const closeClick = useCallback(() => {
@@ -65,10 +73,10 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
       reset();
       onClose();
     }
-  }, []);
+  }, [reset, onClose]);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    // await approveUser(10000);
+    await approveUser(10000);
 
     const RegisterUser_Body: RegisterUser_Body = {
       email: data.email,
@@ -80,13 +88,14 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
         accountUserType: AccountUserType.Customer,
       },
     };
-    const res = await RegisterUser(RegisterUser_Body)
-      .then((res) => {
-        setIsNewId(true);
-        alert(
-          "사용자 생성을 완료했습니다.\r BlockJobs 서비스를 이용하실 수 있습니다."
-        );
-        router.push("/");
+    await RegisterUser(RegisterUser_Body)
+      .then(async () => {
+        await setAccountExist().then(() => {
+          alert(
+            "사용자 생성을 완료했습니다.\r BlockJobs 서비스를 이용하실 수 있습니다."
+          );
+          router.push("/");
+        });
       })
       .catch((ex) => {
         alert(ex.response.data.message);
@@ -121,7 +130,7 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
               <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isRequired mt={3}>
+            <FormControl isRequired mt={3} isInvalid={!!errors.email}>
               <FormLabel htmlFor="email">이메일</FormLabel>
               <Input
                 id="email"
@@ -134,9 +143,10 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
               <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isRequired mt={3}>
+            <FormControl isRequired mt={3} isInvalid={!!errors.phone}>
               <FormLabel htmlFor="phone">휴대폰 번호</FormLabel>
               <Input
+                maxLength={13}
                 id="phone"
                 onInput={autoHyphen}
                 placeholder="(예시) 010-6861-7798"
@@ -147,7 +157,7 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
               <FormErrorMessage>{errors.phone?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isRequired mt={3}>
+            <FormControl isRequired mt={3} isInvalid={!!errors.jobsId}>
               <FormLabel htmlFor="jobsId">직무</FormLabel>
               <Flex>
                 <Select

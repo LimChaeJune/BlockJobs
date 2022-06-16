@@ -8,7 +8,7 @@ import { getEnterSelector } from "@state/enterprise";
 
 import { useBlockJobs } from "@hooks/BlockJobsContract";
 import { Flex, Heading, Text, Box, Spacer, Button } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Profile_Box,
   Profile_Info,
@@ -51,12 +51,12 @@ const ReviewList = () => {
   } = useContractModal();
 
   // 컨트랙트로 등록된 경력 조회
-  const getContractReview = async () => {
+  const getContractReview = useCallback(async () => {
     const value: Review_Item[] = await getReviewByWriter(
       accountstate?.accountAddress
     );
     setReviewes(value);
-  };
+  }, [setReviewes, accountstate?.accountAddress, getReviewByWriter]);
 
   const { IsCustomer } = useUserLogin();
   // 로그인 확인
@@ -101,7 +101,7 @@ const ReviewList = () => {
   useEffect(() => {
     // DB에 등록된 경력
     getContractReview();
-  }, [accountstate?.accountAddress, contractState]);
+  }, [accountstate?.accountAddress, contractState, getContractReview]);
 
   return (
     <CenterLayout>
@@ -113,22 +113,25 @@ const ReviewList = () => {
         <Box>
           <Profile_Box boxTitle="내가 작성한 리뷰">
             <Flex gap={5} direction={"column"}>
-              {reviewes
-                ?.slice()
-                .sort((a, b) => b.id - a.id)
-                .slice(0, currCnt)
-                ?.map((item, idx) => {
-                  return (
-                    <Review_Box
-                      key={idx}
-                      review={item}
-                      mintingClick={Minting_Click}
-                    />
-                  );
-                }) ?? (
+              {reviewes?.length > 0 ? (
+                reviewes
+                  ?.slice()
+                  .sort((a, b) => b.id - a.id)
+                  .slice(0, currCnt)
+                  ?.map((item, idx) => {
+                    return (
+                      <Review_Box
+                        key={idx}
+                        review={item}
+                        mintingClick={Minting_Click}
+                      />
+                    );
+                  })
+              ) : (
                 <Heading textAlign={"center"} fontSize={"xl"}>
-                  아직 작성한 리뷰가 없습니다. 내가 증명받은 기업에 리뷰 작성해
-                  토큰을 보상으로 받아보아요😄
+                  아직 작성한 리뷰가 없습니다.
+                  <br />
+                  내가 증명받은 기업에 리뷰 작성해 토큰을 보상으로 받아보아요😄
                 </Heading>
               )}
             </Flex>
@@ -165,7 +168,7 @@ interface contract_review_props {
     reviewId: number,
     reviewName: string,
     description: string
-  ) => {};
+  ) => void;
 }
 
 const Review_Box = ({ review, mintingClick }: contract_review_props) => {
@@ -186,7 +189,12 @@ const Review_Box = ({ review, mintingClick }: contract_review_props) => {
               passHref
             >
               <Flex alignItems={"center"} gap={"5px"} cursor={"pointer"}>
-                <Image src={opensea} width={"30px"} height={"30px"} />
+                <Image
+                  src={opensea}
+                  alt="opensea"
+                  width={"30px"}
+                  height={"30px"}
+                />
                 <Text
                   fontSize={"sm"}
                   fontWeight={"bold"}

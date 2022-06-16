@@ -11,17 +11,13 @@ import {
   ModalHeader,
   ModalOverlay,
   Textarea,
-  useDisclosure,
 } from "@chakra-ui/react";
 import LoadingModal from "@components/utils/loadingModal";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
 import { useContractModal } from "@hooks/ContractModalHook";
-import { Account_Model } from "@restapi/types/account";
-import { account_state } from "@state/web3/account";
 import { useCallback } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useRecoilState } from "recoil";
 import * as yup from "yup";
 
 interface IFormInput {
@@ -47,7 +43,6 @@ interface modalInput {
 }
 
 const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
-  const [accountState] = useRecoilState<Account_Model | null>(account_state);
   const { createReview } = useBlockJobs();
   const {
     isOpen: isOpenContractModal,
@@ -92,7 +87,7 @@ const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
       reset();
       onClose();
     }
-  }, []);
+  }, [reset, onClose]);
 
   return (
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>

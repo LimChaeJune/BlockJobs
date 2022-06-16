@@ -35,7 +35,7 @@ export const user_Career = "/users/profile/myCareer";
 export const user_Review = "/users/profile/myReview";
 
 // 유저 이력서
-export const user_resume = "/users/resume/post";
+export const user_resume = "/users/profile/myResume";
 
 // 토큰 스왑
 export const token_sawp = "/token/swap";
