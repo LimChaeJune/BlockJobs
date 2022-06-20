@@ -49,8 +49,7 @@ export const useBlockJobs = () => {
     async (amount: number) => {
       const tx = await contractState?.approveUser(amount);
       const receipt = await tx.wait();
-      const data = receipt.logs[0].data;
-      console.log(data);
+      return receipt;
     },
     [contractState]
   );
@@ -79,7 +78,6 @@ export const useBlockJobs = () => {
         value: ethers.utils.parseEther(amount),
       });
       const receipt = await tx.wait();
-      const data = receipt.logs[0].data;
       return receipt;
     },
     [contractState]
@@ -92,7 +90,6 @@ export const useBlockJobs = () => {
         value: amount,
       });
       const receipt = await tx.wait();
-      const data = receipt.logs[0].data;
 
       return receipt;
     },
@@ -117,7 +114,6 @@ export const useBlockJobs = () => {
         reviewCreateAmount
       );
       const receipt = await tx.wait();
-      const data = receipt.logs[0].data;
       return receipt;
     },
     [contractState]
@@ -141,7 +137,6 @@ export const useBlockJobs = () => {
         careerCreateAmount
       );
       const receipt = await tx.wait();
-      const data = receipt.logs[0].data;
       return receipt;
     },
     [contractState]

@@ -29,10 +29,12 @@ import { EnterpriseEmployees, GetEmployees } from "@state/datas/enterprisetype";
 import { useCallback } from "react";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
 import { IndustryEntity } from "@restapi/types/industry";
-import { numberDecimal } from "@components/utils/regex";
+import { autoHyphen_businessnum } from "@components/utils/regex";
 import { useWeb3 } from "@hooks/Web3Client";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useContractModal } from "@hooks/ContractModalHook";
+import LoadingModal from "@components/utils/loadingModal";
 
 interface IFormInput {
   title: string;
@@ -72,6 +74,17 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
   const { setAccountExist } = useWeb3();
   const { approveUser } = useBlockJobs();
   const {
+    isOpen: isOpenContractModal,
+    onClose: onCloseContractModal,
+    receiptLink,
+    isSignWait,
+    isReject,
+    description,
+    SignOpen,
+    RejectOpen,
+  } = useContractModal();
+
+  const {
     handleSubmit,
     register,
     reset,
@@ -86,33 +99,42 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
   }, []);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    await approveUser(10000);
+    await SignOpen("BJC 토큰 Approve");
 
-    const RegisterEnter_Body: RegisterEnterprise_Body = {
-      email: data.email,
-      industryId: data.industryId,
-      title: data.title,
-      description: data.description,
-      address: data.address,
-      employees: data.employees,
-      businessNumber: data.businessNumber,
-      account: {
-        accountAddress: web3State?.address,
-        accountUserType: AccountUserType.Enterprise,
-      },
-    };
-
-    await RegisterEnterprise(RegisterEnter_Body)
+    await approveUser(10000)
       .then(async () => {
-        await setAccountExist().then(() => {
-          alert(
-            "사용자 생성을 완료했습니다.\r BlockJobs 서비스를 이용하실 수 있습니다."
-          );
-          router.push("/");
-        });
+        await onCloseContractModal();
+        const RegisterEnter_Body: RegisterEnterprise_Body = {
+          email: data.email,
+          industryId: data.industryId,
+          title: data.title,
+          description: data.description,
+          address: data.address,
+          employees: data.employees,
+          businessNumber: data.businessNumber,
+          account: {
+            accountAddress: web3State?.address,
+            accountUserType: AccountUserType.Enterprise,
+          },
+        };
+
+        await RegisterEnterprise(RegisterEnter_Body)
+          .then(async () => {
+            await setAccountExist().then(() => {
+              alert(
+                "사용자 생성을 완료했습니다.\r BlockJobs 서비스를 이용하실 수 있습니다."
+              );
+              router.push("/");
+            });
+          })
+          .catch((ex) => {
+            reset();
+            onClose();
+            alert(ex.response.data.message);
+          });
       })
-      .catch((ex) => {
-        alert(ex.response.data.message);
+      .catch(async (e) => {
+        await RejectOpen(e);
       });
   };
 
@@ -229,13 +251,13 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
             <FormControl isRequired mt={3} isInvalid={!!errors.businessNumber}>
               <FormLabel htmlFor="businessNumber">사업자 번호</FormLabel>
               <Input
-                maxLength={12}
+                maxLength={10}
                 id="businessNumber"
                 placeholder="(예시) 123-45-67890"
                 {...register("businessNumber", {
                   required: "사업자 번호는 필수 입력 항목입니다.",
                 })}
-                onInput={numberDecimal}
+                onInput={autoHyphen_businessnum}
               />
               <FormErrorMessage>
                 {errors.businessNumber?.message}
@@ -250,6 +272,14 @@ function Register_Enterprise({ isOpen, onClose, rootIndustry }: modalInput) {
           </form>
         </ModalBody>
       </ModalContent>
+      <LoadingModal
+        isSignWait={isSignWait}
+        isReject={isReject}
+        reciptLink={receiptLink}
+        description={description}
+        isOpen={isOpenContractModal}
+        onClose={onCloseContractModal}
+      />
     </Modal>
   );
 }

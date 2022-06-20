@@ -1,9 +1,7 @@
 import { Input, InputProps } from "@chakra-ui/react";
 import { numberonly } from "./regex";
 
-interface input_props extends InputProps {}
-
-const DateInput = ({ ...rest }: input_props) => {
+const DateInput = ({ ...rest }: InputProps) => {
   return (
     <Input
       type={"text"}

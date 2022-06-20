@@ -38,20 +38,14 @@ export const useIpfs = () => {
       },
     });
     const cid = await client.add(form);
-    console.log(cid.cid);
-    console.log(cid.path);
-    console.log(cid.cid.toV1().toString());
     const imageUri = infura + cid.path;
-    console.log(imageUri);
     const meta = {
       name: name,
       description: description,
       image: imageUri,
     };
-    console.log(meta);
     const buffer = Buffer.from(JSON.stringify(meta));
     const resultUri = await client.add(buffer);
-    console.log(resultUri);
     return resultUri.path;
   };
 

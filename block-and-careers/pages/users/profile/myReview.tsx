@@ -34,7 +34,7 @@ const ReviewList = () => {
   const [reviewes, setReviewes] = useState<Review_Item[]>([]);
 
   // IPFS Hook
-  const { dataURItoBlob, UploadIpfs } = useIpfs();
+  const { dataURItoBlob, UploadIpfs, infura } = useIpfs();
   // Contract Hook
   const { getReviewByWriter, mintNft, contractState } = useBlockJobs();
 
@@ -78,11 +78,12 @@ const ReviewList = () => {
           reviewName,
           description
         ).then(async (imgUrl) => {
+          console.log(imgUrl);
           if (accountstate?.accountAddress) {
             await SignOpen(`${reviewId}번 리뷰 nft 발행`);
             await mintNft({
               owner: accountstate?.accountAddress,
-              tokenURI: imgUrl,
+              tokenURI: infura + imgUrl,
               reviewId: reviewId,
             })
               .then(async (receipt) => {
@@ -185,24 +186,26 @@ const Review_Box = ({ review, mintingClick }: contract_review_props) => {
         <Box float={"right"}>
           {review.nftUri ? (
             <Link
-              href={`https://testnets.opensea.io/assets/rinkeby/0x90a30F0de9a6E6117cdC35e2f7aB6503e4190198/${review.id}`}
+              href={`https://testnets.opensea.io/assets/rinkeby/0xd6310a71d1241970e0a61041c124d663fd24822f/${review.id}`}
               passHref
             >
-              <Flex alignItems={"center"} gap={"5px"} cursor={"pointer"}>
-                <Image
-                  src={opensea}
-                  alt="opensea"
-                  width={"30px"}
-                  height={"30px"}
-                />
-                <Text
-                  fontSize={"sm"}
-                  fontWeight={"bold"}
-                  color={colors.blue[400]}
-                >
-                  OpenSea에서 내 NFT 보기
-                </Text>
-              </Flex>
+              <a target="_blank" rel="noopener noreferrer">
+                <Flex alignItems={"center"} gap={"5px"} cursor={"pointer"}>
+                  <Image
+                    src={opensea}
+                    alt="opensea"
+                    width={"30px"}
+                    height={"30px"}
+                  />
+                  <Text
+                    fontSize={"sm"}
+                    fontWeight={"bold"}
+                    color={colors.blue[400]}
+                  >
+                    OpenSea에서 내 NFT 보기
+                  </Text>
+                </Flex>
+              </a>
             </Link>
           ) : (
             <Button
@@ -216,14 +219,11 @@ const Review_Box = ({ review, mintingClick }: contract_review_props) => {
         </Box>
         <Flex>
           <Box>
-            <Heading fontSize={"small"} color={colors.blue[200]} mb={2}>
-              {review.company}
-            </Heading>
-            <Heading fontSize={"md"} mb={3}>
+            <Heading fontSize={"small"} mb={2}>
               {`${
                 enter?.find((e) => e.account.accountAddress === review.company)
                   ?.title ?? "회원등록 되지 않은 주소"
-              }`}
+              } (${review.company})`}
             </Heading>
           </Box>
           <Spacer />

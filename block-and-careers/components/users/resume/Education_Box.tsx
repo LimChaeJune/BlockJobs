@@ -1,6 +1,6 @@
-import { Box, Flex, Input, Checkbox, CloseButton } from "@chakra-ui/react";
+import { Box, Flex, Checkbox, CloseButton } from "@chakra-ui/react";
 import { Input_Box, TextArea_Box } from "@components/utils/Input_Box";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import colors from "themes/foundations/colors";
 import { profile_Education } from "@state/user";
 import { useRecoilState } from "recoil";
@@ -16,7 +16,6 @@ const Education_Box = ({ education }: Education_Box_props) => {
     useRecoilState<UserEducationEntity[]>(profile_Education);
 
   function UptItem<T>(setItem: T, name: string) {
-    console.log(setItem);
     setEducation(
       educationState.map((item: UserEducationEntity) => {
         return item.id === education.id ? { ...item, [name]: setItem } : item;

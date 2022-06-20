@@ -41,7 +41,6 @@ const TokenSwap = () => {
 
       await Buy(fromValue.toString())
         .then(async (receipt) => {
-          console.log(receipt);
           await SuccessOpen(receipt.transactionHash);
           // 초기화
           await setFromValue("");
@@ -65,7 +64,6 @@ const TokenSwap = () => {
     setFromValue(e.target.value);
     if (parseFloat(e.target.value)) {
       const fromValue = parseFloat(e.target.value);
-      console.log(fromValue);
       const toValue = fromValue * pool;
       setToValue(toValue.toString());
     } else {

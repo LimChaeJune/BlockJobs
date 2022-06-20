@@ -6,6 +6,11 @@ import { GoVerified } from "react-icons/go";
 import { MdSwapVerticalCircle } from "react-icons/md";
 import { BsPencilSquare } from "react-icons/bs";
 import { Fade } from "react-awesome-reveal";
+import NextImage from "next/image";
+import career from "../public/images/career.gif";
+import swap from "../public/images/swap.gif";
+import nft from "../public/images/nft.gif";
+import Link from "next/link";
 
 const Home: NextPage = () => {
   const mainBtns: MainBtn_props[] = [
@@ -46,6 +51,19 @@ const Home: NextPage = () => {
         flexDirection={"column"}
       >
         <Box textAlign={"center"}>
+          {/* <Fade delay={500} duration={500} direction={"down"}>
+            <Box
+              width={{ xl: "20vw", md: "200px", sm: "150px" }}
+              height={{ xl: "20vw", md: "250px", sm: "200px" }}
+            >
+              <NextImage
+                src={blockjobs}
+                layout={"fill"}
+                objectFit={"contain"}
+                alt={"logo"}
+              />
+            </Box>
+          </Fade> */}
           <Heading
             color={colors.blue[300]}
             fontSize={"sm"}
@@ -94,18 +112,90 @@ const Home: NextPage = () => {
         </Flex>
       </Flex>
       <Flex
+        width={"100%"}
         height={"860px"}
-        width={"1024px"}
         justifyContent={"center"}
         alignItems={"center"}
       >
-        <Fade duration={2000}>
-          <Box>
-            <Heading>
-              클릭 한번으로 <br /> 경력을 영구히 보관
-            </Heading>
-          </Box>
-        </Fade>
+        <Flex
+          height={"860px"}
+          width={"1024px"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          gap={"100px"}
+          flexDir={{ xl: "row", md: "column", sm: "column" }}
+        >
+          <Fade duration={1000}>
+            <Flex flexDir={"column"} gap={3} whiteSpace={"nowrap"}>
+              <Heading>클릭 한번으로</Heading>
+              <Heading>경력을 영구보관</Heading>
+            </Flex>
+          </Fade>
+          <Fade duration={2000} delay={500}>
+            <NextImage src={career} />
+          </Fade>
+        </Flex>
+      </Flex>
+      <Flex
+        width={"100%"}
+        height={"860px"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        background={"white"}
+      >
+        <Flex
+          height={"860px"}
+          width={"1024px"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          gap={"100px"}
+          flexDir={{ xl: "row", md: "column", sm: "column" }}
+        >
+          <Fade duration={2000} delay={500}>
+            <NextImage src={swap} />
+          </Fade>
+          <Fade duration={1000}>
+            <Flex flexDir={"column"} gap={3} whiteSpace={"nowrap"}>
+              <Heading>ETH 코인으로</Heading>
+              <Heading>BJC 토큰 스왑</Heading>
+            </Flex>
+          </Fade>
+        </Flex>
+      </Flex>
+      <Flex
+        width={"100%"}
+        height={"860px"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        background={colors.blue[50]}
+      >
+        <Flex
+          height={"860px"}
+          width={"1024px"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          gap={"100px"}
+          flexDir={{ xl: "row", md: "column", sm: "column" }}
+        >
+          <Fade duration={1000}>
+            <Flex flexDir={"column"} gap={3} whiteSpace={"nowrap"}>
+              <Heading>작성한 리뷰를 NFT 발행</Heading>
+              <Heading>
+                <Link
+                  href={"https://testnets.opensea.io/collection/blockjobs"}
+                  passHref
+                >
+                  <a target="_blank" rel="noopener noreferrer">
+                    <Text color={colors.blue[300]}> OpenSea에서 확인</Text>
+                  </a>
+                </Link>
+              </Heading>
+            </Flex>
+          </Fade>
+          <Fade duration={2000} delay={500}>
+            <NextImage src={nft} />
+          </Fade>
+        </Flex>
       </Flex>
     </Box>
   );

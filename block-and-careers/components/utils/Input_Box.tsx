@@ -100,7 +100,7 @@ const TextArea_Box = ({ title, ...rest }: TextArea_Box_props) => {
 };
 
 const Custom_Box = ({ IsFocus, title, children }: Custom_Box_props) => {
-  const [isFocus, setFocus] = useState<boolean>(IsFocus);
+  const [isFocus] = useState<boolean>(IsFocus);
 
   return (
     <Box

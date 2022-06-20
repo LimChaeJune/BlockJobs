@@ -13,7 +13,7 @@ export default class Document extends NextDocument {
           <meta property="og:type" content="website" />
           <meta property="og:url" content="https://example.com/page.html" />
           <meta property="og:title" content="Content Title" />
-          <meta property="og:image" content="https://example.com/image.jpg" />
+          <meta property="og:image" content="../public/images/blockjobs.png" />
           <meta property="og:description" content="Description Here" />
           <meta property="og:site_name" content="Site Name" />
           <meta property="og:image:width" content="1200" />

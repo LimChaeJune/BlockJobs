@@ -6,7 +6,6 @@ import {
   Heading,
   Badge,
   Flex,
-  border,
 } from "@chakra-ui/react";
 import CenterLayout from "@components/layouts/centerlayout";
 import { link_companyDetail } from "@components/utils/routing";
@@ -57,6 +56,7 @@ const Company_Card = ({ company }: companyCard_props) => {
         pathname: link_companyDetail,
         query: { enterpriseId: company.id },
       }}
+      passHref
     >
       <Box
         width={{ xl: "25%", md: "50%", sm: "50%" }}
@@ -77,6 +77,7 @@ const Company_Card = ({ company }: companyCard_props) => {
                 height={"100%"}
                 src={company.thumbnail ?? ""}
                 objectFit={"cover"}
+                alt={"company"}
               />
             ) : (
               <NextImage

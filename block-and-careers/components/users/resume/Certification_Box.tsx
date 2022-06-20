@@ -1,21 +1,9 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  Input,
-  Text,
-  Checkbox,
-  List,
-  ListItem,
-  CloseButton,
-} from "@chakra-ui/react";
-import { Input_Box, TextArea_Box } from "@components/utils/Input_Box";
-import { useCallback, useState } from "react";
+import { Flex, CloseButton } from "@chakra-ui/react";
+import { Input_Box } from "@components/utils/Input_Box";
+import { useCallback } from "react";
 import colors from "themes/foundations/colors";
 import { profile_Certification } from "@state/user";
 import { useRecoilState } from "recoil";
-import { EnterPrise_Entity } from "@restapi/types/enterprise";
-import { getEnterSelector } from "@state/enterprise";
 import DateInput from "@components/utils/date_Input";
 import { UserCertificationEntity } from "@restapi/types/user";
 

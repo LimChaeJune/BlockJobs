@@ -20,14 +20,13 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { account_state, initialWeb3, Web3_Model } from "@state/web3/account";
+import { account_state } from "@state/web3/account";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useCallback, useEffect, useState } from "react";
 import { EnterPrise_Entity } from "@restapi/types/enterprise";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import colors from "themes/foundations/colors";
-import { getEnterSelector } from "@state/enterprise";
 import { AddUserCareer } from "@restapi/users/post";
 import { Account_Model } from "@restapi/types/account";
 import { GetAllEnterPrise } from "@restapi/enterprise/get";
@@ -76,7 +75,7 @@ function CareerPost({ isOpen, onClose, completeSubmit }: modalInput) {
       fnsDt: data.fnsDt,
       roles: data.roles,
     })
-      .then((res) => {
+      .then(() => {
         completeSubmit();
         reset();
         onClose();
@@ -209,7 +208,6 @@ const CompanyAutoComplete = ({ CompanyClick }: companyAutoComplete) => {
   useEffect(() => {
     const action = async () => {
       await GetAllEnterPrise().then((res) => {
-        console.log(res);
         setenterprise(res.data);
         setfindEnterprise(res.data);
       });

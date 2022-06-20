@@ -53,9 +53,7 @@ export const useWeb3 = () => {
   const connect = useCallback(async () => {
     if (web3Modal) {
       try {
-        const provider = await web3Modal?.connect().catch((e) => {
-          console.log(e);
-        });
+        const provider = await web3Modal?.connect();
         const web3Provider = new ethers.providers.Web3Provider(provider);
         const signer = web3Provider?.getSigner();
         const address = await signer.getAddress();

@@ -1,5 +1,3 @@
-import axios from "axios";
-import { ethers } from "ethers";
 import { atom, selector } from "recoil";
 import { EnterPrise_Entity } from "restapi/types/enterprise";
 import { GetAllEnterPrise } from "restapi/enterprise/get";
@@ -13,7 +11,7 @@ export const enterState = atom<EnterPrise_Entity[]>({
 
 export const getEnterSelector = selector<EnterPrise_Entity[]>({
   key: "enterState/get",
-  get: async ({ get }) => {
+  get: async ({}) => {
     try {
       const res = await GetAllEnterPrise();
       console.log(res.data);

@@ -1,4 +1,4 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { AccountUserType } from "@restapi/types/account";
 import UserSideBar from "./sidenavbar";
 
@@ -11,7 +11,6 @@ interface Props {
 
 const ProfileLayout = ({
   navbartitle,
-  title,
   children,
   usertype,
 }: Props): JSX.Element => {

@@ -5,7 +5,6 @@ import {
   Profile_Box,
   Profile_Info,
 } from "@components/users/profile/Profile_Box";
-import { link_unAuthorize } from "@components/utils/routing";
 import TokenSwap from "@components/utils/tokenSwap";
 import { useUserLogin } from "@hooks/LoginCheck";
 import { AccountUserType, Account_Model } from "@restapi/types/account";
@@ -62,7 +61,9 @@ const Token_Enterpirse = () => {
         <Profile_Box boxTitle="내역">
           <Box>
             {coinReceiptState?.map((receipt: UserCoinReceiptEntity, idx) => {
-              return <Box>{receipt.actionDt.toLocaleDateString()}</Box>;
+              return (
+                <Box key={idx}>{receipt.actionDt.toLocaleDateString()}</Box>
+              );
             })}
           </Box>
         </Profile_Box>

@@ -53,7 +53,7 @@ const CareerList = () => {
 
   // Db Career 조회
   const getDBCareer = async () => {
-    if (accountstate?.user.id) {
+    if (accountstate?.user?.id) {
       await GetUserCareers(accountstate?.user.id).then((res) => {
         setcareer(res.data);
       });

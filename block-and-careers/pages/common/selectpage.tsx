@@ -9,7 +9,7 @@ import {
 import Register_Enterprise from "@components/enterprise/registerModal";
 import Register_User from "@components/users/registerModal";
 import { selectList, SelectTypes } from "@state/datas/usertype";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { FaRegBuilding, FaRegUser } from "react-icons/fa";
 import colors from "themes/foundations/colors";
 import { GetRootJobs } from "restapi/jobs/get";
@@ -22,14 +22,6 @@ function SelectPage({
   rootJobs,
   industry,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  // useEffect(() => {
-  //   const item = async () => {
-  //     const res = await GetRootJobs();
-  //     const rootJobs = res.data;
-  //     console.log(rootJobs)
-  //   };
-  //   item();
-  // },[]);
   const selects: SelectTypes[] = selectList();
 
   const { IsLoginByRoute } = useUserLogin();

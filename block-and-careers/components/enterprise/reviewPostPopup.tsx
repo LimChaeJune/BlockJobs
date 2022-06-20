@@ -12,15 +12,12 @@ import {
   ModalOverlay,
   Textarea,
 } from "@chakra-ui/react";
-import LoadingModal from "@components/utils/loadingModal";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useBlockJobs } from "@hooks/BlockJobsContract";
-import { useContractModal } from "@hooks/ContractModalHook";
 import { useCallback } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 
-interface IFormInput {
+export interface IFormInput {
   title: string;
   content: string;
 }
@@ -39,23 +36,10 @@ const career_Schema = yup.object().shape({
 interface modalInput {
   isOpen: boolean;
   onClose: () => void;
-  companyAddress: string | undefined;
+  reviewSubmit: (data: IFormInput) => void;
 }
 
-const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
-  const { createReview } = useBlockJobs();
-  const {
-    isOpen: isOpenContractModal,
-    onClose: onCloseContractModal,
-    receiptLink,
-    isSignWait,
-    isReject,
-    description,
-    SignOpen,
-    RejectOpen,
-    SuccessOpen,
-  } = useContractModal();
-
+const ReviewPostPopup = ({ isOpen, onClose, reviewSubmit }: modalInput) => {
   const {
     handleSubmit,
     register,
@@ -64,22 +48,7 @@ const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
   } = useForm<IFormInput>({ resolver: yupResolver(career_Schema) });
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    await SignOpen(`${companyAddress}에 리뷰 작성`);
-
-    await createReview({
-      title: data.title,
-      content: data.content,
-      company: companyAddress,
-      createDt: new Date(),
-      nftUri: "",
-    })
-      .then(async (recepit) => {
-        await SuccessOpen(recepit.transactionHash);
-        onClose();
-      })
-      .catch(async (e) => {
-        await RejectOpen(e);
-      });
+    await reviewSubmit(data);
   };
 
   const closeClick = useCallback(() => {
@@ -129,14 +98,6 @@ const ReviewPostPopup = ({ isOpen, onClose, companyAddress }: modalInput) => {
           </ModalFooter>
         </form>
       </ModalContent>
-      <LoadingModal
-        isSignWait={isSignWait}
-        isReject={isReject}
-        reciptLink={receiptLink}
-        description={description}
-        isOpen={isOpenContractModal}
-        onClose={onCloseContractModal}
-      />
     </Modal>
   );
 };

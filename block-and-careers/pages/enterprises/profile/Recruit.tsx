@@ -8,7 +8,6 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { useRouter } from "next/router";
 import { account_state } from "@state/web3/account";
 import colors from "themes/foundations/colors";
 import { Account_Model } from "@restapi/types/account";
@@ -20,12 +19,9 @@ import { v4 as uuid } from "uuid";
 import { UpdateEnterprise } from "@restapi/enterprise/post";
 import CenterLayout from "@components/layouts/centerlayout";
 import { useUserLogin } from "@hooks/LoginCheck";
-import { link_unAuthorize } from "@components/utils/routing";
 
 const Recruit_Enterprise = () => {
   let inputRef: HTMLInputElement | null;
-
-  const router = useRouter();
 
   const [accountstate] = useRecoilState<Account_Model | null>(account_state);
   const [updateEnterState, setUpdateEnter] = useState<UpdateEnterPriseDto>({

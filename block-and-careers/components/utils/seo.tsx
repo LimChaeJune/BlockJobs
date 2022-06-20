@@ -1,13 +1,27 @@
 import Head from "next/head";
 
-const SEO = (title: string): JSX.Element => {
+export interface seo_props {
+  title: string;
+  description: string;
+  image: string;
+  url: string;
+}
+
+const SEO = ({ title, description, image, url }: seo_props): JSX.Element => {
   return (
-    <>
-      <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>{`BlockJobs | ${title}`}</title>
-      </Head>
-    </>
+    <Head>
+      <title>{title || "BlockJobs"}</title>
+      <meta
+        name="description"
+        content={description || "경력을 블록체인으로 영구히 보관하는 BlockJobs"}
+      />
+      <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      <meta property="og:title" content={title || "BlockJobs"} />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={url || "https://blockjobs.com"} />
+      <meta property="og:image" content={image} />
+      <meta property="og:article:author" content="BlockJobs" />
+    </Head>
   );
 };
 

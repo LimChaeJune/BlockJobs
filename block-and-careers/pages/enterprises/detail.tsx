@@ -13,12 +13,13 @@ import {
   TabPanels,
   TabPanel,
   Stack,
-  Input,
   Button,
   Spacer,
   useDisclosure,
 } from "@chakra-ui/react";
-import ReviewPostPopup from "@components/enterprise/reviewPostPopup";
+import ReviewPostPopup, {
+  IFormInput,
+} from "@components/enterprise/reviewPostPopup";
 import CenterLayout from "@components/layouts/centerlayout";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
 import { GetEnterPriseById } from "@restapi/enterprise/get";
@@ -31,6 +32,8 @@ import { useEffect, useState } from "react";
 import colors from "themes/foundations/colors";
 import opensea from "../../public/images/opensea.png";
 import NextImage from "next/image";
+import LoadingModal from "@components/utils/loadingModal";
+import { useContractModal } from "@hooks/ContractModalHook";
 
 const CompanyDetail = () => {
   const { getCareerByCompany, getReviewByCompany, contractState } =
@@ -45,6 +48,19 @@ const CompanyDetail = () => {
   const router = useRouter();
 
   const { onClose, isOpen, onOpen } = useDisclosure();
+  const { createReview } = useBlockJobs();
+
+  const {
+    isOpen: isOpenContractModal,
+    onClose: onCloseContractModal,
+    receiptLink,
+    isSignWait,
+    isReject,
+    description,
+    SignOpen,
+    RejectOpen,
+    SuccessOpen,
+  } = useContractModal();
 
   // 컨트랙트로 등록된 경력 조회
   const getContractCareer = async () => {
@@ -67,8 +83,25 @@ const CompanyDetail = () => {
   };
 
   // 리뷰 생성 후 리뷰 목록 재조회
-  const CompleteReviewCreate = async () => {
-    await getContractReview();
+  const reviewSubmit = async (data: IFormInput) => {
+    console.log(data);
+    await SignOpen(`${enterprise?.account.accountAddress}에 리뷰 작성`);
+
+    await createReview({
+      title: data.title,
+      content: data.content,
+      company: enterprise?.account.accountAddress,
+      createDt: new Date(),
+      nftUri: "",
+    })
+      .then(async (recepit) => {
+        await onClose();
+        await SuccessOpen(recepit.transactionHash);
+        await getContractReview();
+      })
+      .catch(async (e) => {
+        await RejectOpen(e);
+      });
   };
 
   useEffect(() => {
@@ -94,7 +127,12 @@ const CompanyDetail = () => {
   return (
     <CenterLayout>
       <Box bg={"white"}>
-        <Image w={"100%"} maxHeight="400px" src={enterprise?.thumbnail} />
+        <Image
+          w={"100%"}
+          maxHeight="400px"
+          src={enterprise?.thumbnail}
+          alt={"img"}
+        />
         <Box pl={5} pr={5}>
           <Box mt={5}>
             <Heading>{enterprise?.title}</Heading>
@@ -165,7 +203,15 @@ const CompanyDetail = () => {
         <ReviewPostPopup
           isOpen={isOpen}
           onClose={onClose}
-          companyAddress={enterprise?.account.accountAddress}
+          reviewSubmit={reviewSubmit}
+        />
+        <LoadingModal
+          isSignWait={isSignWait}
+          isReject={isReject}
+          reciptLink={receiptLink}
+          description={description}
+          isOpen={isOpenContractModal}
+          onClose={onCloseContractModal}
         />
       </Box>
     </CenterLayout>
@@ -215,15 +261,26 @@ const ReviewCard = ({ review }: reviewCard_props) => {
     >
       {review.nftUri ? (
         <Link
-          href={`https://testnets.opensea.io/assets/rinkeby/0x90a30F0de9a6E6117cdC35e2f7aB6503e4190198/${review.id}`}
+          href={`https://testnets.opensea.io/assets/rinkeby/0xd6310a71d1241970e0a61041c124d663fd24822f/${review.id}`}
           passHref
         >
-          <Flex alignItems={"center"} gap={"5px"} cursor={"pointer"} mb={"5px"}>
-            <NextImage src={opensea} width={"30px"} height={"30px"} />
-            <Text fontSize={"sm"} fontWeight={"bold"} color={colors.blue[400]}>
-              OpenSea에서 보기
-            </Text>
-          </Flex>
+          <a target="_blank" rel="noopener noreferrer">
+            <Flex
+              alignItems={"center"}
+              gap={"5px"}
+              cursor={"pointer"}
+              mb={"5px"}
+            >
+              <NextImage src={opensea} width={"30px"} height={"30px"} />
+              <Text
+                fontSize={"sm"}
+                fontWeight={"bold"}
+                color={colors.blue[400]}
+              >
+                OpenSea에서 보기
+              </Text>
+            </Flex>
+          </a>
         </Link>
       ) : null}
       <Heading fontSize={"sm"}>{"작성자"}</Heading>

@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
-import styled from "@emotion/styled";
+import Head from "next/head";
 import colors from "themes/foundations/colors";
+import Footer from "./footer";
 import NavBar from "./navbar";
 
 interface Props {
@@ -10,6 +11,19 @@ interface Props {
 const BlockJobLayout = ({ children }: Props): JSX.Element => {
   return (
     <>
+      <Head>
+        <title>{"BlockJobs"}</title>
+        <meta
+          name="description"
+          content={"경력을 블록체인으로 영구히 보관하는 BlockJobs"}
+        />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta property="og:title" content={"BlockJobs"} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={"https://blockjobs.com"} />
+        {/* <meta property="og:image" content={image} /> */}
+        <meta property="og:article:author" content="BlockJobs" />
+      </Head>
       <Box>
         <NavBar />
         <Box width={"100%"} height={"80px"} />
@@ -20,20 +34,10 @@ const BlockJobLayout = ({ children }: Props): JSX.Element => {
         >
           {children}
         </Box>
+        <Footer />
       </Box>
     </>
   );
 };
-
-const Container = styled.div`
-  display::flex;
-  justify-contents:center;
-  flex-direction:column;  
-`;
-
-const Content = styled.div`
-  display: flex;
-  flex: 1;
-`;
 
 export default BlockJobLayout;

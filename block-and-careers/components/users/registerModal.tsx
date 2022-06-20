@@ -32,6 +32,8 @@ import { useWeb3 } from "@hooks/Web3Client";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
+import { useContractModal } from "@hooks/ContractModalHook";
+import LoadingModal from "@components/utils/loadingModal";
 
 interface IFormInput {
   phone: string;
@@ -47,7 +49,7 @@ interface modalInput {
 }
 
 const user_register_schema = yup.object().shape({
-  title: yup
+  name: yup
     .string()
     .required("이름은 필수입력 내용입니다.")
     .min(2, "이름은 최소 2자 입니다.")
@@ -67,6 +69,16 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
     formState: { errors, isSubmitting },
   } = useForm<IFormInput>({ resolver: yupResolver(user_register_schema) });
   const { approveUser } = useBlockJobs();
+  const {
+    isOpen: isOpenContractModal,
+    onClose: onCloseContractModal,
+    receiptLink,
+    isSignWait,
+    isReject,
+    description,
+    SignOpen,
+    RejectOpen,
+  } = useContractModal();
 
   const closeClick = useCallback(() => {
     if (confirm("회원등록을 취소하시겠습니까?")) {
@@ -76,29 +88,39 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
   }, [reset, onClose]);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    await approveUser(10000);
+    console.log("?");
+    await SignOpen("BJC 토큰 Approve");
 
-    const RegisterUser_Body: RegisterUser_Body = {
-      email: data.email,
-      jobsId: data.jobsId,
-      name: data.name,
-      phone: data.phone,
-      account: {
-        accountAddress: web3State?.address,
-        accountUserType: AccountUserType.Customer,
-      },
-    };
-    await RegisterUser(RegisterUser_Body)
+    await approveUser(10000)
       .then(async () => {
-        await setAccountExist().then(() => {
-          alert(
-            "사용자 생성을 완료했습니다.\r BlockJobs 서비스를 이용하실 수 있습니다."
-          );
-          router.push("/");
-        });
+        await onCloseContractModal();
+        const RegisterUser_Body: RegisterUser_Body = {
+          email: data.email,
+          jobsId: data.jobsId,
+          name: data.name,
+          phone: data.phone,
+          account: {
+            accountAddress: web3State?.address,
+            accountUserType: AccountUserType.Customer,
+          },
+        };
+        await RegisterUser(RegisterUser_Body)
+          .then(async () => {
+            await setAccountExist().then(() => {
+              alert(
+                "사용자 생성을 완료했습니다.\r BlockJobs 서비스를 이용하실 수 있습니다."
+              );
+              router.push("/");
+            });
+          })
+          .catch((ex) => {
+            reset();
+            onClose();
+            alert(ex.response.data.message);
+          });
       })
-      .catch((ex) => {
-        alert(ex.response.data.message);
+      .catch(async (e) => {
+        await RejectOpen(e);
       });
   };
 
@@ -121,11 +143,7 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
                 id="name"
                 placeholder="이름을 입력해주세요"
                 type={"text"}
-                {...register("name", {
-                  required: "email은 필수 입력 항목입니다.",
-                  minLength: 2,
-                  maxLength: 10,
-                })}
+                {...register("name")}
               />
               <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
             </FormControl>
@@ -136,9 +154,7 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
                 id="email"
                 placeholder="email을 입력해주세요"
                 type={"email"}
-                {...register("email", {
-                  required: "email은 필수 입력 항목입니다.",
-                })}
+                {...register("email")}
               />
               <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
             </FormControl>
@@ -150,22 +166,15 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
                 id="phone"
                 onInput={autoHyphen}
                 placeholder="(예시) 010-6861-7798"
-                {...register("phone", {
-                  required: "휴대폰 번호는 필수 입력 항목입니다.",
-                })}
+                {...register("phone")}
               />
               <FormErrorMessage>{errors.phone?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isRequired mt={3} isInvalid={!!errors.jobsId}>
+            <FormControl isRequired mt={3}>
               <FormLabel htmlFor="jobsId">직무</FormLabel>
               <Flex>
-                <Select
-                  id="jobsId"
-                  {...register("jobsId", {
-                    required: "산업군은 필수 입력 항목입니다.",
-                  })}
-                >
+                <Select id="jobsId" {...register("jobsId")}>
                   {rootJobs?.map((value: JobEntity, idx) => {
                     return (
                       <option key={idx} value={value.id}>
@@ -186,6 +195,14 @@ function Register_User({ isOpen, onClose, rootJobs }: modalInput) {
           </form>
         </ModalBody>
       </ModalContent>
+      <LoadingModal
+        isSignWait={isSignWait}
+        isReject={isReject}
+        reciptLink={receiptLink}
+        description={description}
+        isOpen={isOpenContractModal}
+        onClose={onCloseContractModal}
+      />
     </Modal>
   );
 }

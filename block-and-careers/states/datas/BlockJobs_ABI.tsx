@@ -1,4 +1,4 @@
-export const Contract_Address = "0x5e749D8b6B3e1CcE83a2eFDf6aB88BBb9d2533d5";
+export const Contract_Address = "0x5aD2765319620bab2777c3E23F47145113818530";
 export const BlockJobs_ABI = [
   {
     inputs: [

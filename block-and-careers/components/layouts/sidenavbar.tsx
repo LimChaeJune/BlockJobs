@@ -15,7 +15,7 @@ import {
   FlexProps,
   Heading,
 } from "@chakra-ui/react";
-import { FiMail, FiUser, FiStar, FiMenu } from "react-icons/fi";
+import { FiUser, FiMenu } from "react-icons/fi";
 import {
   BsPencilSquare,
   BsBuilding,
