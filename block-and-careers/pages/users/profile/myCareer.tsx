@@ -124,10 +124,13 @@ const CareerList = () => {
   };
 
   useEffect(() => {
+    const action = async () => {
+      await getContractCareer();
+      await getDBCareer();
+    };
+    action();
     // DB에 등록된 경력
-    getContractCareer();
-    getDBCareer();
-  }, [accountstate?.user, contractCareer, contractState]);
+  }, [accountstate?.user, contractState]);
 
   const { IsCustomer } = useUserLogin();
   useEffect(() => {
@@ -161,8 +164,8 @@ const CareerList = () => {
                 })
             ) : (
               <Heading textAlign={"center"} fontSize={"xl"}>
-                아직 블록체인에 등록되어 있는 경력이 없네요 위에 &quot 경력
-                등록하기 &quot 버튼을 눌러 경력을 추가해보아요😄
+                아직 블록체인에 등록되어 있는 경력이 없네요 위에 경력 등록하기
+                버튼을 눌러 경력을 추가해보아요😄
               </Heading>
             )}
           </Flex>
