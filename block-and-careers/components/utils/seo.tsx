@@ -19,7 +19,15 @@ const SEO = ({ title, description, image, url }: seo_props): JSX.Element => {
       <meta property="og:title" content={title || "BlockJobs"} />
       <meta property="og:type" content="website" />
       <meta property="og:url" content={url || "https://blockjobs.com"} />
-      <meta property="og:image" content={image} />
+      <meta
+        property="og:image"
+        content={
+          image ||
+          "https://s3.console.aws.amazon.com/s3/object/blockjobsawsbucket?region=ap-northeast-2&prefix=profile/blockjobs.png"
+        }
+      />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta property="og:article:author" content="BlockJobs" />
     </Head>
   );
