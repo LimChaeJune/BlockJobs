@@ -23,7 +23,7 @@ const SEO = ({ title, description, image, url }: seo_props): JSX.Element => {
         property="og:image"
         content={
           image ||
-          "https://s3.console.aws.amazon.com/s3/object/blockjobsawsbucket?region=ap-northeast-2&prefix=profile/blockjobs.png"
+          "https://blockjobsawsbucket.s3.ap-northeast-2.amazonaws.com/profile/blockjobs_og.png"
         }
       />
       <meta property="og:image:width" content="1200" />

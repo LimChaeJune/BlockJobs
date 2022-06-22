@@ -15,7 +15,7 @@ export default class Document extends NextDocument {
           <meta property="og:title" content="BlockJobs" />
           <meta
             property="og:image"
-            content="https://s3.console.aws.amazon.com/s3/object/blockjobsawsbucket?region=ap-northeast-2&prefix=profile/blockjobs.png"
+            content="https://blockjobsawsbucket.s3.ap-northeast-2.amazonaws.com/profile/blockjobs_og.png"
           />
           <meta
             property="og:description"

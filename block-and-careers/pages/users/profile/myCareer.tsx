@@ -69,7 +69,12 @@ const CareerList = () => {
     const value: Career_Item[] = await getCareerByWorker(
       accountstate?.accountAddress
     );
-    setCareer(value);
+    // trash address
+    setCareer(
+      value?.filter(
+        (e) => e.company !== "0x0000000000000000000000000000000000000000"
+      )
+    );
   };
 
   // 컨트랙트 Hooks
