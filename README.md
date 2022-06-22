@@ -85,6 +85,10 @@ NFT 토큰은 리뷰를 작성한 후에 NFT 발행 버튼을 통해 발행할 �
 
 # Skills
 
+## Architecture
+
+![ERD](images/architecture.png)
+
 ## Front-end
 
 - `Next.js`의 SSG, SSR을 사용해 사용자와 상호작용하는 웹 페이지를 구현했습니다.
@@ -111,7 +115,7 @@ NFT 토큰은 리뷰를 작성한 후에 NFT 발행 버튼을 통해 발행할 �
 - `OpenZepplin`의 인터페이스(ERC-20, ERC-721)을 기반으로 개발했습니다.
 - `Remix`로 소스를 컴파일하고, Web3에 컨트랙트를 배포했습니다.
 
-## infra Structure
+## Infra Structure
 
 ### CI/CD
 
@@ -120,4 +124,7 @@ NFT 토큰은 리뷰를 작성한 후에 NFT 발행 버튼을 통해 발행할 �
 
 ## DB
 
+<img src="images/ERD.png">
+
+- `EC2`를 사용해 DB 서버를 구축했습니다.
 - `MySql`을 데이터베이스로 사용했습니다.

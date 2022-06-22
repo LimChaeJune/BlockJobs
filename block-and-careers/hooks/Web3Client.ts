@@ -60,7 +60,10 @@ export const useWeb3 = () => {
         const network = await web3Provider?.getNetwork();
 
         const sessionCheck = sessionStorage.getItem("account");
-        if (localStorage.getItem("injected") && !sessionCheck) {
+        if (
+          localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER") &&
+          !sessionCheck
+        ) {
           toast({
             title: "지갑연결에 성공했습니다.",
             status: "success",

@@ -34,6 +34,7 @@ import opensea from "../../public/images/opensea.png";
 import NextImage from "next/image";
 import LoadingModal from "@components/utils/loadingModal";
 import { useContractModal } from "@hooks/ContractModalHook";
+import { link_companiespage } from "@components/utils/routing";
 
 const CompanyDetail = () => {
   const { getCareerByCompany, getReviewByCompany, contractState } =
@@ -105,6 +106,11 @@ const CompanyDetail = () => {
   };
 
   useEffect(() => {
+    if (!localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER")) {
+      alert("지갑 연결 후 이용할 수 있습니다.");
+      router.push(link_companiespage);
+    }
+
     const routeId = router.query.enterpriseId;
     const fetchAction = async () => {
       if (routeId) {
