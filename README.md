@@ -1,10 +1,10 @@
 ## OpenSource / document
 
-> BackEnd github - https://github.com/LimChaeJune/Block-Jobs-API
-> Contract github - https://github.com/LimChaeJune/Contracts
+> BackEnd github - https://github.com/LimChaeJune/Block-Jobs-API  
+> Contract github - https://github.com/LimChaeJune/Contracts  
 > Notion Page - https://ruddy-lightyear-95b.notion.site/BlockJobs-334590e6441e40ef984c3d26aede53b9
 
-## Contract (Rinkeby TestNet)
+## Contract Address (Rinkeby TestNet)
 
 ### BlockJobs
 
@@ -22,7 +22,7 @@
 
 # [BlockJobs](https://block-jobs.vercel.app/) 소개
 
-현재 개발자 혹은 디자이너 등 프리랜서와 스타트업 근무자는 회사가 사라진 경우 혹은 경력을 증명해주는 기관이 사라진다면, 이후의 경력을 증빙하기 쉽지 않습니다.
+현재 개발자 혹은 디자이너 등 프리랜서와 외주 등의 근무자는 회사가 사라진 경우 혹은 경력을 증명해주는 기관이 사라진다면, 이후의 경력을 증빙하기 쉽지 않습니다.
 (예를 들어 `KOSA` 등의 경력 인증 사이트는 경력 신청, 경력 증명서 출력시 매번 수수료를 지불하고 해야하며 개인의 편차지만, 그 가격이 전혀 저렴하지 않습니다.)
 BlockJobs는 Ethereum Smart Contract 로 인해 기업과 근로자가 서로 경력을 증명하고 블록체인 네트워크의 불변성으로 경력 조작을 방지하고, 경력 한번 등록 이후엔 수수료를 부과하지 않는 오픈소스 Dapp입니다.
 
