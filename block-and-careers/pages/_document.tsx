@@ -11,15 +11,24 @@ export default class Document extends NextDocument {
       <Html>
         <Head>
           <meta property="og:type" content="website" />
-          <meta property="og:url" content="https://example.com/page.html" />
-          <meta property="og:title" content="Content Title" />
-          <meta property="og:image" content="../public/images/blockjobs.png" />
-          <meta property="og:description" content="Description Here" />
-          <meta property="og:site_name" content="Site Name" />
+          <meta property="og:url" content="https://block-jobs.vercel.app/" />
+          <meta property="og:title" content="BlockJobs" />
+          <meta
+            property="og:image"
+            content="https://s3.console.aws.amazon.com/s3/object/blockjobsawsbucket?region=ap-northeast-2&prefix=profile/blockjobs.png"
+          />
+          <meta
+            property="og:description"
+            content="경력을 블록체인으로 영구히 보관하는 BlockJobs"
+          />
+          <meta property="og:site_name" content="BlockJobs" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
-          <meta property="description" content="Description Here" />
-          <meta property="keyword" content="keyword Here" />
+          <meta
+            property="description"
+            content="경력을 블록체인으로 영구히 보관하는 BlockJobs"
+          />
+          <meta property="keyword" content="BlockChain" />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link
             rel="preconnect"
