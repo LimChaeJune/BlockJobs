@@ -84,14 +84,23 @@ const Home: NextPage = () => {
             Ethereum Smart Contract로 블록체인 네트워크에
             <br /> 경력을 영구히 보관해봐요
           </Text>
-          <Button
-            marginTop={"20px"}
-            borderRadius={"3xl"}
-            padding={"25px 30px 25px 30px"}
-            _hover={{ shadow: "xl" }}
+          <Link
+            href={
+              "https://ruddy-lightyear-95b.notion.site/BlockJobs-334590e6441e40ef984c3d26aede53b9"
+            }
+            passHref
           >
-            BlockJobs 가이드 보기
-          </Button>
+            <a target="_blank" rel="noopener noreferrer">
+              <Button
+                marginTop={"20px"}
+                borderRadius={"3xl"}
+                padding={"25px 30px 25px 30px"}
+                _hover={{ shadow: "xl" }}
+              >
+                BlockJobs 가이드 보기
+              </Button>
+            </a>
+          </Link>
         </Box>
         <Flex
           gap={"10px"}
