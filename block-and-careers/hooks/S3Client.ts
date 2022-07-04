@@ -1,5 +1,6 @@
 import { ChangeEvent } from "react";
-import AWS from "aws-sdk";
+import { S3Client } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
 
 interface ProfileUpload_props {
   id: string;
@@ -12,12 +13,6 @@ export const useS3 = () => {
   const bucket = "blockjobsawsbucket";
   const fileBaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
 
-  AWS.config.update({
-    region: region,
-    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_ID,
-    secretAccessKey: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY,
-  });
-
   const handleFileInput = async ({
     id,
     uploadComplete,
@@ -25,24 +20,29 @@ export const useS3 = () => {
   }: ProfileUpload_props) => {
     const file = e.target.files?.[0];
 
-    const upload = new AWS.S3.ManagedUpload({
-      params: {
-        Bucket: bucket, // 버킷 이름
-        Key: id + ".png", // 유저 아이디 혹은 enterpriseid
-        Body: file, // 파일 객체
+    const s3 = new S3Client({
+      region: region,
+      credentials: {
+        accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_ID ?? "",
+        secretAccessKey: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY ?? "",
       },
     });
 
-    const promise = upload.promise();
-    promise.then(
-      function () {
-        uploadComplete(id);
-      },
-      function (err) {
-        console.log(err);
-        // 이미지 업로드 실패
-      }
-    );
+    try {
+      const mulitpartUpload = new Upload({
+        client: s3,
+        params: {
+          Bucket: bucket, // 버킷 이름
+          Key: id + ".png", // 유저 아이디 혹은 enterpriseid
+          Body: file, // 파일 객체
+        },
+      });
+
+      await mulitpartUpload.done();
+      await uploadComplete(id);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return { handleFileInput, fileBaseUrl };

@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
 import Image from "next/image";
-import colors from "themes/foundations/colors";
+import colors from "../../themes/foundations/colors";
 import { useBlockJobs } from "@hooks/BlockJobsContract";
 import LoadingModal from "./loadingModal";
 import { useContractModal } from "@hooks/ContractModalHook";

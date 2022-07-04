@@ -5,6 +5,7 @@ module.exports = {
     "!**/node_modules/**"
   ],
   moduleNameMapper: {
+    preset: 'ts-jest',
     // Handle CSS imports (with CSS modules)
     // https://jestjs.io/docs/webpack#mocking-css-modules
     "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy",
@@ -25,11 +26,11 @@ module.exports = {
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/.next/"],
-  testEnvironment: "jsdom",
+  testEnvironment: "node",
   transform: {
     // Use babel-jest to transpile tests with the next/babel preset
-    // https://jestjs.io/docs/configuration#transform-objectstring-pathtotransformer--pathtotransformer-object
-    "^.+\\.(js|jsx|ts|tsx)$": ["babel-jest", { presets: ["next/babel"] }]
+    // https://jestjs.io/docs/configuration#transform-objectstring-pathtotransformer--pathtotransformer-object    
+    "^.+\\.(js|jsx|ts|tsx)$": ["ts-jest", { presets: ["next/babel"] }]
   },
   transformIgnorePatterns: ["/node_modules/", "^.+\\.module\\.(css|sass|scss)$"]
 };
