@@ -2,7 +2,7 @@
 
 > BackEnd github - https://github.com/LimChaeJune/Block-Jobs-API  
 > Contract github - https://github.com/LimChaeJune/Contracts  
-> Notion Page - https://ruddy-lightyear-95b.notion.site/BlockJobs-334590e6441e40ef984c3d26aede53b9
+> Notion Page - https://www.notion.so/BlockJobs-334590e6441e40ef984c3d26aede53b9
 
 ## Contract Address (Rinkeby TestNet)
 
