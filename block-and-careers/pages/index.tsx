@@ -86,7 +86,7 @@ const Home: NextPage = () => {
           </Text>
           <Link
             href={
-              "https://ruddy-lightyear-95b.notion.site/BlockJobs-334590e6441e40ef984c3d26aede53b9"
+              "https://www.notion.so/BlockJobs-334590e6441e40ef984c3d26aede53b9"
             }
             passHref
           >
